@@ -21,6 +21,13 @@ const applicationEventSchema = new mongoose.Schema(
 
 const applicationSchema = new mongoose.Schema(
   {
+    publicId: {
+      type: String,
+      required: true,
+      trim: true,
+      unique: true,
+      index: true,
+    },
     candidate: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Candidate",
@@ -35,7 +42,17 @@ const applicationSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["new", "screening", "interview", "offer", "hired", "withdrawn", "rejected"],
+      enum: [
+        "new",
+        "screening",
+        "interview",
+        "offer",
+        "onboarding",
+        "hired",
+        "rejected",
+        "withdrawn",
+        "archived",
+      ],
       default: "new",
       index: true,
     },
@@ -61,9 +78,10 @@ const applicationSchema = new mongoose.Schema(
       default: [],
     },
   },
-  { timestamps: true, 
-    collection: "applications"
-   }
+  {
+    timestamps: true,
+    collection: "applications",
+  }
 );
 
 applicationSchema.index({ candidate: 1, job: 1 });

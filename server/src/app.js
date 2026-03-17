@@ -26,6 +26,11 @@ app.use("/api/admin/presences", require("./routes/admin/adminPresencesRoutes"));
 app.use("/api/admin/jobs", require("./routes/admin/adminJobsRoutes"));
 app.use("/api/admin/translations", require("./routes/admin/adminTranslationsRoutes"));
 
+app.use("/api/admin/applications", require("./routes/admin/adminApplicationsRoutes"));
+app.use("/api/admin/candidates", require("./routes/admin/adminCandidatesRoutes"));
+app.use("/api/admin/scheduler", require("./routes/admin/adminSchedulerRoutes"));
+
+
 connectDB()
   .then(() => {
     app.listen(PORT, () => {
