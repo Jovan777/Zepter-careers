@@ -18,6 +18,14 @@ app.get("/", (req, res) => {
 app.use("/api/jobs", require("./routes/publicJobRoutes"));
 app.use("/api/applications", require("./routes/applicationRoutes"));
 
+app.use("/api/admin/auth", require("./routes/admin/adminAuthRoutes"));
+app.use("/api/admin/dashboard", require("./routes/admin/adminDashboardRoutes"));
+app.use("/api/admin/companies", require("./routes/admin/adminCompaniesRoutes"));
+app.use("/api/admin/regions", require("./routes/admin/adminRegionsRoutes"));
+app.use("/api/admin/presences", require("./routes/admin/adminPresencesRoutes"));
+app.use("/api/admin/jobs", require("./routes/admin/adminJobsRoutes"));
+app.use("/api/admin/translations", require("./routes/admin/adminTranslationsRoutes"));
+
 connectDB()
   .then(() => {
     app.listen(PORT, () => {

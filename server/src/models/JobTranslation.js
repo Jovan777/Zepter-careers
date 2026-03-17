@@ -50,10 +50,15 @@ const jobTranslationSchema = new mongoose.Schema(
       default: "Apply",
       trim: true,
     },
+    notes: {
+      type: String,
+      default: "",
+      trim: true,
+    },
   },
   {
     timestamps: true,
-    collection: "jobTranslations"
+    collection: "jobTranslations",
   }
 );
 
