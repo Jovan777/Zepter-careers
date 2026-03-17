@@ -7,7 +7,6 @@ const {
   SUPPORTED_LOCALES,
   parseStringArray,
   normalizeLocale,
-  isValidObjectId,
 } = require("./adminHelpers");
 
 const buildTranslationPayload = (body, localeOverride = null) => {
@@ -27,7 +26,11 @@ const buildTranslationPayload = (body, localeOverride = null) => {
   };
 };
 
-const upsertTranslation = async (jobId, locale, body) => {
+const findJobByPublicId = async (publicId) => {
+  return Job.findOne({ publicId: String(publicId).trim() });
+};
+
+const upsertTranslation = async (jobObjectId, locale, body) => {
   const payload = buildTranslationPayload(body, locale);
 
   if (!payload.name) {
@@ -35,13 +38,13 @@ const upsertTranslation = async (jobId, locale, body) => {
   }
 
   let translation = await JobTranslation.findOne({
-    job: jobId,
+    job: jobObjectId,
     locale: payload.locale,
   });
 
   if (!translation) {
     translation = await JobTranslation.create({
-      job: jobId,
+      job: jobObjectId,
       ...payload,
     });
     return translation;
@@ -72,10 +75,16 @@ const getTranslationJobs = async (req, res) => {
 
     const items = await Promise.all(
       jobs.map(async (job) => {
-        let translation = await JobTranslation.findOne({ job: job._id, locale });
+        let translation = await JobTranslation.findOne({
+          job: job._id,
+          locale,
+        });
 
         if (!translation) {
-          translation = await JobTranslation.findOne({ job: job._id, locale: "en" });
+          translation = await JobTranslation.findOne({
+            job: job._id,
+            locale: "en",
+          });
         }
 
         return {
@@ -104,15 +113,17 @@ const getTranslationJobs = async (req, res) => {
 
 const getJobTranslationsOverview = async (req, res) => {
   try {
-    const { jobId } = req.params;
+    const { publicId } = req.params;
 
-    if (!isValidObjectId(jobId)) {
+    if (!publicId || !String(publicId).trim()) {
       return res.status(400).json({
-        message: "jobId nije validan.",
+        message: "publicId je obavezan.",
       });
     }
 
-    const job = await Job.findById(jobId)
+    const job = await Job.findOne({
+      publicId: String(publicId).trim(),
+    })
       .populate("company", "name")
       .populate("region", "name isoCode");
 
@@ -122,7 +133,9 @@ const getJobTranslationsOverview = async (req, res) => {
       });
     }
 
-    const translations = await JobTranslation.find({ job: job._id }).sort({ locale: 1 });
+    const translations = await JobTranslation.find({
+      job: job._id,
+    }).sort({ locale: 1 });
 
     const matrix = translations.map((t) => ({
       locale: t.locale,
@@ -153,15 +166,17 @@ const getJobTranslationsOverview = async (req, res) => {
 
 const getJobTranslationByLocale = async (req, res) => {
   try {
-    const { jobId, locale } = req.params;
+    const { publicId, locale } = req.params;
 
-    if (!isValidObjectId(jobId)) {
+    if (!publicId || !String(publicId).trim()) {
       return res.status(400).json({
-        message: "jobId nije validan.",
+        message: "publicId je obavezan.",
       });
     }
 
-    const job = await Job.findById(jobId)
+    const job = await Job.findOne({
+      publicId: String(publicId).trim(),
+    })
       .populate("company", "name")
       .populate("region", "name isoCode");
 
@@ -197,16 +212,16 @@ const getJobTranslationByLocale = async (req, res) => {
 
 const saveJobTranslation = async (req, res) => {
   try {
-    const { jobId } = req.params;
+    const { publicId } = req.params;
     const locale = normalizeLocale(req.body.locale);
 
-    if (!isValidObjectId(jobId)) {
+    if (!publicId || !String(publicId).trim()) {
       return res.status(400).json({
-        message: "jobId nije validan.",
+        message: "publicId je obavezan.",
       });
     }
 
-    const job = await Job.findById(jobId);
+    const job = await findJobByPublicId(publicId);
 
     if (!job) {
       return res.status(404).json({
@@ -231,15 +246,15 @@ const saveJobTranslation = async (req, res) => {
 
 const updateJobTranslationByLocale = async (req, res) => {
   try {
-    const { jobId, locale } = req.params;
+    const { publicId, locale } = req.params;
 
-    if (!isValidObjectId(jobId)) {
+    if (!publicId || !String(publicId).trim()) {
       return res.status(400).json({
-        message: "jobId nije validan.",
+        message: "publicId je obavezan.",
       });
     }
 
-    const job = await Job.findById(jobId);
+    const job = await findJobByPublicId(publicId);
 
     if (!job) {
       return res.status(404).json({
@@ -247,7 +262,11 @@ const updateJobTranslationByLocale = async (req, res) => {
       });
     }
 
-    const translation = await upsertTranslation(job._id, normalizeLocale(locale), req.body);
+    const translation = await upsertTranslation(
+      job._id,
+      normalizeLocale(locale),
+      req.body
+    );
 
     return res.status(200).json({
       message: "Prevod je uspešno izmenjen.",
@@ -264,16 +283,24 @@ const updateJobTranslationByLocale = async (req, res) => {
 
 const deleteJobTranslationByLocale = async (req, res) => {
   try {
-    const { jobId, locale } = req.params;
+    const { publicId, locale } = req.params;
 
-    if (!isValidObjectId(jobId)) {
+    if (!publicId || !String(publicId).trim()) {
       return res.status(400).json({
-        message: "jobId nije validan.",
+        message: "publicId je obavezan.",
+      });
+    }
+
+    const job = await findJobByPublicId(publicId);
+
+    if (!job) {
+      return res.status(404).json({
+        message: "Job nije pronađen.",
       });
     }
 
     const translation = await JobTranslation.findOne({
-      job: jobId,
+      job: job._id,
       locale: normalizeLocale(locale),
     });
 
@@ -299,18 +326,26 @@ const deleteJobTranslationByLocale = async (req, res) => {
 
 const copyJobTranslation = async (req, res) => {
   try {
-    const { jobId } = req.params;
+    const { publicId } = req.params;
     const { fromLocale, toLocale } = req.body;
 
-    if (!isValidObjectId(jobId)) {
+    if (!publicId || !String(publicId).trim()) {
       return res.status(400).json({
-        message: "jobId nije validan.",
+        message: "publicId je obavezan.",
       });
     }
 
     if (!fromLocale || !toLocale) {
       return res.status(400).json({
         message: "fromLocale i toLocale su obavezni.",
+      });
+    }
+
+    const job = await findJobByPublicId(publicId);
+
+    if (!job) {
+      return res.status(404).json({
+        message: "Job nije pronađen.",
       });
     }
 
@@ -324,7 +359,7 @@ const copyJobTranslation = async (req, res) => {
     }
 
     const sourceTranslation = await JobTranslation.findOne({
-      job: jobId,
+      job: job._id,
       locale: sourceLocale,
     });
 
@@ -335,13 +370,13 @@ const copyJobTranslation = async (req, res) => {
     }
 
     let targetTranslation = await JobTranslation.findOne({
-      job: jobId,
+      job: job._id,
       locale: targetLocale,
     });
 
     if (!targetTranslation) {
       targetTranslation = await JobTranslation.create({
-        job: jobId,
+        job: job._id,
         locale: targetLocale,
         name: sourceTranslation.name,
         locationOrLink: sourceTranslation.locationOrLink,

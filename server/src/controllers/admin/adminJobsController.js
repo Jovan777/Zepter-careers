@@ -23,17 +23,25 @@ const buildTranslationPayload = (body, localeOverride = null) => {
     requirements: parseStringArray(body.requirements),
     whatZepterOffers: parseStringArray(body.whatZepterOffers),
     applyLabel: body.applyLabel ? String(body.applyLabel).trim() : "Apply",
-    notes: body.translationNotes ? String(body.translationNotes).trim() : (body.notes ? String(body.notes).trim() : ""),
+    notes: body.translationNotes
+      ? String(body.translationNotes).trim()
+      : body.notes
+      ? String(body.notes).trim()
+      : "",
   };
 };
 
-const upsertJobTranslation = async (jobId, translationInput) => {
+const findJobByPublicId = async (publicId) => {
+  return Job.findOne({ publicId: String(publicId).trim() });
+};
+
+const upsertJobTranslation = async (jobObjectId, translationInput) => {
   if (!translationInput.name) {
     return null;
   }
 
   const existing = await JobTranslation.findOne({
-    job: jobId,
+    job: jobObjectId,
     locale: translationInput.locale,
   });
 
@@ -52,7 +60,7 @@ const upsertJobTranslation = async (jobId, translationInput) => {
   }
 
   return JobTranslation.create({
-    job: jobId,
+    job: jobObjectId,
     ...translationInput,
   });
 };
@@ -68,10 +76,16 @@ const getAdminJobs = async (req, res) => {
 
     const result = await Promise.all(
       jobs.map(async (job) => {
-        let translation = await JobTranslation.findOne({ job: job._id, locale });
+        let translation = await JobTranslation.findOne({
+          job: job._id,
+          locale,
+        });
 
         if (!translation) {
-          translation = await JobTranslation.findOne({ job: job._id, locale: "en" });
+          translation = await JobTranslation.findOne({
+            job: job._id,
+            locale: "en",
+          });
         }
 
         const fallbackName = translation?.name || "(No translation)";
@@ -107,16 +121,18 @@ const getAdminJobs = async (req, res) => {
 
 const getAdminJobById = async (req, res) => {
   try {
-    const { id } = req.params;
+    const { publicId } = req.params;
     const locale = normalizeLocale(req.query.locale);
 
-    if (!isValidObjectId(id)) {
+    if (!publicId || !String(publicId).trim()) {
       return res.status(400).json({
-        message: "Job id nije validan.",
+        message: "publicId je obavezan.",
       });
     }
 
-    const job = await Job.findById(id)
+    const job = await Job.findOne({
+      publicId: String(publicId).trim(),
+    })
       .populate("company", "name legalEntity")
       .populate("region", "name isoCode type");
 
@@ -138,7 +154,9 @@ const getAdminJobById = async (req, res) => {
       });
     }
 
-    const translations = await JobTranslation.find({ job: job._id }).sort({ locale: 1 });
+    const translations = await JobTranslation.find({
+      job: job._id,
+    }).sort({ locale: 1 });
 
     return res.status(200).json({
       supportedLocales: SUPPORTED_LOCALES,
@@ -185,7 +203,10 @@ const createAdminJob = async (req, res) => {
       });
     }
 
-    const existingPublicId = await Job.findOne({ publicId: String(publicId).trim() });
+    const existingPublicId = await Job.findOne({
+      publicId: String(publicId).trim(),
+    });
+
     if (existingPublicId) {
       return res.status(409).json({
         message: "Job sa ovim publicId već postoji.",
@@ -234,15 +255,15 @@ const createAdminJob = async (req, res) => {
 
 const updateAdminJob = async (req, res) => {
   try {
-    const { id } = req.params;
+    const { publicId } = req.params;
 
-    if (!isValidObjectId(id)) {
+    if (!publicId || !String(publicId).trim()) {
       return res.status(400).json({
-        message: "Job id nije validan.",
+        message: "publicId je obavezan.",
       });
     }
 
-    const job = await Job.findById(id);
+    const job = await findJobByPublicId(publicId);
 
     if (!job) {
       return res.status(404).json({
@@ -251,7 +272,7 @@ const updateAdminJob = async (req, res) => {
     }
 
     const {
-      publicId,
+      publicId: nextPublicId,
       company,
       region,
       status,
@@ -261,9 +282,9 @@ const updateAdminJob = async (req, res) => {
       locale,
     } = req.body;
 
-    if (typeof publicId === "string" && publicId.trim() !== job.publicId) {
+    if (typeof nextPublicId === "string" && nextPublicId.trim() !== job.publicId) {
       const duplicatePublicId = await Job.findOne({
-        publicId: publicId.trim(),
+        publicId: nextPublicId.trim(),
         _id: { $ne: job._id },
       });
 
@@ -273,7 +294,7 @@ const updateAdminJob = async (req, res) => {
         });
       }
 
-      job.publicId = publicId.trim();
+      job.publicId = nextPublicId.trim();
     }
 
     if (company) {
@@ -351,16 +372,16 @@ const updateAdminJob = async (req, res) => {
 
 const repostAdminJob = async (req, res) => {
   try {
-    const { id } = req.params;
+    const { publicId } = req.params;
     const { publishStartAt, publishEndAt } = req.body;
 
-    if (!isValidObjectId(id)) {
+    if (!publicId || !String(publicId).trim()) {
       return res.status(400).json({
-        message: "Job id nije validan.",
+        message: "publicId je obavezan.",
       });
     }
 
-    const job = await Job.findById(id);
+    const job = await findJobByPublicId(publicId);
 
     if (!job) {
       return res.status(404).json({
@@ -389,15 +410,15 @@ const repostAdminJob = async (req, res) => {
 
 const deleteAdminJob = async (req, res) => {
   try {
-    const { id } = req.params;
+    const { publicId } = req.params;
 
-    if (!isValidObjectId(id)) {
+    if (!publicId || !String(publicId).trim()) {
       return res.status(400).json({
-        message: "Job id nije validan.",
+        message: "publicId je obavezan.",
       });
     }
 
-    const job = await Job.findById(id);
+    const job = await findJobByPublicId(publicId);
 
     if (!job) {
       return res.status(404).json({
@@ -405,7 +426,9 @@ const deleteAdminJob = async (req, res) => {
       });
     }
 
-    const applicationsCount = await Application.countDocuments({ job: job._id });
+    const applicationsCount = await Application.countDocuments({
+      job: job._id,
+    });
 
     if (applicationsCount > 0) {
       return res.status(409).json({

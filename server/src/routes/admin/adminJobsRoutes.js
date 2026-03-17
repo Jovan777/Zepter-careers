@@ -14,10 +14,10 @@ const router = express.Router();
 router.use(adminAuthMiddleware);
 
 router.get("/", getAdminJobs);
-router.get("/:id", getAdminJobById);
+router.get("/:publicId", getAdminJobById);
 router.post("/", createAdminJob);
-router.put("/:id", updateAdminJob);
-router.post("/:id/repost", repostAdminJob);
-router.delete("/:id", deleteAdminJob);
+router.put("/:publicId", updateAdminJob);
+router.post("/:publicId/repost", repostAdminJob);
+router.delete("/:publicId", deleteAdminJob);
 
 module.exports = router;
