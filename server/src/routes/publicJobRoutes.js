@@ -7,6 +7,6 @@ const {
 const router = express.Router();
 
 router.get("/", getPublishedJobs);
-router.get("/:id", getJobById);
+router.get("/:publicId", getJobById);
 
 module.exports = router;

@@ -1,4 +1,3 @@
-const mongoose = require("mongoose");
 const Candidate = require("../../models/Candidate");
 const Application = require("../../models/Application");
 require("../../models/Job");
@@ -7,7 +6,9 @@ require("../../models/Region");
 
 const { formatStatusLabel } = require("./adminApplicationHelpers");
 
-const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
+const findCandidateByPublicId = async (publicId) => {
+  return Candidate.findOne({ publicId: String(publicId).trim() });
+};
 
 const getAdminCandidates = async (req, res) => {
   try {
@@ -27,8 +28,13 @@ const getAdminCandidates = async (req, res) => {
         const fullName =
           `${candidate.firstName || ""} ${candidate.lastName || ""}`.toLowerCase();
         const emailValue = String(candidate.email || "").toLowerCase();
+        const publicId = String(candidate.publicId || "").toLowerCase();
 
-        return fullName.includes(search) || emailValue.includes(search);
+        return (
+          fullName.includes(search) ||
+          emailValue.includes(search) ||
+          publicId.includes(search)
+        );
       });
     }
 
@@ -46,15 +52,17 @@ const getAdminCandidates = async (req, res) => {
 
 const getAdminCandidateById = async (req, res) => {
   try {
-    const { id } = req.params;
+    const { publicId } = req.params;
 
-    if (!isValidObjectId(id)) {
+    if (!publicId || !String(publicId).trim()) {
       return res.status(400).json({
-        message: "Candidate id nije validan.",
+        message: "publicId je obavezan.",
       });
     }
 
-    const candidate = await Candidate.findById(id);
+    const candidate = await Candidate.findOne({
+      publicId: String(publicId).trim(),
+    });
 
     if (!candidate) {
       return res.status(404).json({
@@ -76,6 +84,7 @@ const getAdminCandidateById = async (req, res) => {
 
     const mappedApplications = applications.map((application) => ({
       _id: application._id,
+      publicId: application.publicId,
       appliedAt: application.createdAt,
       status: application.status,
       statusLabel: formatStatusLabel(application.status),

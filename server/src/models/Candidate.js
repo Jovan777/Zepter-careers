@@ -22,6 +22,13 @@ const candidateDocumentSchema = new mongoose.Schema(
 
 const candidateSchema = new mongoose.Schema(
   {
+    publicId: {
+      type: String,
+      required: true,
+      trim: true,
+      unique: true,
+      index: true,
+    },
     firstName: {
       type: String,
       required: true,
@@ -60,9 +67,10 @@ const candidateSchema = new mongoose.Schema(
       default: [],
     },
   },
-  { timestamps: true, 
-    collection: "candidates"
-   }
+  {
+    timestamps: true,
+    collection: "candidates",
+  }
 );
 
 module.exports = mongoose.model("Candidate", candidateSchema);

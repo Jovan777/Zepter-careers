@@ -10,6 +10,6 @@ const router = express.Router();
 router.use(adminAuthMiddleware);
 
 router.get("/", getAdminCandidates);
-router.get("/:id", getAdminCandidateById);
+router.get("/:publicId", getAdminCandidateById);
 
 module.exports = router;
