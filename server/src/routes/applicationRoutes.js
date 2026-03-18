@@ -1,5 +1,6 @@
 const express = require("express");
 const { submitApplication } = require("../controllers/applicationController");
+const uploadCv = require("../middlewares/cvUploadMiddleware");
 
 const router = express.Router();
 
@@ -9,6 +10,6 @@ router.get("/", (req, res) => {
   });
 });
 
-router.post("/", submitApplication);
+router.post("/", uploadCv.single("cv"), submitApplication);
 
 module.exports = router;
