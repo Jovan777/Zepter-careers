@@ -3,8 +3,10 @@ const cors = require("cors");
 const dotenv = require("dotenv");
 const connectDB = require("./config/db");
 const path = require("path");
+const {verifyMailer} = require("./services/mailer");
 
 dotenv.config();
+console.log("MAILTRAP_API_TOKEN:", process.env.MAILTRAP_API_TOKEN);
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -31,6 +33,10 @@ app.use("/api/admin/applications", require("./routes/admin/adminApplicationsRout
 app.use("/api/admin/candidates", require("./routes/admin/adminCandidatesRoutes"));
 app.use("/api/admin/scheduler", require("./routes/admin/adminSchedulerRoutes"));
 
+app.use("/api/job-alerts", require("./routes/jobAlertRoutes"));
+
+app.use("/api/phone-verification", require("./routes/phoneVerificationRoutes"));
+app.use("/api/email-verification", require("./routes/emailVerificationRoutes"));
 
 connectDB()
   .then(() => {

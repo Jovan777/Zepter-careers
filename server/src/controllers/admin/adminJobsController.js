@@ -9,6 +9,7 @@ const {
   normalizeLocale,
   isValidObjectId,
 } = require("./adminHelpers");
+const { sendJobAlertsForPublishedJob } = require("../../services/jobAlertService");
 
 const buildTranslationPayload = (body, localeOverride = null) => {
   const locale = localeOverride || normalizeLocale(body.locale);
@@ -26,8 +27,8 @@ const buildTranslationPayload = (body, localeOverride = null) => {
     notes: body.translationNotes
       ? String(body.translationNotes).trim()
       : body.notes
-      ? String(body.notes).trim()
-      : "",
+        ? String(body.notes).trim()
+        : "",
   };
 };
 
@@ -239,10 +240,19 @@ const createAdminJob = async (req, res) => {
       translation = await upsertJobTranslation(job._id, translationPayload);
     }
 
+    let alertResult = null;
+
+    if (job.status === "published") {
+      alertResult = await sendJobAlertsForPublishedJob(job);
+    }
+
+
+
     return res.status(201).json({
       message: "Job je uspešno kreiran.",
       job,
       translation,
+      alerts: alertResult,
     });
   } catch (error) {
     console.error("Greška u createAdminJob:", error);
@@ -270,6 +280,8 @@ const updateAdminJob = async (req, res) => {
         message: "Job nije pronađen.",
       });
     }
+
+    const previousStatus = job.status;
 
     const {
       publicId: nextPublicId,
@@ -349,6 +361,14 @@ const updateAdminJob = async (req, res) => {
 
     await job.save();
 
+    let alertResult = null;
+
+    if (previousStatus !== "published" && job.status === "published") {
+      alertResult = await sendJobAlertsForPublishedJob(job);
+    }
+
+
+
     const translationPayload = buildTranslationPayload(req.body, locale || undefined);
     let translation = null;
 
@@ -360,6 +380,7 @@ const updateAdminJob = async (req, res) => {
       message: "Job je uspešno izmenjen.",
       job,
       translation,
+      alerts: alertResult,
     });
   } catch (error) {
     console.error("Greška u updateAdminJob:", error);
@@ -389,15 +410,21 @@ const repostAdminJob = async (req, res) => {
       });
     }
 
+    const previousStatus = job.status;
+
     job.status = "published";
     job.publishStartAt = publishStartAt || new Date();
     job.publishEndAt = publishEndAt || null;
 
     await job.save();
 
+    const alertResult = await sendJobAlertsForPublishedJob(job);
+
+
     return res.status(200).json({
       message: "Job je uspešno repostovan.",
       job,
+      alerts: alertResult,
     });
   } catch (error) {
     console.error("Greška u repostAdminJob:", error);
