@@ -6,8 +6,26 @@ import JobsHeroSection from "../components/JobsHeroSection";
 import JobsResultsSection from "../components/JobsResultsSection";
 import "../styles/jobs.css";
 
+export type JobsFiltersState = {
+  search: string;
+  region: string;
+  locationType: string;
+  workArea: string;
+  employmentType: string;
+  locale: string;
+};
+
 const JobsPage = () => {
   const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false);
+
+  const [filters, setFilters] = useState<JobsFiltersState>({
+    search: "",
+    region: "",
+    locationType: "",
+    workArea: "",
+    employmentType: "",
+    locale: "sr",
+  });
 
   const openNotifications = () => setIsNotificationModalOpen(true);
   const closeNotifications = () => setIsNotificationModalOpen(false);
@@ -15,8 +33,11 @@ const JobsPage = () => {
   return (
     <>
       <Header onOpenNotifications={openNotifications} />
-      <JobsHeroSection />
-      <JobsResultsSection />
+
+      <JobsHeroSection filters={filters} onChangeFilters={setFilters} />
+
+      <JobsResultsSection filters={filters} />
+
       <Footer onOpenNotifications={openNotifications} />
 
       <NotificationModal

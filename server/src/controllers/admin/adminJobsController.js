@@ -17,9 +17,16 @@ const buildTranslationPayload = (body, localeOverride = null) => {
   return {
     locale,
     name: body.name ? String(body.name).trim() : "",
-    locationOrLink: body.locationOrLink ? String(body.locationOrLink).trim() : "",
-    whyThisPosition: body.whyThisPosition ? String(body.whyThisPosition).trim() : "",
+    locationLabel: body.locationLabel ? String(body.locationLabel).trim() : "",
+    shortDescription: body.shortDescription
+      ? String(body.shortDescription).trim()
+      : "",
+    intro: parseStringArray(body.intro),
+    whyThisPosition: body.whyThisPosition
+      ? String(body.whyThisPosition).trim()
+      : "",
     aboutZepter: body.aboutZepter ? String(body.aboutZepter).trim() : "",
+    qualifications: parseStringArray(body.qualifications),
     responsibilities: parseStringArray(body.responsibilities),
     requirements: parseStringArray(body.requirements),
     whatZepterOffers: parseStringArray(body.whatZepterOffers),
@@ -32,8 +39,41 @@ const buildTranslationPayload = (body, localeOverride = null) => {
   };
 };
 
+const normalizeJobInput = (body) => {
+  return {
+    publicId: body.publicId ? String(body.publicId).trim() : "",
+    company: body.company ? String(body.company).trim() : "",
+    region: body.region ? String(body.region).trim() : "",
+    status: body.status ? String(body.status).trim() : "",
+    publishStartAt: body.publishStartAt || null,
+    publishEndAt: body.publishEndAt || null,
+    notes: body.notes ? String(body.notes).trim() : "",
+    workArea: body.workArea ? String(body.workArea).trim() : "",
+    employmentType: body.employmentType
+      ? String(body.employmentType).trim()
+      : "",
+    locationType: body.locationType ? String(body.locationType).trim() : "",
+  };
+};
+
 const findJobByPublicId = async (publicId) => {
   return Job.findOne({ publicId: String(publicId).trim() });
+};
+
+const resolveTranslationForLocale = async (jobId, locale) => {
+  let translation = await JobTranslation.findOne({
+    job: jobId,
+    locale,
+  });
+
+  if (!translation && locale !== "en") {
+    translation = await JobTranslation.findOne({
+      job: jobId,
+      locale: "en",
+    });
+  }
+
+  return translation;
 };
 
 const upsertJobTranslation = async (jobObjectId, translationInput) => {
@@ -48,9 +88,12 @@ const upsertJobTranslation = async (jobObjectId, translationInput) => {
 
   if (existing) {
     existing.name = translationInput.name;
-    existing.locationOrLink = translationInput.locationOrLink;
+    existing.locationLabel = translationInput.locationLabel;
+    existing.shortDescription = translationInput.shortDescription;
+    existing.intro = translationInput.intro;
     existing.whyThisPosition = translationInput.whyThisPosition;
     existing.aboutZepter = translationInput.aboutZepter;
+    existing.qualifications = translationInput.qualifications;
     existing.responsibilities = translationInput.responsibilities;
     existing.requirements = translationInput.requirements;
     existing.whatZepterOffers = translationInput.whatZepterOffers;
@@ -77,18 +120,7 @@ const getAdminJobs = async (req, res) => {
 
     const result = await Promise.all(
       jobs.map(async (job) => {
-        let translation = await JobTranslation.findOne({
-          job: job._id,
-          locale,
-        });
-
-        if (!translation) {
-          translation = await JobTranslation.findOne({
-            job: job._id,
-            locale: "en",
-          });
-        }
-
+        const translation = await resolveTranslationForLocale(job._id, locale);
         const fallbackName = translation?.name || "(No translation)";
 
         return {
@@ -103,6 +135,9 @@ const getAdminJobs = async (req, res) => {
           publishEndAt: job.publishEndAt,
           appliedCount: job.appliedCount,
           notes: job.notes,
+          workArea: job.workArea || "",
+          employmentType: job.employmentType || "",
+          locationType: job.locationType || "",
         };
       })
     );
@@ -143,17 +178,7 @@ const getAdminJobById = async (req, res) => {
       });
     }
 
-    let activeTranslation = await JobTranslation.findOne({
-      job: job._id,
-      locale,
-    });
-
-    if (!activeTranslation) {
-      activeTranslation = await JobTranslation.findOne({
-        job: job._id,
-        locale: "en",
-      });
-    }
+    const activeTranslation = await resolveTranslationForLocale(job._id, locale);
 
     const translations = await JobTranslation.find({
       job: job._id,
@@ -176,6 +201,8 @@ const getAdminJobById = async (req, res) => {
 
 const createAdminJob = async (req, res) => {
   try {
+    const normalized = normalizeJobInput(req.body);
+
     const {
       publicId,
       company,
@@ -184,9 +211,12 @@ const createAdminJob = async (req, res) => {
       publishStartAt,
       publishEndAt,
       notes,
-    } = req.body;
+      workArea,
+      employmentType,
+      locationType,
+    } = normalized;
 
-    if (!publicId || !String(publicId).trim()) {
+    if (!publicId) {
       return res.status(400).json({
         message: "publicId je obavezan.",
       });
@@ -204,10 +234,7 @@ const createAdminJob = async (req, res) => {
       });
     }
 
-    const existingPublicId = await Job.findOne({
-      publicId: String(publicId).trim(),
-    });
-
+    const existingPublicId = await Job.findOne({ publicId });
     if (existingPublicId) {
       return res.status(409).json({
         message: "Job sa ovim publicId već postoji.",
@@ -224,18 +251,21 @@ const createAdminJob = async (req, res) => {
     }
 
     const job = await Job.create({
-      publicId: String(publicId).trim(),
+      publicId,
       company,
       region,
       status: status || "draft",
       publishStartAt: publishStartAt || null,
       publishEndAt: publishEndAt || null,
-      notes: notes ? String(notes).trim() : "",
+      notes,
+      workArea,
+      employmentType,
+      locationType: locationType || "onsite",
     });
 
     const translationPayload = buildTranslationPayload(req.body);
-
     let translation = null;
+
     if (translationPayload.name) {
       translation = await upsertJobTranslation(job._id, translationPayload);
     }
@@ -245,8 +275,6 @@ const createAdminJob = async (req, res) => {
     if (job.status === "published") {
       alertResult = await sendJobAlertsForPublishedJob(job);
     }
-
-
 
     return res.status(201).json({
       message: "Job je uspešno kreiran.",
@@ -292,11 +320,14 @@ const updateAdminJob = async (req, res) => {
       publishEndAt,
       notes,
       locale,
-    } = req.body;
+      workArea,
+      employmentType,
+      locationType,
+    } = normalizeJobInput(req.body);
 
-    if (typeof nextPublicId === "string" && nextPublicId.trim() !== job.publicId) {
+    if (nextPublicId && nextPublicId !== job.publicId) {
       const duplicatePublicId = await Job.findOne({
-        publicId: nextPublicId.trim(),
+        publicId: nextPublicId,
         _id: { $ne: job._id },
       });
 
@@ -306,7 +337,7 @@ const updateAdminJob = async (req, res) => {
         });
       }
 
-      job.publicId = nextPublicId.trim();
+      job.publicId = nextPublicId;
     }
 
     if (company) {
@@ -343,20 +374,32 @@ const updateAdminJob = async (req, res) => {
       job.region = region;
     }
 
-    if (typeof status === "string") {
+    if (status) {
       job.status = status;
     }
 
-    if (publishStartAt !== undefined) {
+    if (req.body.publishStartAt !== undefined) {
       job.publishStartAt = publishStartAt || null;
     }
 
-    if (publishEndAt !== undefined) {
+    if (req.body.publishEndAt !== undefined) {
       job.publishEndAt = publishEndAt || null;
     }
 
-    if (typeof notes === "string") {
-      job.notes = notes.trim();
+    if (typeof req.body.notes === "string") {
+      job.notes = notes;
+    }
+
+    if (typeof req.body.workArea === "string") {
+      job.workArea = workArea;
+    }
+
+    if (typeof req.body.employmentType === "string") {
+      job.employmentType = employmentType;
+    }
+
+    if (typeof req.body.locationType === "string") {
+      job.locationType = locationType || "onsite";
     }
 
     await job.save();
@@ -366,8 +409,6 @@ const updateAdminJob = async (req, res) => {
     if (previousStatus !== "published" && job.status === "published") {
       alertResult = await sendJobAlertsForPublishedJob(job);
     }
-
-
 
     const translationPayload = buildTranslationPayload(req.body, locale || undefined);
     let translation = null;
@@ -410,8 +451,6 @@ const repostAdminJob = async (req, res) => {
       });
     }
 
-    const previousStatus = job.status;
-
     job.status = "published";
     job.publishStartAt = publishStartAt || new Date();
     job.publishEndAt = publishEndAt || null;
@@ -419,7 +458,6 @@ const repostAdminJob = async (req, res) => {
     await job.save();
 
     const alertResult = await sendJobAlertsForPublishedJob(job);
-
 
     return res.status(200).json({
       message: "Job je uspešno repostovan.",

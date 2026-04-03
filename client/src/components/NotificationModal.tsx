@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { subscribeToJobAlerts } from "../api/jobAlertsApi";
 
 type NotificationModalProps = {
   isOpen: boolean;
@@ -13,31 +14,55 @@ const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) => {
   const [city, setCity] = useState("");
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [marketingConsent, setMarketingConsent] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
 
   if (!isOpen) return null;
 
-  const handleSubmit = () => {
+  const resetForm = () => {
+    setEmail("");
+    setKeyword("");
+    setWorkArea("");
+    setLocationType("specific");
+    setCity("");
+    setAcceptedTerms(false);
+    setMarketingConsent(false);
+    setSubmitError("");
+  };
+
+  const handleSubmit = async () => {
     if (!acceptedTerms) return;
 
-    console.log({
-      email,
-      keyword,
-      workArea,
-      locationType,
-      city,
-      acceptedTerms,
-      marketingConsent,
-    });
+    try {
+      setIsSubmitting(true);
+      setSubmitError("");
 
-    onClose();
+      await subscribeToJobAlerts({
+        email,
+        keyword,
+        locale: "sr",
+        workArea,
+        locationType,
+        city: locationType === "remote" ? "" : city,
+        acceptedTerms,
+        marketingConsent,
+      });
+
+      resetForm();
+      onClose();
+    } catch (error) {
+      console.error(error);
+      setSubmitError(
+        error instanceof Error ? error.message : "Greška pri slanju prijave."
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
     <div className="notification-modal__overlay" onClick={onClose}>
-      <div
-        className="notification-modal"
-        onClick={(e) => e.stopPropagation()}
-      >
+      <div className="notification-modal" onClick={(e) => e.stopPropagation()}>
         <div className="notification-modal__header">
           <div className="notification-modal__title-wrap">
             <img
@@ -84,13 +109,8 @@ const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) => {
           <div className="notification-modal__field">
             <label>Oblast rada</label>
             <div className="notification-modal__select-wrap">
-              <select
-                value={workArea}
-                onChange={(e) => setWorkArea(e.target.value)}
-              >
-                <option value="" disabled>
-                  Izaberite oblast rada
-                </option>
+              <select value={workArea} onChange={(e) => setWorkArea(e.target.value)}>
+                <option value="">Izaberite oblast rada</option>
                 <option value="sales">Prodaja</option>
                 <option value="marketing">Marketing</option>
                 <option value="hr">HR</option>
@@ -142,10 +162,12 @@ const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) => {
           <div className="notification-modal__field">
             <label>Izaberite lokaciju</label>
             <div className="notification-modal__select-wrap">
-              <select value={city} onChange={(e) => setCity(e.target.value)}>
-                <option value="" disabled>
-                  Izaberite grad
-                </option>
+              <select
+                value={city}
+                onChange={(e) => setCity(e.target.value)}
+                disabled={locationType === "remote"}
+              >
+                <option value="">Izaberite grad</option>
                 <option value="beograd">Beograd</option>
                 <option value="novi-sad">Novi Sad</option>
                 <option value="nis">Niš</option>
@@ -179,13 +201,15 @@ const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) => {
             </span>
           </label>
 
+          {submitError && <p className="notification-modal__error">{submitError}</p>}
+
           <button
             type="button"
             className="notification-modal__submit"
-            disabled={!acceptedTerms}
+            disabled={!acceptedTerms || isSubmitting}
             onClick={handleSubmit}
           >
-            Pošalji prijavu
+            {isSubmitting ? "Slanje..." : "Pošalji prijavu"}
           </button>
 
           <p className="notification-modal__footnote">

@@ -1,10 +1,72 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import CustomSelect from "./CustomSelect";
+import { getJobFilters } from "../api/jobsApi";
+import type { JobFiltersResponse } from "../types/jobs";
+import type { JobsFiltersState } from "../pages/JobsPage";
 
-const JobsHeroSection = () => {
-  const [location, setLocation] = useState("");
-  const [region, setRegion] = useState("all-regions");
-  const [language, setLanguage] = useState("english");
+type JobsHeroSectionProps = {
+  filters: JobsFiltersState;
+  onChangeFilters: React.Dispatch<React.SetStateAction<JobsFiltersState>>;
+};
+
+const JobsHeroSection = ({ filters, onChangeFilters }: JobsHeroSectionProps) => {
+  const [keywordInput, setKeywordInput] = useState(filters.search);
+  const [availableFilters, setAvailableFilters] = useState<JobFiltersResponse | null>(null);
+  const [isLoadingFilters, setIsLoadingFilters] = useState(true);
+
+  useEffect(() => {
+    const loadFilters = async () => {
+      try {
+        const data = await getJobFilters();
+        setAvailableFilters(data);
+      } catch (error) {
+        console.error("Greška pri dohvatanju job filtera:", error);
+      } finally {
+        setIsLoadingFilters(false);
+      }
+    };
+
+    loadFilters();
+  }, []);
+
+  const regionOptions = useMemo(() => {
+    const dynamic = availableFilters?.regions || [];
+    return [
+      { value: "", label: "Sve regije" },
+      ...dynamic.map((item) => ({
+        value: item.value,
+        label: item.label,
+      })),
+    ];
+  }, [availableFilters]);
+
+  const locationTypeOptions = useMemo(() => {
+    const dynamic = availableFilters?.locationTypes || [];
+    return [
+      { value: "", label: "Sve lokacije" },
+      ...dynamic.map((item) => ({
+        value: item.value,
+        label: item.label,
+      })),
+    ];
+  }, [availableFilters]);
+
+  const languageOptions = useMemo(() => {
+    const dynamic = availableFilters?.locales || [];
+    return dynamic.length > 0
+      ? dynamic
+      : [
+          { value: "sr", label: "Srpski" },
+          { value: "en", label: "English" },
+        ];
+  }, [availableFilters]);
+
+  const handleSearch = () => {
+    onChangeFilters((prev) => ({
+      ...prev,
+      search: keywordInput.trim(),
+    }));
+  };
 
   return (
     <section className="jobs-hero">
@@ -18,7 +80,17 @@ const JobsHeroSection = () => {
           <div className="jobs-hero__search-main">
             <div className="jobs-hero__field jobs-hero__field--keyword">
               <span className="jobs-hero__field-icon">⌕</span>
-              <input type="text" placeholder="Pretraži otvorene pozicije" />
+              <input
+                type="text"
+                placeholder="Pretraži otvorene pozicije"
+                value={keywordInput}
+                onChange={(e) => setKeywordInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    handleSearch();
+                  }
+                }}
+              />
             </div>
 
             <div className="jobs-hero__divider" />
@@ -31,19 +103,20 @@ const JobsHeroSection = () => {
               />
 
               <CustomSelect
-                placeholder="Lokacija"
-                value={location}
-                onChange={setLocation}
+                placeholder={isLoadingFilters ? "Učitavanje..." : "Tip lokacije"}
+                value={filters.locationType}
+                onChange={(value) =>
+                  onChangeFilters((prev) => ({
+                    ...prev,
+                    locationType: value,
+                  }))
+                }
                 className="jobs-hero__custom-select"
-                options={[
-                  { value: "beograd", label: "Beograd" },
-                  { value: "novi-sad", label: "Novi Sad" },
-                  { value: "remote", label: "Remote" },
-                ]}
+                options={locationTypeOptions}
               />
             </div>
 
-            <button className="jobs-hero__search-button" type="button">
+            <button className="jobs-hero__search-button" type="button" onClick={handleSearch}>
               <span className="jobs-hero__search-button-icon">⌕</span>
               <span>Pretraga</span>
             </button>
@@ -51,26 +124,29 @@ const JobsHeroSection = () => {
 
           <div className="jobs-hero__filters">
             <CustomSelect
-              placeholder="All Regions"
-              value={region}
-              onChange={setRegion}
+              placeholder={isLoadingFilters ? "Učitavanje..." : "Sve regije"}
+              value={filters.region}
+              onChange={(value) =>
+                onChangeFilters((prev) => ({
+                  ...prev,
+                  region: value,
+                }))
+              }
               className="jobs-hero__small-custom-select"
-              options={[
-                { value: "all-regions", label: "All Regions" },
-                { value: "serbia", label: "Serbia" },
-                { value: "europe", label: "Europe" },
-              ]}
+              options={regionOptions}
             />
 
             <CustomSelect
-              placeholder="English"
-              value={language}
-              onChange={setLanguage}
+              placeholder="Jezik"
+              value={filters.locale}
+              onChange={(value) =>
+                onChangeFilters((prev) => ({
+                  ...prev,
+                  locale: value,
+                }))
+              }
               className="jobs-hero__small-custom-select"
-              options={[
-                { value: "english", label: "English" },
-                { value: "serbian", label: "Srpski" },
-              ]}
+              options={languageOptions}
             />
           </div>
         </div>

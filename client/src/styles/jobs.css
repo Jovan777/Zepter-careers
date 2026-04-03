@@ -552,6 +552,8 @@
     gap: 5px;
 }
 
+
+
 /* APPLY MODAL */
 
 
@@ -882,6 +884,7 @@
 }
 
 
+
 .jobs-hero__custom-select {
     width: 100%;
     min-width: 0;
@@ -1183,6 +1186,40 @@
         .apply-modal__submit {
             height: 48px;
             font-size: 15px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .apply-modal__success-overlay {
+            padding: 16px;
+        }
+
+        .apply-modal__success-card {
+            max-width: 100%;
+            padding: 28px 20px 22px;
+            border-radius: 22px;
+        }
+
+        .apply-modal__success-logo-wrap {
+            width: 84px;
+            height: 84px;
+            margin: 0 auto 16px;
+        }
+
+        .apply-modal__success-logo {
+            width: 42px;
+            height: 42px;
+        }
+
+        .apply-modal__success-title {
+            font-size: 22px;
+            margin-bottom: 10px;
+        }
+
+        .apply-modal__success-text {
+            font-size: 13px;
+            line-height: 1.6;
+            margin-bottom: 18px;
         }
     }
 

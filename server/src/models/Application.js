@@ -19,27 +19,23 @@ const applicationEventSchema = new mongoose.Schema(
   { _id: false }
 );
 
+const applicationDocumentSchema = new mongoose.Schema({
+  fileName: { type: String, default: "", trim: true },
+  fileUrl: { type: String, default: "", trim: true },
+  category: {
+    type: String,
+    enum: ["cv", "certificate", "diploma", "portfolio", "other"],
+    default: "other",
+  },
+  uploadedAt: { type: Date, default: Date.now },
+}, { _id: false });
+
 const applicationSchema = new mongoose.Schema(
   {
-    publicId: {
-      type: String,
-      required: true,
-      trim: true,
-      unique: true,
-      index: true,
-    },
-    candidate: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Candidate",
-      required: true,
-      index: true,
-    },
-    job: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Job",
-      required: true,
-      index: true,
-    },
+    publicId: { type: String, required: true, trim: true, unique: true, index: true },
+    candidate: { type: mongoose.Schema.Types.ObjectId, ref: "Candidate", required: true, index: true },
+    job: { type: mongoose.Schema.Types.ObjectId, ref: "Job", required: true, index: true },
+
     status: {
       type: String,
       enum: [
@@ -56,23 +52,44 @@ const applicationSchema = new mongoose.Schema(
       default: "new",
       index: true,
     },
-    reason: {
+    reason: { type: String, default: "", trim: true },
+
+    cvDocument: {
+      fileName: { type: String, default: "", trim: true },
+      fileUrl: { type: String, default: "", trim: true },
+    },
+
+    extraDocuments: {
+      type: [applicationDocumentSchema],
+      default: [],
+    },
+
+    coverLetter: {
       type: String,
       default: "",
       trim: true,
     },
-    cvDocument: {
-      fileName: {
-        type: String,
-        default: "",
-        trim: true,
-      },
-      fileUrl: {
-        type: String,
-        default: "",
-        trim: true,
-      },
+
+    acceptedTerms: {
+      type: Boolean,
+      default: false,
     },
+    acceptedTermsAt: {
+      type: Date,
+      default: null,
+    },
+
+    marketingConsent: {
+      type: Boolean,
+      default: false,
+    },
+
+    sourceLocale: {
+      type: String,
+      default: "sr",
+      trim: true,
+    },
+
     events: {
       type: [applicationEventSchema],
       default: [],

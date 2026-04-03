@@ -15,9 +15,16 @@ const buildTranslationPayload = (body, localeOverride = null) => {
   return {
     locale,
     name: body.name ? String(body.name).trim() : "",
-    locationOrLink: body.locationOrLink ? String(body.locationOrLink).trim() : "",
-    whyThisPosition: body.whyThisPosition ? String(body.whyThisPosition).trim() : "",
+    locationLabel: body.locationLabel ? String(body.locationLabel).trim() : "",
+    shortDescription: body.shortDescription
+      ? String(body.shortDescription).trim()
+      : "",
+    intro: parseStringArray(body.intro),
+    whyThisPosition: body.whyThisPosition
+      ? String(body.whyThisPosition).trim()
+      : "",
     aboutZepter: body.aboutZepter ? String(body.aboutZepter).trim() : "",
+    qualifications: parseStringArray(body.qualifications),
     responsibilities: parseStringArray(body.responsibilities),
     requirements: parseStringArray(body.requirements),
     whatZepterOffers: parseStringArray(body.whatZepterOffers),
@@ -51,9 +58,12 @@ const upsertTranslation = async (jobObjectId, locale, body) => {
   }
 
   translation.name = payload.name;
-  translation.locationOrLink = payload.locationOrLink;
+  translation.locationLabel = payload.locationLabel;
+  translation.shortDescription = payload.shortDescription;
+  translation.intro = payload.intro;
   translation.whyThisPosition = payload.whyThisPosition;
   translation.aboutZepter = payload.aboutZepter;
+  translation.qualifications = payload.qualifications;
   translation.responsibilities = payload.responsibilities;
   translation.requirements = payload.requirements;
   translation.whatZepterOffers = payload.whatZepterOffers;
@@ -61,6 +71,22 @@ const upsertTranslation = async (jobObjectId, locale, body) => {
   translation.notes = payload.notes;
 
   await translation.save();
+  return translation;
+};
+
+const resolveTranslationForLocale = async (jobId, locale) => {
+  let translation = await JobTranslation.findOne({
+    job: jobId,
+    locale,
+  });
+
+  if (!translation && locale !== "en") {
+    translation = await JobTranslation.findOne({
+      job: jobId,
+      locale: "en",
+    });
+  }
+
   return translation;
 };
 
@@ -75,17 +101,7 @@ const getTranslationJobs = async (req, res) => {
 
     const items = await Promise.all(
       jobs.map(async (job) => {
-        let translation = await JobTranslation.findOne({
-          job: job._id,
-          locale,
-        });
-
-        if (!translation) {
-          translation = await JobTranslation.findOne({
-            job: job._id,
-            locale: "en",
-          });
-        }
+        const translation = await resolveTranslationForLocale(job._id, locale);
 
         return {
           _id: job._id,
@@ -94,6 +110,9 @@ const getTranslationJobs = async (req, res) => {
           localeUsed: translation?.locale || null,
           company: job.company?.name || "",
           region: job.region?.name || "",
+          workArea: job.workArea || "",
+          employmentType: job.employmentType || "",
+          locationType: job.locationType || "",
         };
       })
     );
@@ -140,8 +159,12 @@ const getJobTranslationsOverview = async (req, res) => {
     const matrix = translations.map((t) => ({
       locale: t.locale,
       name: t.name,
+      locationLabel: t.locationLabel,
+      shortDescription: t.shortDescription,
+      intro: t.intro,
       whyThisPosition: t.whyThisPosition,
       aboutZepter: t.aboutZepter,
+      qualifications: t.qualifications,
       responsibilities: t.responsibilities,
       requirements: t.requirements,
       whatZepterOffers: t.whatZepterOffers,
@@ -379,9 +402,12 @@ const copyJobTranslation = async (req, res) => {
         job: job._id,
         locale: targetLocale,
         name: sourceTranslation.name,
-        locationOrLink: sourceTranslation.locationOrLink,
+        locationLabel: sourceTranslation.locationLabel,
+        shortDescription: sourceTranslation.shortDescription,
+        intro: sourceTranslation.intro,
         whyThisPosition: sourceTranslation.whyThisPosition,
         aboutZepter: sourceTranslation.aboutZepter,
+        qualifications: sourceTranslation.qualifications,
         responsibilities: sourceTranslation.responsibilities,
         requirements: sourceTranslation.requirements,
         whatZepterOffers: sourceTranslation.whatZepterOffers,
@@ -390,9 +416,12 @@ const copyJobTranslation = async (req, res) => {
       });
     } else {
       targetTranslation.name = sourceTranslation.name;
-      targetTranslation.locationOrLink = sourceTranslation.locationOrLink;
+      targetTranslation.locationLabel = sourceTranslation.locationLabel;
+      targetTranslation.shortDescription = sourceTranslation.shortDescription;
+      targetTranslation.intro = sourceTranslation.intro;
       targetTranslation.whyThisPosition = sourceTranslation.whyThisPosition;
       targetTranslation.aboutZepter = sourceTranslation.aboutZepter;
+      targetTranslation.qualifications = sourceTranslation.qualifications;
       targetTranslation.responsibilities = sourceTranslation.responsibilities;
       targetTranslation.requirements = sourceTranslation.requirements;
       targetTranslation.whatZepterOffers = sourceTranslation.whatZepterOffers;

@@ -20,6 +20,15 @@ const getNextNumericPublicId = async (Model) => {
   return String(maxValue + 1);
 };
 
+const normalizeBoolean = (value) => {
+  if (typeof value === "boolean") return value;
+  if (typeof value === "string") {
+    const normalized = value.trim().toLowerCase();
+    return normalized === "true" || normalized === "1" || normalized === "yes" || normalized === "on";
+  }
+  return false;
+};
+
 const submitApplication = async (req, res) => {
   try {
     const {
@@ -29,20 +38,33 @@ const submitApplication = async (req, res) => {
       phone,
       country,
       city,
-      jobId,
+      jobPublicId,
+      coverLetter,
+      acceptedTerms,
+      marketingConsent,
+      locale,
     } = req.body;
 
-    if (!firstName || !lastName || !email || !jobId) {
+    if (!firstName || !lastName || !email || !jobPublicId) {
       return res.status(400).json({
-        message: "firstName, lastName, email i jobId su obavezni.",
+        message: "firstName, lastName, email i jobPublicId su obavezni.",
       });
     }
 
-    const normalizedEmail = email.trim().toLowerCase();
-    const normalizedJobId = String(jobId).trim();
+    const acceptedTermsValue = normalizeBoolean(acceptedTerms);
+    const marketingConsentValue = normalizeBoolean(marketingConsent);
+
+    if (!acceptedTermsValue) {
+      return res.status(400).json({
+        message: "Prihvatanje uslova korišćenja je obavezno.",
+      });
+    }
+
+    const normalizedEmail = String(email).trim().toLowerCase();
+    const normalizedJobPublicId = String(jobPublicId).trim();
 
     const job = await Job.findOne({
-      publicId: normalizedJobId,
+      publicId: normalizedJobPublicId,
       status: "published",
     });
 
@@ -52,50 +74,83 @@ const submitApplication = async (req, res) => {
       });
     }
 
-    const uploadedFile = req.file || null;
-    const cvFileName = uploadedFile ? uploadedFile.filename : "";
-    const cvFileUrl = uploadedFile ? `/uploads/cv/${uploadedFile.filename}` : "";
+    const cvFile = req.files?.cv?.[0] || null;
+    if (!cvFile) {
+      return res.status(400).json({
+        message: "CV je obavezan.",
+      });
+    }
+
+    const extraFiles = req.files?.extraFiles || [];
+
+    const cvDocument = {
+      fileName: cvFile.filename,
+      fileUrl: `/uploads/applications/${cvFile.filename}`,
+    };
+
+    const extraDocuments = extraFiles.map((file) => ({
+      fileName: file.filename,
+      fileUrl: `/uploads/applications/${file.filename}`,
+      category: "other",
+      uploadedAt: new Date(),
+    }));
 
     let candidate = await Candidate.findOne({
       email: normalizedEmail,
     });
+
+    const now = new Date();
 
     if (!candidate) {
       const nextCandidatePublicId = await getNextNumericPublicId(Candidate);
 
       candidate = await Candidate.create({
         publicId: nextCandidatePublicId,
-        firstName: firstName.trim(),
-        lastName: lastName.trim(),
+        firstName: String(firstName).trim(),
+        lastName: String(lastName).trim(),
         email: normalizedEmail,
-        phone: phone ? phone.trim() : "",
-        country: country ? country.trim() : "",
-        city: city ? city.trim() : "",
-        documents:
-          cvFileName || cvFileUrl
-            ? [
-                {
-                  fileName: cvFileName,
-                  fileUrl: cvFileUrl,
-                  uploadedAt: new Date(),
-                },
-              ]
-            : [],
+        phone: phone ? String(phone).trim() : "",
+        country: country ? String(country).trim() : "",
+        city: city ? String(city).trim() : "",
+        documents: [
+          {
+            fileName: cvDocument.fileName,
+            fileUrl: cvDocument.fileUrl,
+            uploadedAt: now,
+          },
+          ...extraDocuments.map((doc) => ({
+            fileName: doc.fileName,
+            fileUrl: doc.fileUrl,
+            uploadedAt: doc.uploadedAt,
+          })),
+        ],
+        acceptedTerms: acceptedTermsValue,
+        acceptedTermsAt: acceptedTermsValue ? now : null,
+        marketingConsent: marketingConsentValue,
       });
     } else {
-      candidate.firstName = firstName.trim();
-      candidate.lastName = lastName.trim();
-      candidate.phone = phone ? phone.trim() : candidate.phone;
-      candidate.country = country ? country.trim() : candidate.country;
-      candidate.city = city ? city.trim() : candidate.city;
+      candidate.firstName = String(firstName).trim();
+      candidate.lastName = String(lastName).trim();
+      candidate.phone = phone ? String(phone).trim() : candidate.phone;
+      candidate.country = country ? String(country).trim() : candidate.country;
+      candidate.city = city ? String(city).trim() : candidate.city;
+      candidate.acceptedTerms = acceptedTermsValue;
+      candidate.acceptedTermsAt = acceptedTermsValue ? (candidate.acceptedTermsAt || now) : null;
+      candidate.marketingConsent = marketingConsentValue;
 
-      if (cvFileName || cvFileUrl) {
+      candidate.documents.push({
+        fileName: cvDocument.fileName,
+        fileUrl: cvDocument.fileUrl,
+        uploadedAt: now,
+      });
+
+      extraDocuments.forEach((doc) => {
         candidate.documents.push({
-          fileName: cvFileName,
-          fileUrl: cvFileUrl,
-          uploadedAt: new Date(),
+          fileName: doc.fileName,
+          fileUrl: doc.fileUrl,
+          uploadedAt: doc.uploadedAt,
         });
-      }
+      });
 
       await candidate.save();
     }
@@ -108,16 +163,21 @@ const submitApplication = async (req, res) => {
       job: job._id,
       status: "new",
       reason: "",
-      cvDocument: {
-        fileName: cvFileName,
-        fileUrl: cvFileUrl,
-      },
+      cvDocument,
+      extraDocuments,
+      coverLetter: coverLetter ? String(coverLetter).trim() : "",
+      acceptedTerms: acceptedTermsValue,
+      acceptedTermsAt: acceptedTermsValue ? now : null,
+      marketingConsent: marketingConsentValue,
+      sourceLocale: locale ? String(locale).trim() : "sr",
       events: [
         {
           type: "created",
-          timestamp: new Date(),
+          timestamp: now,
           data: {
-            cvUrl: cvFileUrl,
+            cvUrl: cvDocument.fileUrl,
+            extraDocumentsCount: extraDocuments.length,
+            sourceLocale: locale ? String(locale).trim() : "sr",
           },
         },
       ],
@@ -137,6 +197,8 @@ const submitApplication = async (req, res) => {
         jobPublicId: job.publicId,
         status: application.status,
         cvDocument: application.cvDocument,
+        extraDocuments: application.extraDocuments,
+        coverLetter: application.coverLetter,
       },
     });
   } catch (error) {

@@ -1,9 +1,32 @@
-import { openPositions } from "../data/openPositions";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-
-
+import { getPublishedJobs } from "../api/jobsApi";
+import type { JobListItem } from "../types/jobs";
 
 const OpenPositionsSection = () => {
+  const [jobs, setJobs] = useState<JobListItem[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const loadJobs = async () => {
+      try {
+        const data = await getPublishedJobs({
+          locale: "sr",
+          page: 1,
+          limit: 3,
+        });
+
+        setJobs(data.items);
+      } catch (error) {
+        console.error("Greška pri dohvatanju otvorenih pozicija:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadJobs();
+  }, []);
+
   return (
     <section className="open-positions">
       <div className="container">
@@ -22,41 +45,46 @@ const OpenPositionsSection = () => {
           </div>
 
           <div className="open-positions__grid">
-            {openPositions.map((position) => (
-              <article key={position.id} className="job-card">
-                <button
-                  className="job-card__favorite"
-                  type="button"
-                  aria-label="Sačuvaj poziciju"
-                >
-                  ♡
-                </button>
+            {isLoading && <p>Učitavanje...</p>}
 
-                <h3 className="job-card__title">{position.title}</h3>
+            {!isLoading &&
+              jobs.map((position) => (
+                <article key={position.publicId} className="job-card">
+                  <button
+                    className="job-card__favorite"
+                    type="button"
+                    aria-label="Sačuvaj poziciju"
+                  >
+                    ♡
+                  </button>
 
-                <div className="job-card__meta">
-                  <span className="job-card__meta-item">
-                    <img
-                      src="/Zepter-Careers images/JobIcon.png"
-                      alt="Company"
-                      className="job-card__meta-img"
-                    />
-                    {position.company}
-                  </span>
+                  <h3 className="job-card__title">{position.title}</h3>
 
-                  <span className="job-card__meta-item">
-                    <img
-                      src="/Zepter-Careers images/VectorLoc.png"
-                      alt="Location"
-                      className="job-card__meta-img"
-                    />
-                    {position.location}
-                  </span>
+                  <div className="job-card__meta">
+                    <span className="job-card__meta-item">
+                      <img
+                        src="/Zepter-Careers images/JobIcon.png"
+                        alt="Company"
+                        className="job-card__meta-img"
+                      />
+                      {position.company.name}
+                    </span>
 
-                  <span className="job-card__date-pill">{position.publishedAt}</span>
-                </div>
-              </article>
-            ))}
+                    <span className="job-card__meta-item">
+                      <img
+                        src="/Zepter-Careers images/VectorLoc.png"
+                        alt="Location"
+                        className="job-card__meta-img"
+                      />
+                      {position.location.label}
+                    </span>
+
+                    <span className="job-card__date-pill">
+                      {new Date(position.postedAt).toLocaleDateString("sr-RS")}
+                    </span>
+                  </div>
+                </article>
+              ))}
           </div>
         </div>
       </div>

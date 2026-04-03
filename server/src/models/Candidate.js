@@ -66,6 +66,19 @@ const candidateSchema = new mongoose.Schema(
       type: [candidateDocumentSchema],
       default: [],
     },
+
+    acceptedTerms: {
+      type: Boolean,
+      default: false,
+    },
+    acceptedTermsAt: {
+      type: Date,
+      default: null,
+    },
+    marketingConsent: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,
