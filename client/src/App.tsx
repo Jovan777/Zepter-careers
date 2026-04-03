@@ -9,11 +9,19 @@ import ZepterClubSection from "./components/ZepterClubSection";
 import ValuesSection from "./components/ValuesSection";
 import SolutionSection from "./components/SolutionSection";
 import Footer from "./components/Footer";
+import NotificationModal from "./components/NotificationModal";
+import { useState } from "react";
+
 
 function App() {
+  const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false);
+
+  const openNotifications = () => setIsNotificationModalOpen(true);
+  const closeNotifications = () => setIsNotificationModalOpen(false);
+
   return (
     <>
-      <Header />
+      <Header onOpenNotifications={openNotifications} />
       <HeroSection />
       <BrandStrip />
       <OpenPositionsSection />
@@ -22,7 +30,12 @@ function App() {
       <ZepterClubSection />
       <ValuesSection />
       <SolutionSection />
-      <Footer />
+      <Footer onOpenNotifications={openNotifications} />
+
+      <NotificationModal
+        isOpen={isNotificationModalOpen}
+        onClose={closeNotifications}
+      />
     </>
   );
 }

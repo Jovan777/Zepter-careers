@@ -1073,6 +1073,215 @@
     cursor: pointer;
 }
 
+/* NOTIFICATION MODAL */
+
+.notification-modal__overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.58);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 2000;
+}
+
+.notification-modal {
+    width: 100%;
+    max-width: 620px;
+    background: #ffffff;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.28);
+}
+
+.notification-modal__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 22px 30px 18px;
+    border-bottom: 1px solid #dde1ea;
+}
+
+.notification-modal__title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.notification-modal__bell {
+    width: 26px;
+    height: 26px;
+    object-fit: contain;
+    display: block;
+}
+
+.notification-modal__title {
+    margin: 0;
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-size: 24px;
+    line-height: 1.2;
+    font-weight: 700;
+    color: #1a234f;
+}
+
+.notification-modal__close {
+    border: none;
+    background: transparent;
+    font-size: 40px;
+    line-height: 1;
+    color: #222222;
+    cursor: pointer;
+    padding: 0;
+}
+
+.notification-modal__body {
+    padding: 20px 30px 24px;
+}
+
+.notification-modal__field {
+    margin-bottom: 16px;
+}
+
+.notification-modal__field label {
+    display: block;
+    margin-bottom: 9px;
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.3;
+    font-weight: 700;
+    color: #1a234f;
+}
+
+.notification-modal__field input,
+.notification-modal__field select {
+    width: 100%;
+    height: 44px;
+    border: 1px solid #ccd2de;
+    border-radius: 10px;
+    background: #ffffff;
+    padding: 0 14px;
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-size: 14px;
+    color: #313131;
+    outline: none;
+}
+
+.notification-modal__field input::placeholder {
+    color: #b4b8c3;
+}
+
+.notification-modal__field select {
+    color: #b4b8c3;
+}
+
+.notification-modal__field select:valid {
+    color: #313131;
+}
+
+.notification-modal__select-wrap {
+    position: relative;
+}
+
+.notification-modal__select-wrap select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    padding-right: 38px;
+    cursor: pointer;
+}
+
+.notification-modal__select-arrow {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-52%);
+    color: #b4b8c3;
+    font-size: 16px;
+    pointer-events: none;
+}
+
+.notification-modal__radio-group {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    padding-top: 2px;
+}
+
+.notification-modal__radio {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-size: 13px;
+    color: #222222;
+    cursor: pointer;
+}
+
+.notification-modal__radio input {
+    appearance: auto;
+    width: 12px;
+    height: 12px;
+    margin: 0;
+    accent-color: #1a234f;
+}
+
+.notification-modal__checkbox {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 12px;
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-size: 13px;
+    font-weight: bold;
+    line-height: 1.55;
+    color: #1f2a56;
+}
+
+.notification-modal__checkbox input {
+    margin-top: 2px;
+    accent-color: #1a234f;
+}
+
+.notification-modal__checkbox a {
+    color: #b59c68;
+}
+
+.notification-modal__submit {
+    width: 100%;
+    height: 52px;
+    border: none;
+    border-radius: 12px;
+    background: #b59c68;
+    color: #ffffff;
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.notification-modal__submit:hover:not(:disabled) {
+    transform: translateY(-1px);
+    opacity: 0.96;
+}
+
+.notification-modal__submit:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+.notification-modal__footnote {
+    margin: 16px 0 0;
+    text-align: center;
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #8d95a6;
+}
+
 
 @keyframes brandStripLoop {
     from {
@@ -1571,6 +1780,56 @@
         .footer__bottom {
             flex-direction: column;
             align-items: flex-start;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .notification-modal__overlay {
+            padding: 12px;
+        }
+
+        .notification-modal {
+            max-width: 100%;
+        }
+
+        .notification-modal__header {
+            padding: 18px 18px 16px;
+        }
+
+        .notification-modal__title-wrap {
+            gap: 12px;
+        }
+
+        .notification-modal__bell {
+            width: 22px;
+            height: 22px;
+        }
+
+        .notification-modal__title {
+            font-size: 20px;
+        }
+
+        .notification-modal__close {
+            font-size: 34px;
+        }
+
+        .notification-modal__body {
+            padding: 18px 18px 22px;
+        }
+
+        .notification-modal__radio-group {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .notification-modal__submit {
+            height: 48px;
+            font-size: 15px;
+        }
+
+        .notification-modal__footnote {
+            font-size: 13px;
         }
     }
 

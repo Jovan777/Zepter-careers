@@ -1,3 +1,8 @@
+
+type FooterProps = {
+  onOpenNotifications: () => void;
+};
+
 const companyLinks = [
   "Blog",
   "Misija",
@@ -16,7 +21,7 @@ const rulesLinks = [
   "Uslovi čuvanja poslovne tajne",
 ];
 
-const Footer = () => {
+const Footer = ({ onOpenNotifications }: FooterProps) => {
   return (
     <footer className="footer">
       <div className="footer__inner">
@@ -76,7 +81,7 @@ const Footer = () => {
               Budite u toku sa novim prilikama
             </h3>
 
-            <button type="button" className="footer__button">
+            <button type="button" className="footer__button" onClick={onOpenNotifications}>
               <span>Prijavite se za obaveštenja</span>
               <span className="footer__button-arrow">›</span>
             </button>

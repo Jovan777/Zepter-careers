@@ -1,4 +1,8 @@
-const Header = () => {
+type HeaderProps = {
+  onOpenNotifications: () => void;
+};
+
+const Header = ({ onOpenNotifications }: HeaderProps) => {
   return (
     <header className="header">
       <div className="container header__inner">
@@ -25,7 +29,7 @@ const Header = () => {
         </nav>
 
         <div className="header__actions">
-          <button className="header__alert-btn">
+          <button className="header__alert-btn" onClick={onOpenNotifications}>
             <img
               src="/Zepter-Careers images/Bell.png"
               alt="Bell"
