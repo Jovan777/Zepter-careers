@@ -296,7 +296,7 @@ const ApplyJobModal = ({
             disabled={!isFormValid || isSubmitting}
             onClick={handleSubmit}
           >
-            {isSubmitting ? "Slanje..." : "Submit Application"}
+            {isSubmitting ? "Slanje..." : "Pošalji prijavu"}
           </button>
         </div>
 
