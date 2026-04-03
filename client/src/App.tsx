@@ -8,6 +8,7 @@ import QuoteSection from "./components/QuoteSection";
 import ZepterClubSection from "./components/ZepterClubSection";
 import ValuesSection from "./components/ValuesSection";
 import SolutionSection from "./components/SolutionSection";
+import Footer from "./components/Footer";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
       <ZepterClubSection />
       <ValuesSection />
       <SolutionSection />
+      <Footer />
     </>
   );
 }
