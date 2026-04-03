@@ -1,4 +1,7 @@
 import { openPositions } from "../data/openPositions";
+import { Link } from "react-router-dom";
+
+
 
 const OpenPositionsSection = () => {
   return (
@@ -13,9 +16,9 @@ const OpenPositionsSection = () => {
               </p>
             </div>
 
-            <a href="#jobs" className="open-positions__link">
+            <Link to="/jobs" className="open-positions__link">
               Pretraži sve <span>›</span>
-            </a>
+            </Link>
           </div>
 
           <div className="open-positions__grid">

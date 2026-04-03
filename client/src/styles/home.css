@@ -1205,7 +1205,7 @@
     display: flex;
     align-items: center;
     flex-wrap: wrap;
-    gap: 16px;
+    gap: 20px;
     padding-top: 2px;
 }
 
@@ -1223,7 +1223,7 @@
     appearance: auto;
     width: 12px;
     height: 12px;
-    margin: 0;
+    margin: 3;
     accent-color: #1a234f;
 }
 
