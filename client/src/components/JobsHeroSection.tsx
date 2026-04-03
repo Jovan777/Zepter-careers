@@ -1,4 +1,11 @@
+import { useState } from "react";
+import CustomSelect from "./CustomSelect";
+
 const JobsHeroSection = () => {
+  const [location, setLocation] = useState("");
+  const [region, setRegion] = useState("all-regions");
+  const [language, setLanguage] = useState("english");
+
   return (
     <section className="jobs-hero">
       <div className="jobs-hero__inner">
@@ -22,14 +29,18 @@ const JobsHeroSection = () => {
                 alt="Location"
                 className="jobs-hero__location-icon"
               />
-              <select defaultValue="">
-                <option value="" disabled>
-                  Lokacija
-                </option>
-                <option value="beograd">Beograd</option>
-                <option value="novi-sad">Novi Sad</option>
-                <option value="remote">Remote</option>
-              </select>
+
+              <CustomSelect
+                placeholder="Lokacija"
+                value={location}
+                onChange={setLocation}
+                className="jobs-hero__custom-select"
+                options={[
+                  { value: "beograd", label: "Beograd" },
+                  { value: "novi-sad", label: "Novi Sad" },
+                  { value: "remote", label: "Remote" },
+                ]}
+              />
             </div>
 
             <button className="jobs-hero__search-button" type="button">
@@ -39,22 +50,28 @@ const JobsHeroSection = () => {
           </div>
 
           <div className="jobs-hero__filters">
-            <div className="jobs-hero__small-select-wrap">
-              <select className="jobs-hero__small-select" defaultValue="all-regions">
-                <option value="all-regions">All Regions</option>
-                <option value="serbia">Serbia</option>
-                <option value="europe">Europe</option>
-              </select>
-              <span className="jobs-hero__small-select-arrow">▾</span>
-            </div>
+            <CustomSelect
+              placeholder="All Regions"
+              value={region}
+              onChange={setRegion}
+              className="jobs-hero__small-custom-select"
+              options={[
+                { value: "all-regions", label: "All Regions" },
+                { value: "serbia", label: "Serbia" },
+                { value: "europe", label: "Europe" },
+              ]}
+            />
 
-            <div className="jobs-hero__small-select-wrap">
-              <select className="jobs-hero__small-select" defaultValue="english">
-                <option value="english">English</option>
-                <option value="serbian">Srpski</option>
-              </select>
-              <span className="jobs-hero__small-select-arrow">▾</span>
-            </div>
+            <CustomSelect
+              placeholder="English"
+              value={language}
+              onChange={setLanguage}
+              className="jobs-hero__small-custom-select"
+              options={[
+                { value: "english", label: "English" },
+                { value: "serbian", label: "Srpski" },
+              ]}
+            />
           </div>
         </div>
       </div>

@@ -1,4 +1,5 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 type ApplyJobModalProps = {
     isOpen: boolean;
@@ -7,6 +8,8 @@ type ApplyJobModalProps = {
 };
 
 const ApplyJobModal = ({ isOpen, onClose, jobTitle }: ApplyJobModalProps) => {
+    const navigate = useNavigate();
+
     const [fullName, setFullName] = useState("");
     const [email, setEmail] = useState("");
     const [phone, setPhone] = useState("");
@@ -15,6 +18,7 @@ const ApplyJobModal = ({ isOpen, onClose, jobTitle }: ApplyJobModalProps) => {
     const [coverLetter, setCoverLetter] = useState("");
     const [acceptedTerms, setAcceptedTerms] = useState(false);
     const [marketingConsent, setMarketingConsent] = useState(false);
+    const [showSuccessModal, setShowSuccessModal] = useState(false);
 
     const isFormValid = useMemo(() => {
         return Boolean(
@@ -27,6 +31,12 @@ const ApplyJobModal = ({ isOpen, onClose, jobTitle }: ApplyJobModalProps) => {
         );
     }, [fullName, email, phone, cvFile, coverLetter, acceptedTerms]);
 
+    useEffect(() => {
+        if (!isOpen) {
+            setShowSuccessModal(false);
+        }
+    }, [isOpen]);
+
     if (!isOpen) return null;
 
     const handleCvChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -37,6 +47,17 @@ const ApplyJobModal = ({ isOpen, onClose, jobTitle }: ApplyJobModalProps) => {
     const handleExtraFilesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = Array.from(e.target.files ?? []);
         setExtraFiles(files);
+    };
+
+    const resetForm = () => {
+        setFullName("");
+        setEmail("");
+        setPhone("");
+        setCvFile(null);
+        setExtraFiles([]);
+        setCoverLetter("");
+        setAcceptedTerms(false);
+        setMarketingConsent(false);
     };
 
     const handleSubmit = () => {
@@ -54,7 +75,9 @@ const ApplyJobModal = ({ isOpen, onClose, jobTitle }: ApplyJobModalProps) => {
             marketingConsent,
         });
 
-        onClose();
+        setShowSuccessModal(true);
+
+        
     };
 
     return (
@@ -131,9 +154,14 @@ const ApplyJobModal = ({ isOpen, onClose, jobTitle }: ApplyJobModalProps) => {
                         <div className="apply-modal__field">
                             <label htmlFor="extra-files-upload">Dodatna dokumenta (opciono)</label>
 
-                            <label htmlFor="extra-files-upload" className="apply-modal__upload-box">
+                            <label
+                                htmlFor="extra-files-upload"
+                                className="apply-modal__upload-box"
+                            >
                                 <span
-                                    className={`apply-modal__upload-text ${extraFiles.length > 0 ? "apply-modal__upload-text--selected" : ""
+                                    className={`apply-modal__upload-text ${extraFiles.length > 0
+                                            ? "apply-modal__upload-text--selected"
+                                            : ""
                                         }`}
                                 >
                                     {extraFiles.length > 0
@@ -204,9 +232,47 @@ const ApplyJobModal = ({ isOpen, onClose, jobTitle }: ApplyJobModalProps) => {
                         disabled={!isFormValid}
                         onClick={handleSubmit}
                     >
-                        Pošalji prijavu
+                        Submit Application
                     </button>
                 </div>
+
+                {showSuccessModal && (
+                    <div className="apply-modal__success-overlay">
+                        <div className="apply-modal__success-card">
+                            <div className="apply-modal__success-logo-wrap">
+                                <img
+                                    src="/Zepter-Careers images/ZepterJobLogo.png"
+                                    alt="Zepter"
+                                    className="apply-modal__success-logo"
+                                />
+                            </div>
+
+                            <h3 className="apply-modal__success-title">
+                                Uspešno ste poslali prijavu
+                            </h3>
+
+                            <p className="apply-modal__success-text">
+                                Hvala vam na interesovanju za rad u kompaniji Zepter. Vaša prijava je
+                                uspešno evidentirana. Naš tim će pregledati dostavljene podatke i
+                                kontaktirati vas ukoliko uđete u naredni krug selekcije.
+                            </p>
+
+                            <button
+                                type="button"
+                                className="apply-modal__success-button"
+                                onClick={() => {
+                                    setShowSuccessModal(false);
+                                    resetForm();
+                                    onClose();
+                                    navigate("/");
+                                    window.scrollTo({ top: 0, behavior: "smooth" });
+                                }}
+                            >
+                                OK <span>›</span>
+                            </button>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );
