@@ -22,7 +22,11 @@ const HeroSection = () => {
               <div className="hero__divider" />
 
               <div className="hero__field hero__field--location">
-                <span className="hero__field-icon">📍</span>
+                <img
+                  src="/Zepter-Careers images/VectorLoc.png"
+                  alt="Location"
+                  className="hero__location-icon"
+                />
                 <select defaultValue="">
                   <option value="" disabled>
                     Lokacija
@@ -33,7 +37,10 @@ const HeroSection = () => {
                 </select>
               </div>
 
-              <button className="hero__search-button">Pretraga</button>
+              <button className="hero__search-button">
+                <span className="hero__search-button-icon">⌕</span>
+                <span>Pretraga</span>
+              </button>
             </div>
 
             <div className="hero__filters">

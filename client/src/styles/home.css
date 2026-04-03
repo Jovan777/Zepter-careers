@@ -159,7 +159,7 @@
 
 .hero__left {
   width: 100%;
-  max-width: 760px;
+  max-width: 820px;
   margin-left: 96px;
 }
 
@@ -188,34 +188,45 @@
 
 .hero__search-main {
   width: 100%;
-  max-width: 680px;
-  min-height: 58px;
-  display: flex;
+  max-width: 760px;
+  min-height: 54px;
+  display: grid;
+  grid-template-columns: 1.7fr 1px 1.05fr auto;
   align-items: center;
   background: rgba(255, 255, 255, 0.97);
   border-radius: 16px;
-  padding: 7px 9px 7px 16px;
+  padding: 6px 8px 6px 18px;
   box-shadow: 0 14px 28px rgba(0, 0, 0, 0.18);
+  column-gap: 0;
 }
 
 .hero__field {
   display: flex;
   align-items: center;
-  gap: 9px;
+  gap: 10px;
   min-width: 0;
+  height: 100%;
 }
 
 .hero__field--keyword {
-  flex: 1.4;
+  padding-right: 16px;
 }
 
 .hero__field--location {
-  flex: 1;
+  padding-left: 16px;
+  padding-right: 14px;
 }
 
 .hero__field-icon {
   font-size: 15px;
   color: #7c8188;
+  flex-shrink: 0;
+}
+
+.hero__location-icon {
+  width: 15px;
+  height: 15px;
+  object-fit: contain;
   flex-shrink: 0;
 }
 
@@ -235,11 +246,34 @@
   color: #9aa0a8;
 }
 
+.hero__field select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  cursor: pointer;
+  padding-right: 18px;
+}
+
+.hero__field--location {
+  position: relative;
+}
+
+.hero__field--location::after {
+  content: "▾";
+  position: absolute;
+  right: 2px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 12px;
+  color: #344054;
+  pointer-events: none;
+}
+
 .hero__divider {
   width: 1px;
-  align-self: stretch;
-  background: rgba(0, 0, 0, 0.08);
-  margin: 0 14px;
+  height: 28px;
+  background: rgba(0, 0, 0, 0.09);
+  justify-self: center;
 }
 
 .hero__search-button {
@@ -249,10 +283,15 @@
   color: #ffffff;
   font-family: 'Montserrat', Arial, sans-serif;
   font-size: 14px;
-  font-weight: 600;
-  height: 44px;
-  min-width: 150px;
-  padding: 0 28px;
+  font-weight: 400;
+  height: 40px;
+  min-width: 156px;
+  padding: 0 24px;
+  margin-left: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   cursor: pointer;
   transition: transform 0.2s ease, opacity 0.2s ease;
 }
@@ -260,6 +299,11 @@
 .hero__search-button:hover {
   transform: translateY(-1px);
   opacity: 0.96;
+}
+
+.hero__search-button-icon {
+  font-size: 14px;
+  line-height: 1;
 }
 
 .hero__filters {
@@ -289,11 +333,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  padding-top: 34px;
+  transform: translateX(-16px);
 }
 
 .hero__anniversary-logo {
   width: 100%;
-  max-width: 520px;
+  max-width: 500px;
   object-fit: contain;
   filter: drop-shadow(0 10px 24px rgba(0, 0, 0, 0.28));
 }
@@ -301,48 +347,74 @@
 /* BRAND STRIP */
 .brand-strip {
   background: #050505;
-  padding: 14px 0 16px;
+  height: 96px;
+  display: flex;
+  align-items: center;
   overflow: hidden;
 }
 
-.brand-strip__inner {
+.brand-strip__viewport {
+  width: 100%;
+  overflow: hidden;
+}
+
+.brand-strip__track {
+  width: max-content;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 18px;
-  flex-wrap: nowrap;
+  gap: 46px;
+  animation: brandStripLoop 38s linear infinite;
+  will-change: transform;
 }
 
 .brand-strip__item {
+  flex: 0 0 auto;
+  height: 96px;
   display: flex;
   align-items: center;
   justify-content: center;
-  flex: 1 1 0;
-  min-width: 0;
 }
 
 .brand-strip__item img {
   display: block;
-  max-height: 40px;
-  max-width: 100%;
+  max-height: 50px;
   width: auto;
+  max-width: none;
   object-fit: contain;
 }
 
+@keyframes brandStripLoop {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-10%);
+  }
+}
+
+
 /* RESPONSIVE */
 @media (max-width: 1200px) {
+  .header__logo img {
+    width: 156px;
+  }
+
   .header__nav {
-    gap: 22px;
-    margin-right: 20px;
+    gap: 24px;
   }
 
   .hero__left {
-    margin-left: 28px;
-    max-width: 680px;
+    margin-left: 34px;
+    max-width: 720px;
   }
 
   .hero__title {
     font-size: 48px;
+  }
+
+  .hero__search-main {
+    max-width: 700px;
+    grid-template-columns: 1.5fr 1px 1fr auto;
   }
 
   .hero__anniversary-logo {
@@ -350,26 +422,24 @@
   }
 
   .brand-strip__item img {
-    max-height: 32px;
+    max-height: 40px;
   }
 }
 
 @media (max-width: 992px) {
   .header__inner {
-    flex-wrap: wrap;
-    justify-content: center;
+    grid-template-columns: 1fr;
+    justify-items: center;
     padding: 16px 0;
   }
 
   .header__nav {
-    width: 100%;
     justify-content: center;
-    margin: 0;
+    flex-wrap: wrap;
   }
 
   .header__actions {
-    width: 100%;
-    justify-content: center;
+    justify-self: center;
   }
 
   .hero {
@@ -386,28 +456,52 @@
 
   .hero__left {
     margin-left: 0;
+    max-width: 100%;
+  }
+
+  .hero__search-main {
+    max-width: 100%;
+    grid-template-columns: 1fr;
+    row-gap: 10px;
+    padding: 12px;
+  }
+
+  .hero__divider {
+    display: none;
+  }
+
+  .hero__field--keyword,
+  .hero__field--location {
+    padding: 0;
+  }
+
+  .hero__search-button {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .hero__filters {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .hero__small-select {
+    width: 100%;
   }
 
   .hero__right {
     justify-content: flex-start;
+    transform: none;
+    padding-top: 10px;
   }
 
   .hero__anniversary-logo {
     max-width: 360px;
   }
 
-  .brand-strip {
-    padding: 18px 0;
-  }
-
   .brand-strip__inner {
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 20px;
-  }
-
-  .brand-strip__item {
-    flex: 0 0 auto;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
   }
 
   .brand-strip__item img {
