@@ -229,7 +229,8 @@ const JobsResultsSection = ({ filters }: JobsResultsSectionProps) => {
             {detailsError && <p>{detailsError}</p>}
 
             {!detailsError && selectedJobDetails ? (
-              <article className="job-details-card">
+              <article key={selectedJobDetails.publicId}
+                className="job-details-card">
                 <div className="job-details-card__header">
                   <div className="job-details-card__title-wrap">
                     <img
@@ -359,7 +360,7 @@ const JobsResultsSection = ({ filters }: JobsResultsSectionProps) => {
 
             {isSwitchingDetails && (
               <div className="jobs-results__details-overlay">
-                <div className="jobs-results__details-spinner" />
+                <div className="jobs-results__details-veil" />
               </div>
             )}
           </div>

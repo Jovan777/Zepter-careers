@@ -1106,6 +1106,80 @@
     transform: translateY(-1px);
 }
 
+.jobs-results__details {
+    position: relative;
+    min-width: 0;
+}
+
+.job-details-card,
+.job-details-empty {
+    transition: opacity 0.22s ease, transform 0.22s ease, box-shadow 0.22s ease;
+    will-change: opacity, transform;
+}
+
+.job-details-card {
+    animation: job-details-fade-in 0.26s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.jobs-results__details--loading .job-details-card,
+.jobs-results__details--loading .job-details-empty {
+    opacity: 0.82;
+    transform: translateY(1px) scale(0.995);
+}
+
+.jobs-results__details-overlay {
+    position: absolute;
+    inset: 0;
+    border-radius: 12px;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 3;
+}
+
+.jobs-results__details-veil {
+    position: absolute;
+    inset: 0;
+    border-radius: 12px;
+    background:
+        linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0) 0%,
+            rgba(255, 255, 255, 0.28) 35%,
+            rgba(255, 255, 255, 0.46) 50%,
+            rgba(255, 255, 255, 0.28) 65%,
+            rgba(255, 255, 255, 0) 100%
+        );
+    animation: job-details-shimmer 0.85s ease forwards;
+}
+
+@keyframes job-details-fade-in {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes job-details-shimmer {
+    from {
+        opacity: 0;
+        transform: translateX(-18%);
+    }
+
+    20% {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+        transform: translateX(18%);
+    }
+}
+
 @keyframes jobs-details-spin {
     to {
         transform: rotate(360deg);
