@@ -37,15 +37,23 @@ const AdminLoginPage = () => {
 
         <label>
           Email
-          <input value={email} onChange={(e) => setEmail(e.target.value)} type="email" />
+          <input
+            className="admin-input"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            type="email"
+            placeholder="Unesite email"
+          />
         </label>
 
         <label>
           Password
           <input
+            className="admin-input"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             type="password"
+            placeholder="Unesite lozinku"
           />
         </label>
 

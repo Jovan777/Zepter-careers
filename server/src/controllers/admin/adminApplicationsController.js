@@ -120,21 +120,22 @@ const getAdminApplicationById = async (req, res) => {
     }
 
     return res.status(200).json({
-      application: {
-        _id: application._id,
-        publicId: application.publicId,
-        appliedAt: application.createdAt,
-        candidate: application.candidate,
-        job: application.job,
-        status: application.status,
-        statusLabel: formatStatusLabel(application.status),
-        reason: application.reason,
-        cvDocument: application.cvDocument,
-        events: [...application.events].sort(
-          (a, b) => new Date(b.timestamp) - new Date(a.timestamp)
-        ),
-      },
-    });
+  application: {
+    _id: application._id,
+    publicId: application.publicId,
+    appliedAt: application.createdAt,
+    candidate: application.candidate,
+    job: application.job,
+    status: application.status,
+    statusLabel: formatStatusLabel(application.status),
+    reason: application.reason,
+    cvDocument: application.cvDocument,
+    extraDocuments: application.extraDocuments,
+    events: [...application.events].sort(
+      (a, b) => new Date(b.timestamp) - new Date(a.timestamp)
+    ),
+  },
+});
   } catch (error) {
     console.error("Greška u getAdminApplicationById:", error);
     return res.status(500).json({

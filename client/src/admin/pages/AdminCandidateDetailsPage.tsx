@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useAdminAuth } from "../context/AdminAuthContext";
 import { getAdminCandidateById } from "../api/adminCandidatesApi";
+import { ADMIN_API_ORIGIN } from "../api/adminHttp";
 import type { AdminCandidateDetailsResponse } from "../types/admin";
 
 const AdminCandidateDetailsPage = () => {
@@ -70,7 +71,7 @@ const AdminCandidateDetailsPage = () => {
                 <a
                   key={`${doc.fileUrl}-${index}`}
                   className="admin-link"
-                  href={`http://localhost:5000${doc.fileUrl}`}
+                  href={`${ADMIN_API_ORIGIN}${doc.fileUrl}`}
                   target="_blank"
                   rel="noreferrer"
                 >

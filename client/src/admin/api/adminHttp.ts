@@ -57,3 +57,6 @@ export const adminHttp = {
   delete: <T>(path: string, token?: string | null) =>
     request<T>(path, { method: "DELETE", token }),
 };
+
+export const ADMIN_API_BASE_URL = API_BASE_URL;
+export const ADMIN_API_ORIGIN = API_BASE_URL.replace(/\/api$/, "");

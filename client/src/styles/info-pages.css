@@ -1,0 +1,179 @@
+.info-page-hero {
+    background: #ffffff;
+    padding: 42px 0 34px;
+}
+
+.info-page-hero__inner {
+    width: min(1240px, calc(100% - 80px));
+    margin: 0 auto;
+    text-align: center;
+}
+
+.info-page-hero__title {
+    margin: 0 0 14px;
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-size: 44px;
+    line-height: 1.12;
+    font-weight: 700;
+    color: #102d54;
+    letter-spacing: -0.6px;
+}
+
+.info-page-hero__subtitle {
+    margin: 0 auto;
+    max-width: 760px;
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    color: #586984;
+}
+
+.info-page-section {
+    background: #ffffff;
+    padding: 0 0 72px;
+}
+
+.info-page-section__inner {
+    width: min(1240px, calc(100% - 80px));
+    margin: 0 auto;
+}
+
+.process-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+}
+
+.process-card {
+    background: #f0ebe1;
+    border-radius: 22px;
+    padding: 28px 26px;
+}
+
+.process-card__step {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: #b59c68;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 18px;
+}
+
+.process-card__title {
+    margin: 0 0 12px;
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-size: 22px;
+    line-height: 1.25;
+    font-weight: 700;
+    color: #102d54;
+}
+
+.process-card__text {
+    margin: 0;
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-size: 15px;
+    line-height: 1.65;
+    color: #31456a;
+}
+
+.faq-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.faq-card {
+    border: 1px solid #dde4ef;
+    border-radius: 18px;
+    background: #ffffff;
+    overflow: hidden;
+}
+
+.faq-card__trigger {
+    width: 100%;
+    border: none;
+    background: #f8fafc;
+    padding: 22px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    text-align: left;
+    cursor: pointer;
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-size: 17px;
+    font-weight: 600;
+    color: #102d54;
+}
+
+.faq-card__icon {
+    font-size: 18px;
+    color: #102d54;
+    transition: transform 0.2s ease;
+}
+
+.faq-card__icon--open {
+    transform: rotate(180deg);
+}
+
+.faq-card__content {
+    padding: 0 24px 22px;
+    background: #ffffff;
+}
+
+.faq-card__content p {
+    margin: 0;
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+    color: #586984;
+}
+
+@media (max-width: 992px) {
+    .process-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .info-page-hero__inner,
+    .info-page-section__inner {
+        width: min(100%, calc(100% - 40px));
+    }
+
+    .info-page-hero__title {
+        font-size: 34px;
+    }
+}
+
+@media (max-width: 768px) {
+    .info-page-hero {
+        padding: 34px 0 24px;
+    }
+
+    .info-page-hero__title {
+        font-size: 28px;
+    }
+
+    .info-page-hero__subtitle {
+        font-size: 14px;
+    }
+
+    .process-card {
+        padding: 22px 18px;
+        border-radius: 18px;
+    }
+
+    .faq-card__trigger {
+        padding: 18px;
+        font-size: 15px;
+    }
+
+    .faq-card__content {
+        padding: 0 18px 18px;
+    }
+}

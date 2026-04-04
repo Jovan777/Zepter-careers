@@ -31,7 +31,11 @@ const ZepterClubSection = () => {
               korporativne privilegije.
             </p>
 
-            <button type="button" className="zepter-club__button">
+            <button
+              type="button"
+              className="zepter-club__button"
+              onClick={() => window.open("https://www.zepter.rs/zepterclub", "_blank")}
+            >
               <span>Postani član</span>
               <span className="zepter-club__button-arrow">›</span>
             </button>

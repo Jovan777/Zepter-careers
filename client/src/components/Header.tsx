@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 type HeaderProps = {
   onOpenNotifications: () => void;
 };
@@ -19,18 +21,26 @@ const Header = ({ onOpenNotifications }: HeaderProps) => {
         </a>
 
         <nav className="header__nav">
-          <a href="#jobs" className="header__nav-link header__nav-link--active">
+          <Link to="/jobs" className="header__nav-link">
             Jobs
-          </a>
-          <a href="#process" className="header__nav-link">
+          </Link>
+
+          <Link to="/process" className="header__nav-link">
             Process
-          </a>
-          <a href="#contact" className="header__nav-link">
+          </Link>
+
+          <a
+            href="https://www.zepter.rs/contacts"
+            className="header__nav-link"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             Contact
           </a>
-          <a href="#faq" className="header__nav-link">
+
+          <Link to="/faq" className="header__nav-link">
             FAQ
-          </a>
+          </Link>
         </nav>
 
         <div className="header__actions">
@@ -44,12 +54,7 @@ const Header = ({ onOpenNotifications }: HeaderProps) => {
             <span className="header__alert-arrow">›</span>
           </button>
 
-          <a
-            href="https://www.zepter.rs/zepterclub"
-            className="header__club-logo"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+          <a href="https://www.zepter.rs/zepterclub" className="header__club-logo">
             <img
               src="/Zepter-Careers images/zk_kockica 2.png"
               alt="Zepter Club"
