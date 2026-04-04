@@ -2,6 +2,7 @@ import { useState } from "react";
 import { subscribeToJobAlerts } from "../api/jobAlertsApi";
 import CustomSelect from "./CustomSelect";
 
+
 type NotificationModalProps = {
   isOpen: boolean;
   onClose: () => void;
@@ -30,6 +31,8 @@ const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) => {
   const [marketingConsent, setMarketingConsent] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
+
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const resetForm = () => {
     setEmail("");
@@ -82,8 +85,13 @@ const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) => {
         marketingConsent,
       });
 
-      resetForm();
-      onClose();
+      setShowSuccessModal(true);
+
+      setTimeout(() => {
+        setShowSuccessModal(false);
+        resetForm();
+        onClose();
+      }, 5000);
     } catch (error) {
       console.error(error);
       setSubmitError(
@@ -308,6 +316,40 @@ const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) => {
           </p>
         </div>
       </div>
+      {showSuccessModal && (
+        <div className="notification-modal__success-overlay">
+          <div className="notification-modal__success-card">
+            <div className="notification-modal__success-logo-wrap">
+              <img
+                src="/Zepter-Careers images/ZepterJobLogo.png"
+                alt="Zepter"
+                className="notification-modal__success-logo"
+              />
+            </div>
+
+            <h3 className="notification-modal__success-title">
+              Uspešno ste se prijavili
+            </h3>
+
+            <p className="notification-modal__success-text">
+              Uspešno ste se prijavili za obaveštenja o novim poslovnim prilikama.
+              Kada se pojavi odgovarajuća pozicija, bićete obavešteni putem emaila.
+            </p>
+
+            <button
+              type="button"
+              className="notification-modal__success-button"
+              onClick={() => {
+                setShowSuccessModal(false);
+                resetForm();
+                onClose();
+              }}
+            >
+              OK <span>›</span>
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

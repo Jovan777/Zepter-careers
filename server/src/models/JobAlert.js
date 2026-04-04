@@ -27,11 +27,10 @@ const jobAlertSchema = new mongoose.Schema(
   { timestamps: true, collection: "jobAlerts" }
 );
 
-jobAlertSchema.pre("validate", function (next) {
+jobAlertSchema.pre("validate", function () {
   if (this.locationType === "remote") {
     this.city = "";
   }
-  next();
 });
 
 jobAlertSchema.index(
