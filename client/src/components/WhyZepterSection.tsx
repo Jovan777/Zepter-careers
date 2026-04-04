@@ -29,8 +29,10 @@ const WhyZepterSection = () => {
             </p>
 
             <button type="button" className="why-zepter__button">
-              <span>Saznaj više</span>
-              <span className="why-zepter__button-arrow">›</span>
+              <a href="https://www.zepter.rs/zepter-world/company-profile">
+                <span>Saznaj više</span>
+                <span className="why-zepter__button-arrow">›</span>
+              </a>
             </button>
           </div>
         </div>
@@ -39,9 +41,8 @@ const WhyZepterSection = () => {
           {stats.map((item, index) => (
             <div
               key={item.label}
-              className={`why-zepter__stat ${
-                index !== stats.length - 1 ? "why-zepter__stat--with-border" : ""
-              }`}
+              className={`why-zepter__stat ${index !== stats.length - 1 ? "why-zepter__stat--with-border" : ""
+                }`}
             >
               <div className="why-zepter__stat-value">{item.value}</div>
               <div className="why-zepter__stat-label">{item.label}</div>

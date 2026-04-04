@@ -6,7 +6,12 @@ const Header = ({ onOpenNotifications }: HeaderProps) => {
   return (
     <header className="header">
       <div className="container header__inner">
-        <a href="/" className="header__logo">
+        <a
+          href="https://www.zepter.rs/"
+          className="header__logo"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           <img
             src="/Zepter-Careers images/zepter_logo_web 1.png"
             alt="Zepter"
@@ -39,7 +44,12 @@ const Header = ({ onOpenNotifications }: HeaderProps) => {
             <span className="header__alert-arrow">›</span>
           </button>
 
-          <a href="/" className="header__club-logo">
+          <a
+            href="https://www.zepter.rs/zepterclub"
+            className="header__club-logo"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             <img
               src="/Zepter-Careers images/zk_kockica 2.png"
               alt="Zepter Club"

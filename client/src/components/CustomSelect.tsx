@@ -11,6 +11,7 @@ type CustomSelectProps = {
   value: string;
   onChange: (value: string) => void;
   className?: string;
+  disabled?: boolean;
 };
 
 const CustomSelect = ({
@@ -19,6 +20,7 @@ const CustomSelect = ({
   value,
   onChange,
   className = "",
+  disabled = false,
 }: CustomSelectProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -41,15 +43,28 @@ const CustomSelect = ({
     };
   }, []);
 
+  useEffect(() => {
+    if (disabled && isOpen) {
+      setIsOpen(false);
+    }
+  }, [disabled, isOpen]);
+
   return (
     <div
-      className={`custom-select ${className} ${isOpen ? "custom-select--open" : ""}`}
+      className={`custom-select ${className} ${
+        isOpen ? "custom-select--open" : ""
+      } ${disabled ? "custom-select--disabled" : ""}`}
       ref={containerRef}
     >
       <button
         type="button"
         className="custom-select__trigger"
-        onClick={() => setIsOpen((prev) => !prev)}
+        onClick={() => {
+          if (!disabled) {
+            setIsOpen((prev) => !prev);
+          }
+        }}
+        disabled={disabled}
       >
         <span
           className={`custom-select__value ${
@@ -61,7 +76,7 @@ const CustomSelect = ({
         <span className="custom-select__arrow">▾</span>
       </button>
 
-      {isOpen && (
+      {isOpen && !disabled && (
         <div className="custom-select__menu">
           {options.map((option) => {
             const isSelected = option.value === value;

@@ -1,10 +1,24 @@
 import { useState } from "react";
 import { subscribeToJobAlerts } from "../api/jobAlertsApi";
+import CustomSelect from "./CustomSelect";
 
 type NotificationModalProps = {
   isOpen: boolean;
   onClose: () => void;
 };
+
+const workAreaOptions = [
+  { value: "sales", label: "Prodaja" },
+  { value: "marketing", label: "Marketing" },
+  { value: "hr", label: "HR" },
+  { value: "it", label: "IT" },
+];
+
+const cityOptions = [
+  { value: "beograd", label: "Beograd" },
+  { value: "novi-sad", label: "Novi Sad" },
+  { value: "nis", label: "Niš" },
+];
 
 const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) => {
   const [email, setEmail] = useState("");
@@ -17,8 +31,6 @@ const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
 
-  if (!isOpen) return null;
-
   const resetForm = () => {
     setEmail("");
     setKeyword("");
@@ -30,16 +42,38 @@ const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) => {
     setSubmitError("");
   };
 
+  const isEmailValid = (value: string) => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
+  };
+
+  const getValidationError = () => {
+    if (!email.trim()) return "Email je obavezan.";
+    if (!isEmailValid(email)) return "Unesite ispravnu email adresu.";
+    if (locationType !== "remote" && !city.trim()) {
+      return "Izaberite lokaciju.";
+    }
+    if (!acceptedTerms) {
+      return "Morate prihvatiti uslove korišćenja i politiku privatnosti.";
+    }
+    return "";
+  };
+
+  const validationError = getValidationError();
+  const isFormValid = validationError === "";
+
   const handleSubmit = async () => {
-    if (!acceptedTerms) return;
+    if (!isFormValid) {
+      setSubmitError(validationError);
+      return;
+    }
 
     try {
       setIsSubmitting(true);
       setSubmitError("");
 
       await subscribeToJobAlerts({
-        email,
-        keyword,
+        email: email.trim(),
+        keyword: keyword.trim(),
         locale: "sr",
         workArea,
         locationType,
@@ -59,6 +93,8 @@ const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) => {
       setIsSubmitting(false);
     }
   };
+
+  if (!isOpen) return null;
 
   return (
     <div className="notification-modal__overlay" onClick={onClose}>
@@ -92,7 +128,10 @@ const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) => {
               type="email"
               placeholder="john@example.com"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                if (submitError) setSubmitError("");
+              }}
             />
           </div>
 
@@ -108,16 +147,16 @@ const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) => {
 
           <div className="notification-modal__field">
             <label>Oblast rada</label>
-            <div className="notification-modal__select-wrap">
-              <select value={workArea} onChange={(e) => setWorkArea(e.target.value)}>
-                <option value="">Izaberite oblast rada</option>
-                <option value="sales">Prodaja</option>
-                <option value="marketing">Marketing</option>
-                <option value="hr">HR</option>
-                <option value="it">IT</option>
-              </select>
-              <span className="notification-modal__select-arrow">⌄</span>
-            </div>
+            <CustomSelect
+              placeholder="Izaberite oblast rada"
+              value={workArea}
+              onChange={(value) => {
+                setWorkArea(value);
+                if (submitError) setSubmitError("");
+              }}
+              className="notification-modal__custom-select"
+              options={workAreaOptions}
+            />
           </div>
 
           <div className="notification-modal__field">
@@ -130,7 +169,11 @@ const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) => {
                   name="locationType"
                   value="remote"
                   checked={locationType === "remote"}
-                  onChange={(e) => setLocationType(e.target.value)}
+                  onChange={(e) => {
+                    setLocationType(e.target.value);
+                    setCity("");
+                    if (submitError) setSubmitError("");
+                  }}
                 />
                 <span>Samo remote pozicije</span>
               </label>
@@ -141,7 +184,10 @@ const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) => {
                   name="locationType"
                   value="specific"
                   checked={locationType === "specific"}
-                  onChange={(e) => setLocationType(e.target.value)}
+                  onChange={(e) => {
+                    setLocationType(e.target.value);
+                    if (submitError) setSubmitError("");
+                  }}
                 />
                 <span>Specifična lokacija</span>
               </label>
@@ -152,7 +198,10 @@ const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) => {
                   name="locationType"
                   value="hybrid"
                   checked={locationType === "hybrid"}
-                  onChange={(e) => setLocationType(e.target.value)}
+                  onChange={(e) => {
+                    setLocationType(e.target.value);
+                    if (submitError) setSubmitError("");
+                  }}
                 />
                 <span>Hibridni model rada</span>
               </label>
@@ -160,19 +209,28 @@ const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) => {
           </div>
 
           <div className="notification-modal__field">
-            <label>Izaberite lokaciju</label>
-            <div className="notification-modal__select-wrap">
-              <select
+            <label>
+              Izaberite lokaciju {locationType !== "remote" ? "*" : ""}
+            </label>
+
+            <div
+              className={
+                locationType === "remote"
+                  ? "notification-modal__select-disabled"
+                  : ""
+              }
+            >
+              <CustomSelect
+                placeholder="Izaberite grad"
                 value={city}
-                onChange={(e) => setCity(e.target.value)}
+                onChange={(value) => {
+                  setCity(value);
+                  if (submitError) setSubmitError("");
+                }}
+                className="notification-modal__custom-select"
+                options={cityOptions}
                 disabled={locationType === "remote"}
-              >
-                <option value="">Izaberite grad</option>
-                <option value="beograd">Beograd</option>
-                <option value="novi-sad">Novi Sad</option>
-                <option value="nis">Niš</option>
-              </select>
-              <span className="notification-modal__select-arrow">⌄</span>
+              />
             </div>
           </div>
 
@@ -180,12 +238,45 @@ const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) => {
             <input
               type="checkbox"
               checked={acceptedTerms}
-              onChange={(e) => setAcceptedTerms(e.target.checked)}
+              onChange={(e) => {
+                setAcceptedTerms(e.target.checked);
+                if (submitError) setSubmitError("");
+              }}
             />
             <span>
-              Slažem se sa <a href="#">Uslovima korišćenja</a> i potvrđujem da će
-              moji podaci biti korišćeni u skladu sa{" "}
-              <a href="#">Politikom privatnosti</a> *
+              Slažem se sa{" "}
+              <a
+                href="https://www.zepter.rs/rules/regulation"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Uslovima korišćenja
+              </a>
+              ,{" "}
+              <a
+                href="https://www.zepter.rs/rules/limits-of-delivery-and-manner-of-payment"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                uslovima dostave i načina plaćanja
+              </a>{" "}
+              i potvrđujem da će moji podaci biti korišćeni u skladu sa{" "}
+              <a
+                href="https://www.zepter.rs/rules/privacy-policy"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Politikom privatnosti
+              </a>{" "}
+              i{" "}
+              <a
+                href="https://www.zepter.rs/rules/uslovi-cuvanja-poslovne-tajne"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                pravilima čuvanja poslovne tajne
+              </a>
+              . *
             </span>
           </label>
 
@@ -206,7 +297,7 @@ const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) => {
           <button
             type="button"
             className="notification-modal__submit"
-            disabled={!acceptedTerms || isSubmitting}
+            disabled={!isFormValid || isSubmitting}
             onClick={handleSubmit}
           >
             {isSubmitting ? "Slanje..." : "Pošalji prijavu"}

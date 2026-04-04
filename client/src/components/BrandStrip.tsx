@@ -8,9 +8,16 @@ const BrandStrip = () => {
       <div className="brand-strip__viewport">
         <div className="brand-strip__track">
           {loopedLogos.map((brand, index) => (
-            <div key={`${brand.name}-${index}`} className="brand-strip__item">
+            <a
+              key={`${brand.name}-${index}`}
+              href={brand.url}
+              target="_blank"
+              rel="noreferrer"
+              className="brand-strip__item"
+              aria-label={brand.name}
+            >
               <img src={brand.src} alt={brand.name} />
-            </div>
+            </a>
           ))}
         </div>
       </div>
