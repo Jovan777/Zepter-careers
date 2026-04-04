@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { getPublishedJobs } from "../api/jobsApi";
 import type { JobListItem } from "../types/jobs";
 
 const OpenPositionsSection = () => {
   const [jobs, setJobs] = useState<JobListItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const loadJobs = async () => {
@@ -26,6 +27,14 @@ const OpenPositionsSection = () => {
 
     loadJobs();
   }, []);
+
+  const openJobOnJobsPage = (jobPublicId: string) => {
+    const params = new URLSearchParams();
+    params.set("locale", "sr");
+    params.set("job", jobPublicId);
+
+    navigate(`/jobs?${params.toString()}`);
+  };
 
   return (
     <section className="open-positions">
@@ -49,11 +58,23 @@ const OpenPositionsSection = () => {
 
             {!isLoading &&
               jobs.map((position) => (
-                <article key={position.publicId} className="job-card">
+                <article
+                  key={position.publicId}
+                  className="job-card"
+                  onClick={() => openJobOnJobsPage(position.publicId)}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      openJobOnJobsPage(position.publicId);
+                    }
+                  }}
+                >
                   <button
                     className="job-card__favorite"
                     type="button"
                     aria-label="Sačuvaj poziciju"
+                    onClick={(e) => e.stopPropagation()}
                   >
                     ♡
                   </button>

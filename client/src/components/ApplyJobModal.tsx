@@ -259,9 +259,21 @@ const ApplyJobModal = ({
               onChange={(e) => setAcceptedTerms(e.target.checked)}
             />
             <span>
-              Slažem se sa <a href="#">Uslovima korišćenja</a> i potvrđujem da će
+              Slažem se sa <a
+                href="https://www.zepter.rs/rules/regulation"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Uslovima korišćenja
+              </a> i potvrđujem da će
               moji podaci biti korišćeni u skladu sa{" "}
-              <a href="#">Politikom privatnosti</a>. *
+              <a
+                href="https://www.zepter.rs/rules/privacy-policy"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Politikom privatnosti
+              </a>{" "}.
             </span>
           </label>
 

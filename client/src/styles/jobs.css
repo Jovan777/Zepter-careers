@@ -1060,6 +1060,58 @@
     color: #ffffff;
 }
 
+.jobs-results__details {
+    position: relative;
+    min-width: 0;
+}
+
+.job-details-card,
+.job-details-empty {
+    transition: opacity 0.18s ease, transform 0.18s ease, filter 0.18s ease;
+    will-change: opacity, transform, filter;
+}
+
+.jobs-results__details--loading .job-details-card,
+.jobs-results__details--loading .job-details-empty {
+    opacity: 0.55;
+    transform: translateY(2px);
+    filter: blur(0.4px);
+}
+
+.jobs-results__details-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 34px;
+    pointer-events: none;
+    z-index: 3;
+}
+
+.jobs-results__details-spinner {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    border: 2px solid rgba(181, 156, 104, 0.22);
+    border-top-color: #b59c68;
+    animation: jobs-details-spin 0.7s linear infinite;
+}
+
+.jobs-mini-card {
+    transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
+}
+
+.jobs-mini-card:hover {
+    transform: translateY(-1px);
+}
+
+@keyframes jobs-details-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
 
 @media (max-width: 992px) {
     .jobs-results__inner {

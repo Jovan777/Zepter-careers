@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import ApplyJobModal from "./ApplyJobModal";
 import { getJobById, getPublishedJobs } from "../api/jobsApi";
 import type { JobDetailsResponse, JobListItem } from "../types/jobs";
@@ -9,6 +10,8 @@ type JobsResultsSectionProps = {
 };
 
 const JobsResultsSection = ({ filters }: JobsResultsSectionProps) => {
+  const [searchParams, setSearchParams] = useSearchParams();
+
   const [jobs, setJobs] = useState<JobListItem[]>([]);
   const [selectedJobId, setSelectedJobId] = useState<string | null>(null);
   const [selectedJobDetails, setSelectedJobDetails] = useState<JobDetailsResponse | null>(null);
@@ -29,9 +32,28 @@ const JobsResultsSection = ({ filters }: JobsResultsSectionProps) => {
   const openApplyModal = () => setIsApplyModalOpen(true);
   const closeApplyModal = () => setIsApplyModalOpen(false);
 
+  const requestedJobId = searchParams.get("job");
+
+  const updateSearchParam = (key: string, value: string) => {
+    const nextParams = new URLSearchParams(searchParams);
+
+    if (value) {
+      nextParams.set(key, value);
+    } else {
+      nextParams.delete(key);
+    }
+
+    setSearchParams(nextParams, { replace: true });
+  };
+
+  const handleSelectJob = (jobId: string) => {
+    setSelectedJobId(jobId);
+    updateSearchParam("job", jobId);
+  };
+
   useEffect(() => {
     setPage(1);
-  }, [filters.search, filters.region, filters.locationType, filters.locale]);
+  }, [filters.search, filters.region, filters.locationType, filters.locale, filters.workArea, filters.employmentType]);
 
   useEffect(() => {
     const loadJobs = async () => {
@@ -54,11 +76,29 @@ const JobsResultsSection = ({ filters }: JobsResultsSectionProps) => {
         setPagination(data.pagination);
 
         if (data.items.length > 0) {
-          const stillExists = data.items.some((item) => item.publicId === selectedJobId);
-          setSelectedJobId(stillExists ? selectedJobId : data.items[0].publicId);
+          const requestedExists = requestedJobId
+            ? data.items.some((item) => item.publicId === requestedJobId)
+            : false;
+
+          const currentExists = selectedJobId
+            ? data.items.some((item) => item.publicId === selectedJobId)
+            : false;
+
+          const nextSelectedJobId = requestedExists
+            ? requestedJobId
+            : currentExists
+              ? selectedJobId
+              : data.items[0].publicId;
+
+          setSelectedJobId(nextSelectedJobId || null);
+
+          if (nextSelectedJobId && requestedJobId !== nextSelectedJobId) {
+            updateSearchParam("job", nextSelectedJobId);
+          }
         } else {
           setSelectedJobId(null);
           setSelectedJobDetails(null);
+          updateSearchParam("job", "");
         }
       } catch (error) {
         console.error(error);
@@ -80,7 +120,7 @@ const JobsResultsSection = ({ filters }: JobsResultsSectionProps) => {
     filters.workArea,
     filters.employmentType,
     page,
-    selectedJobId,
+    requestedJobId,
   ]);
 
   useEffect(() => {
@@ -108,6 +148,8 @@ const JobsResultsSection = ({ filters }: JobsResultsSectionProps) => {
     loadJobDetails();
   }, [selectedJobId, filters.locale]);
 
+  const isSwitchingDetails = isLoadingDetails && !!selectedJobDetails;
+
   return (
     <section className="jobs-results">
       <div className="jobs-results__inner">
@@ -119,6 +161,7 @@ const JobsResultsSection = ({ filters }: JobsResultsSectionProps) => {
             onClick={() => {
               setSelectedJobId(null);
               setSelectedJobDetails(null);
+              updateSearchParam("job", "");
             }}
           >
             Clear all
@@ -139,7 +182,7 @@ const JobsResultsSection = ({ filters }: JobsResultsSectionProps) => {
                   <article
                     key={job.publicId}
                     className={`jobs-mini-card ${isActive ? "jobs-mini-card--active" : ""}`}
-                    onClick={() => setSelectedJobId(job.publicId)}
+                    onClick={() => handleSelectJob(job.publicId)}
                   >
                     <button
                       type="button"
@@ -182,11 +225,10 @@ const JobsResultsSection = ({ filters }: JobsResultsSectionProps) => {
               })}
           </aside>
 
-          <div className="jobs-results__details">
-            {isLoadingDetails && <p>Učitavanje detalja...</p>}
+          <div className={`jobs-results__details ${isSwitchingDetails ? "jobs-results__details--loading" : ""}`}>
             {detailsError && <p>{detailsError}</p>}
 
-            {!isLoadingDetails && !detailsError && selectedJobDetails ? (
+            {!detailsError && selectedJobDetails ? (
               <article className="job-details-card">
                 <div className="job-details-card__header">
                   <div className="job-details-card__title-wrap">
@@ -298,8 +340,8 @@ const JobsResultsSection = ({ filters }: JobsResultsSectionProps) => {
                 </div>
               </article>
             ) : (
-              !isLoadingDetails &&
-              !detailsError && (
+              !detailsError &&
+              !isLoadingDetails && (
                 <div className="job-details-empty">
                   <img
                     src="/Zepter-Careers images/ZepterJobLogo.png"
@@ -314,6 +356,12 @@ const JobsResultsSection = ({ filters }: JobsResultsSectionProps) => {
                 </div>
               )
             )}
+
+            {isSwitchingDetails && (
+              <div className="jobs-results__details-overlay">
+                <div className="jobs-results__details-spinner" />
+              </div>
+            )}
           </div>
         </div>
 
@@ -325,9 +373,8 @@ const JobsResultsSection = ({ filters }: JobsResultsSectionProps) => {
                 (pageNumber) => (
                   <button
                     key={pageNumber}
-                    className={`jobs-results__page ${
-                      pageNumber === pagination.page ? "jobs-results__page--active" : ""
-                    }`}
+                    className={`jobs-results__page ${pageNumber === pagination.page ? "jobs-results__page--active" : ""
+                      }`}
                     onClick={() => setPage(pageNumber)}
                   >
                     {pageNumber}

@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import NotificationModal from "../components/NotificationModal";
@@ -16,6 +17,7 @@ export type JobsFiltersState = {
 };
 
 const JobsPage = () => {
+  const [searchParams] = useSearchParams();
   const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false);
 
   const [filters, setFilters] = useState<JobsFiltersState>({
@@ -26,6 +28,17 @@ const JobsPage = () => {
     employmentType: "",
     locale: "sr",
   });
+
+  useEffect(() => {
+    setFilters({
+      search: searchParams.get("search") || "",
+      region: searchParams.get("region") || "",
+      locationType: searchParams.get("locationType") || "",
+      workArea: searchParams.get("workArea") || "",
+      employmentType: searchParams.get("employmentType") || "",
+      locale: searchParams.get("locale") || "sr",
+    });
+  }, [searchParams]);
 
   const openNotifications = () => setIsNotificationModalOpen(true);
   const closeNotifications = () => setIsNotificationModalOpen(false);

@@ -260,14 +260,8 @@ const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) => {
               >
                 Uslovima korišćenja
               </a>
-              ,{" "}
-              <a
-                href="https://www.zepter.rs/rules/limits-of-delivery-and-manner-of-payment"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                uslovima dostave i načina plaćanja
-              </a>{" "}
+              {" "}
+              
               i potvrđujem da će moji podaci biti korišćeni u skladu sa{" "}
               <a
                 href="https://www.zepter.rs/rules/privacy-policy"
@@ -276,15 +270,8 @@ const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) => {
               >
                 Politikom privatnosti
               </a>{" "}
-              i{" "}
-              <a
-                href="https://www.zepter.rs/rules/uslovi-cuvanja-poslovne-tajne"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                pravilima čuvanja poslovne tajne
-              </a>
-              . *
+              
+              .
             </span>
           </label>
 
