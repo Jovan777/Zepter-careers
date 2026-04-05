@@ -94,7 +94,7 @@ const AdminCandidateDetailsPage = () => {
                     <strong>{application.publicId}</strong>
                     <div>{application.job?.company?.name || "-"}</div>
                     <div>{application.job?.region?.name || "-"}</div>
-                    <div>{new Date(application.appliedAt).toLocaleString("sr-RS")}</div>
+                    <div>{new Date(application.createdAt).toLocaleString("sr-RS")}</div>
                   </div>
 
                   <div className="admin-inline-actions">
