@@ -94,3 +94,153 @@ export type AdminApplicationListItem = {
   status: string;
   statusLabel: string;
 };
+
+export type AdminApplicationEvent = {
+  type: string;
+  timestamp: string;
+  data?: Record<string, unknown>;
+};
+
+export type AdminApplicationDocument = {
+  fileName: string;
+  fileUrl: string;
+};
+
+export type AdminApplicationDetailsResponse = {
+  application: {
+    _id: string;
+    publicId: string;
+    createdAt: string;
+    updatedAt?: string;
+    status: string;
+    reason: string;
+    cvDocument?: AdminApplicationDocument | null;
+    events: AdminApplicationEvent[];
+    candidate: {
+      _id?: string;
+      publicId?: string;
+      firstName: string;
+      lastName: string;
+      email: string;
+      phone?: string;
+      country?: string;
+      city?: string;
+      documents?: AdminApplicationDocument[];
+    };
+    job: {
+      _id?: string;
+      publicId?: string;
+      company?: {
+        _id?: string;
+        name?: string;
+      } | null;
+      region?: {
+        _id?: string;
+        name?: string;
+        isoCode?: string;
+      } | null;
+      status?: string;
+    };
+  };
+  statuses?: string[];
+};
+
+export type AdminCandidate = {
+  _id: string;
+  publicId: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  phone?: string;
+  country?: string;
+  city?: string;
+};
+
+export type AdminCandidateDetailsResponse = {
+  candidate: {
+    _id: string;
+    publicId: string;
+    email: string;
+    firstName: string;
+    lastName: string;
+    phone?: string;
+    country?: string;
+    city?: string;
+    documents?: {
+      fileName: string;
+      fileUrl: string;
+      uploadedAt?: string;
+    }[];
+  };
+  applications: {
+    _id: string;
+    publicId: string;
+    createdAt: string;
+    status: string;
+    reason?: string;
+    job?: {
+      _id?: string;
+      publicId?: string;
+      company?: {
+        _id?: string;
+        name?: string;
+      } | null;
+      region?: {
+        _id?: string;
+        name?: string;
+        isoCode?: string;
+      } | null;
+    };
+  }[];
+};
+
+export type Company = {
+  _id: string;
+  name: string;
+  legalEntity?: string;
+  isActive: boolean;
+};
+
+export type Region = {
+  _id: string;
+  type: string;
+  name: string;
+  isoCode?: string;
+  parentRegion?: string | null;
+  isActive: boolean;
+};
+
+export type Presence = {
+  _id: string;
+  company: {
+    _id: string;
+    name: string;
+  } | string;
+  region: {
+    _id: string;
+    name: string;
+    isoCode?: string;
+  } | string;
+  isActive: boolean;
+};
+
+export type SchedulerEvent = {
+  _id: string;
+  application: string | {
+    _id?: string;
+    publicId?: string;
+  };
+  candidate: string | {
+    _id?: string;
+    publicId?: string;
+    firstName?: string;
+    lastName?: string;
+    email?: string;
+  };
+  type: string;
+  startAt: string;
+  endAt: string;
+  timezone: string;
+  locationOrLink?: string;
+  notes?: string;
+};
