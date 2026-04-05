@@ -226,8 +226,8 @@ const AdminSchedulerPage = () => {
                 {isSubmitting
                   ? "Saving..."
                   : editingId
-                  ? "Update event"
-                  : "Create event"}
+                    ? "Update event"
+                    : "Create event"}
               </button>
             </div>
           </form>
@@ -252,9 +252,15 @@ const AdminSchedulerPage = () => {
               {events.map((event) => (
                 <tr key={event._id}>
                   <td>
-                    {event.candidate?.firstName} {event.candidate?.lastName}
+                    {typeof event.candidate === "string"
+                      ? event.candidate
+                      : `${event.candidate?.firstName || ""} ${event.candidate?.lastName || ""}`.trim() || "-"}
                   </td>
-                  <td>{event.application?.status || "-"}</td>
+                  <td>
+                    {typeof event.application === "string"
+                      ? "-"
+                      : event.application?.status || "-"}
+                  </td>                  
                   <td>{event.type}</td>
                   <td>{new Date(event.startAt).toLocaleString("sr-RS")}</td>
                   <td>{new Date(event.endAt).toLocaleString("sr-RS")}</td>

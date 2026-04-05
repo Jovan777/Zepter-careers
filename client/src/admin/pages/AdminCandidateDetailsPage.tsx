@@ -99,7 +99,7 @@ const AdminCandidateDetailsPage = () => {
 
                   <div className="admin-inline-actions">
                     <span className={`admin-badge admin-badge--${application.status}`}>
-                      {application.statusLabel}
+                      {application.statusLabel || application.status}                    
                     </span>
 
                     <Link

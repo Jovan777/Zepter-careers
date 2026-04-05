@@ -1,6 +1,3 @@
-
-
-
 export type AdminUser = {
   _id: string;
   email: string;
@@ -177,6 +174,7 @@ export type AdminCandidateDetailsResponse = {
     publicId: string;
     createdAt: string;
     status: string;
+    statusLabel?: string;
     reason?: string;
     job?: {
       _id?: string;
@@ -189,7 +187,9 @@ export type AdminCandidateDetailsResponse = {
         _id?: string;
         name?: string;
         isoCode?: string;
+        type?: string;
       } | null;
+      status?: string;
     };
   }[];
 };
@@ -201,46 +201,70 @@ export type Company = {
   isActive: boolean;
 };
 
+export type RegionParent = {
+  _id: string;
+  name: string;
+};
+
 export type Region = {
   _id: string;
   type: string;
   name: string;
   isoCode?: string;
-  parentRegion?: string | null;
+  parentRegion?: RegionParent | string | null;
   isActive: boolean;
+};
+
+export type PresenceCompanyRef = {
+  _id: string;
+  name: string;
+};
+
+export type PresenceRegionRef = {
+  _id: string;
+  name: string;
+  isoCode?: string;
+  type?: string;
 };
 
 export type Presence = {
   _id: string;
-  company: {
-    _id: string;
-    name: string;
-  } | string;
-  region: {
-    _id: string;
-    name: string;
-    isoCode?: string;
-  } | string;
+  company: PresenceCompanyRef;
+  region: PresenceRegionRef;
   isActive: boolean;
+};
+
+export type SchedulerEventApplicationRef = {
+  _id?: string;
+  publicId?: string;
+  status?: string;
+};
+
+export type SchedulerEventCandidateRef = {
+  _id?: string;
+  publicId?: string;
+  firstName?: string;
+  lastName?: string;
+  email?: string;
 };
 
 export type SchedulerEvent = {
   _id: string;
-  application: string | {
-    _id?: string;
-    publicId?: string;
-  };
-  candidate: string | {
-    _id?: string;
-    publicId?: string;
-    firstName?: string;
-    lastName?: string;
-    email?: string;
-  };
+  application: string | SchedulerEventApplicationRef;
+  candidate: string | SchedulerEventCandidateRef;
   type: string;
   startAt: string;
   endAt: string;
   timezone: string;
   locationOrLink?: string;
   notes?: string;
+};
+
+export type TranslationJobListItem = {
+  publicId: string;
+  name: string;
+};
+
+export type JobTranslationsOverviewResponse = {
+  translations: AdminTranslation[];
 };

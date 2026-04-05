@@ -186,8 +186,8 @@ const AdminRegionsPage = () => {
                 {isSubmitting
                   ? "Saving..."
                   : editingId
-                  ? "Update region"
-                  : "Create region"}
+                    ? "Update region"
+                    : "Create region"}
               </button>
             </div>
           </form>
@@ -213,7 +213,11 @@ const AdminRegionsPage = () => {
                   <td>{region.name}</td>
                   <td>{region.type}</td>
                   <td>{region.isoCode || "-"}</td>
-                  <td>{region.parentRegion?.name || "-"}</td>
+                  <td>
+                    {typeof region.parentRegion === "string"
+                      ? region.parentRegion
+                      : region.parentRegion?.name || "-"}
+                  </td>
                   <td>{region.isActive ? "Da" : "Ne"}</td>
                   <td>
                     <div className="admin-inline-actions">
@@ -226,7 +230,10 @@ const AdminRegionsPage = () => {
                             type: region.type,
                             name: region.name,
                             isoCode: region.isoCode || "",
-                            parentRegion: region.parentRegion?._id || "",
+                            parentRegion:
+                              typeof region.parentRegion === "string"
+                                ? region.parentRegion
+                                : region.parentRegion?._id || "",
                             isActive: region.isActive,
                           });
                         }}

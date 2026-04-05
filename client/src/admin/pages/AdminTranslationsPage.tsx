@@ -1,22 +1,28 @@
 import { useEffect, useState } from "react";
 import { useAdminAuth } from "../context/AdminAuthContext";
 import {
-  copyJobTranslation,
   deleteJobTranslation,
   getJobTranslationsOverview,
   getTranslationJobs,
   saveJobTranslation,
-  updateJobTranslation,
 } from "../api/adminTranslationsApi";
+import type {
+  AdminTranslation,
+  JobTranslationsOverviewResponse,
+  TranslationJobListItem,
+} from "../types/admin";
 
 const AdminTranslationsPage = () => {
   const { token } = useAdminAuth();
-  const [jobs, setJobs] = useState<any[]>([]);
+  const [jobs, setJobs] = useState<TranslationJobListItem[]>([]);
   const [selectedJobId, setSelectedJobId] = useState("");
   const [selectedLocale, setSelectedLocale] = useState("sr");
-  const [overview, setOverview] = useState<any>(null);
-  const [form, setForm] = useState<any>({ name: "", shortDescription: "", applyLabel: "Apply" });
-  const [error, setError] = useState("");
+  const [overview, setOverview] = useState<JobTranslationsOverviewResponse | null>(null);
+  const [form, setForm] = useState<Partial<AdminTranslation>>({
+    name: "",
+    shortDescription: "",
+    applyLabel: "Apply",
+  }); const [error, setError] = useState("");
 
   useEffect(() => {
     const loadJobs = async () => {
@@ -32,8 +38,7 @@ const AdminTranslationsPage = () => {
     try {
       const data = await getJobTranslationsOverview(token, selectedJobId);
       setOverview(data);
-      const translation = data.translations.find((t: any) => t.locale === selectedLocale);
-      setForm(
+      const translation = data.translations.find((t) => t.locale === selectedLocale); setForm(
         translation || {
           locale: selectedLocale,
           name: "",
@@ -85,7 +90,7 @@ const AdminTranslationsPage = () => {
           <div className="admin-panel">
             <h3>Available translations</h3>
             <ul className="admin-list">
-              {overview.translations.map((item: any) => (
+              {overview.translations.map((item) => (
                 <li key={item.locale}>{item.locale} — {item.name}</li>
               ))}
             </ul>
