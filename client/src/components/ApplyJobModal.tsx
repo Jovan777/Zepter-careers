@@ -5,7 +5,6 @@ import { submitApplication } from "../api/applicationsApi";
 type ApplyJobModalProps = {
   isOpen: boolean;
   onClose: () => void;
-  jobTitle?: string;
   jobPublicId: string;
 };
 
@@ -34,7 +33,6 @@ const splitFullName = (fullName: string) => {
 const ApplyJobModal = ({
   isOpen,
   onClose,
-  jobTitle,
   jobPublicId,
 }: ApplyJobModalProps) => {
   const navigate = useNavigate();

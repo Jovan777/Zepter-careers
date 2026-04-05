@@ -403,7 +403,6 @@ const JobsResultsSection = ({ filters }: JobsResultsSectionProps) => {
       <ApplyJobModal
         isOpen={isApplyModalOpen}
         onClose={closeApplyModal}
-        jobTitle={selectedJobDetails?.translation.title || ""}
         jobPublicId={selectedJobDetails?.publicId || ""}
       />
     </section>
