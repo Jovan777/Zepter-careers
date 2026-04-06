@@ -14,7 +14,7 @@ const OpenPositionsSection = () => {
         const data = await getPublishedJobs({
           locale: "sr",
           page: 1,
-          limit: 3,
+          limit: 6,
         });
 
         setJobs(data.items);
