@@ -7,17 +7,17 @@ import type { JobsFiltersState } from "../pages/JobsPage";
 
 type JobsHeroSectionProps = {
   filters: JobsFiltersState;
-  onChangeFilters: React.Dispatch<React.SetStateAction<JobsFiltersState>>;
+  onApplyFilters: (filters: JobsFiltersState) => void;
 };
 
-const JobsHeroSection = ({ filters, onChangeFilters }: JobsHeroSectionProps) => {
-  const [keywordInput, setKeywordInput] = useState(filters.search);
+const JobsHeroSection = ({ filters, onApplyFilters }: JobsHeroSectionProps) => {
+  const [draftFilters, setDraftFilters] = useState<JobsFiltersState>(filters);
   const [availableFilters, setAvailableFilters] = useState<JobFiltersResponse | null>(null);
   const [isLoadingFilters, setIsLoadingFilters] = useState(true);
 
   useEffect(() => {
-    setKeywordInput(filters.search);
-  }, [filters.search]);
+    setDraftFilters(filters);
+  }, [filters]);
 
   useEffect(() => {
     const loadFilters = async () => {
@@ -64,10 +64,10 @@ const JobsHeroSection = ({ filters, onChangeFilters }: JobsHeroSectionProps) => 
   }, [availableFilters]);
 
   const handleSearch = () => {
-    onChangeFilters((prev) => ({
-      ...prev,
-      search: keywordInput.trim(),
-    }));
+    onApplyFilters({
+      ...draftFilters,
+      search: draftFilters.search.trim(),
+    });
   };
 
   return (
@@ -85,8 +85,13 @@ const JobsHeroSection = ({ filters, onChangeFilters }: JobsHeroSectionProps) => 
               <input
                 type="text"
                 placeholder="Pretraži otvorene pozicije"
-                value={keywordInput}
-                onChange={(e) => setKeywordInput(e.target.value)}
+                value={draftFilters.search}
+                onChange={(e) =>
+                  setDraftFilters((prev) => ({
+                    ...prev,
+                    search: e.target.value,
+                  }))
+                }
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
                     handleSearch();
@@ -106,9 +111,9 @@ const JobsHeroSection = ({ filters, onChangeFilters }: JobsHeroSectionProps) => 
 
               <CustomSelect
                 placeholder={isLoadingFilters ? "Učitavanje..." : "Tip lokacije"}
-                value={filters.locationType}
+                value={draftFilters.locationType}
                 onChange={(value) =>
-                  onChangeFilters((prev) => ({
+                  setDraftFilters((prev) => ({
                     ...prev,
                     locationType: value,
                   }))
@@ -118,7 +123,11 @@ const JobsHeroSection = ({ filters, onChangeFilters }: JobsHeroSectionProps) => 
               />
             </div>
 
-            <button className="jobs-hero__search-button" type="button" onClick={handleSearch}>
+            <button
+              className="jobs-hero__search-button"
+              type="button"
+              onClick={handleSearch}
+            >
               <span className="jobs-hero__search-button-icon">⌕</span>
               <span>Pretraga</span>
             </button>
@@ -127,9 +136,9 @@ const JobsHeroSection = ({ filters, onChangeFilters }: JobsHeroSectionProps) => 
           <div className="jobs-hero__filters">
             <CountrySearchSelect
               placeholder={isLoadingFilters ? "Učitavanje..." : "Sve regije"}
-              value={filters.region}
+              value={draftFilters.region}
               onChange={(value) =>
-                onChangeFilters((prev) => ({
+                setDraftFilters((prev) => ({
                   ...prev,
                   region: value,
                 }))
@@ -140,9 +149,9 @@ const JobsHeroSection = ({ filters, onChangeFilters }: JobsHeroSectionProps) => 
 
             <CustomSelect
               placeholder="Jezik"
-              value={filters.locale}
+              value={draftFilters.locale}
               onChange={(value) =>
-                onChangeFilters((prev) => ({
+                setDraftFilters((prev) => ({
                   ...prev,
                   locale: value,
                 }))
