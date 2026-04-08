@@ -1,6 +1,48 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import CustomSelect from "./CustomSelect";
+import CountrySearchSelect from "./CountrySearchSelect";
+import { getJobFilters } from "../api/jobsApi";
+import type { JobFiltersResponse } from "../types/jobs";
+
+const fallbackCountryOptions = [
+  { value: "austria", label: "Austria" },
+  { value: "belarus", label: "Belarus" },
+  { value: "bosnia-and-herzegovina", label: "Bosnia and Herzegovina" },
+  { value: "bulgaria", label: "Bulgaria" },
+  { value: "croatia", label: "Croatia" },
+  { value: "czech-republic", label: "Czech Republic" },
+  { value: "estonia", label: "Estonia" },
+  { value: "france", label: "France" },
+  { value: "germany", label: "Germany" },
+  { value: "hungary", label: "Hungary" },
+  { value: "italy", label: "Italy" },
+  { value: "latvia", label: "Latvia" },
+  { value: "lithuania", label: "Lithuania" },
+  { value: "moldova", label: "Moldova" },
+  { value: "netherlands", label: "Netherlands" },
+  { value: "norway", label: "Norway" },
+  { value: "poland", label: "Poland" },
+  { value: "romania", label: "Romania" },
+  { value: "russia", label: "Russia" },
+  { value: "serbia", label: "Serbia" },
+  { value: "slovakia", label: "Slovakia" },
+  { value: "slovenia", label: "Slovenia" },
+  { value: "spain", label: "Spain" },
+  { value: "switzerland", label: "Switzerland" },
+  { value: "ukraine", label: "Ukraine" },
+  { value: "united-kingdom", label: "United Kingdom" },
+  { value: "canada", label: "Canada" },
+  { value: "united-states", label: "United States" },
+  { value: "australia", label: "Australia" },
+  { value: "azerbaijan", label: "Azerbaijan" },
+  { value: "egypt", label: "Egypt" },
+  { value: "india", label: "India" },
+  { value: "israel", label: "Israel" },
+  { value: "jordan", label: "Jordan" },
+  { value: "kazakhstan", label: "Kazakhstan" },
+  { value: "new-zealand", label: "New Zealand" },
+];
 
 const HeroSection = () => {
   const navigate = useNavigate();
@@ -9,6 +51,36 @@ const HeroSection = () => {
   const [locationType, setLocationType] = useState("");
   const [region, setRegion] = useState("");
   const [language, setLanguage] = useState("sr");
+  const [availableFilters, setAvailableFilters] = useState<JobFiltersResponse | null>(null);
+  const [isLoadingFilters, setIsLoadingFilters] = useState(true);
+
+  useEffect(() => {
+    const loadFilters = async () => {
+      try {
+        const data = await getJobFilters();
+        setAvailableFilters(data);
+      } catch (error) {
+        console.error("Greška pri dohvatanju job filtera:", error);
+      } finally {
+        setIsLoadingFilters(false);
+      }
+    };
+
+    loadFilters();
+  }, []);
+
+  const countryOptions = useMemo(() => {
+    const dynamic = availableFilters?.regions || [];
+
+    if (dynamic.length > 0) {
+      return dynamic.map((item) => ({
+        value: item.value,
+        label: item.label,
+      }));
+    }
+
+    return fallbackCountryOptions;
+  }, [availableFilters]);
 
   const handleSearch = () => {
     const params = new URLSearchParams();
@@ -92,15 +164,12 @@ const HeroSection = () => {
             </div>
 
             <div className="hero__filters">
-              <CustomSelect
-                placeholder="Sve regije"
+              <CountrySearchSelect
+                placeholder={isLoadingFilters ? "Učitavanje..." : "Sve regije"}
                 value={region}
                 onChange={setRegion}
                 className="hero__small-custom-select"
-                options={[
-                  { value: "serbia", label: "Srbija" },
-                  { value: "europe", label: "Evropa" },
-                ]}
+                options={countryOptions}
               />
 
               <CustomSelect

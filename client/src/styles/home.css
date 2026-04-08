@@ -130,7 +130,9 @@
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    overflow: hidden;
+    overflow: visible;
+    z-index: 20;
+    isolation: isolate;
 }
 
 .hero__overlay {
@@ -182,6 +184,8 @@
     display: flex;
     flex-direction: column;
     gap: 12px;
+    position: relative;
+    z-index: 25;
 }
 
 
@@ -299,6 +303,8 @@
     display: flex;
     align-items: center;
     gap: 12px;
+    position: relative;
+    z-index: 30;
 }
 
 .hero__small-select-wrap {
@@ -481,7 +487,7 @@
     border-radius: 16px;
     box-shadow: 0 18px 40px rgba(12, 24, 46, 0.16);
     padding: 8px;
-    z-index: 30;
+    z-index: 200;
     overflow: hidden;
 }
 
@@ -572,13 +578,74 @@
 }
 
 
+/* COUNTRY SEARCH SELECT */
+
+.country-search-select__menu {
+    padding: 8px;
+}
+
+.country-search-select__search-wrap {
+    padding: 4px 4px 8px;
+    border-bottom: 1px solid #eef2f7;
+    margin-bottom: 6px;
+}
+
+.country-search-select__search-input {
+    width: 100%;
+    height: 32px;
+    border: 1px solid #d8deea;
+    border-radius: 12px;
+    padding: 0 14px;
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: #31456a;
+    outline: none;
+    background: #ffffff;
+    transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.country-search-select__search-input:focus {
+    border-color: #b59c68;
+    box-shadow: 0 0 0 3px rgba(181, 156, 104, 0.14);
+}
+
+.country-search-select__search-input::placeholder {
+    color: #8b919b;
+}
+
+.country-search-select__options {
+    max-height: 260px;
+    overflow-y: auto;
+    padding-right: 2px;
+}
+
+.country-search-select__options::-webkit-scrollbar {
+    width: 8px;
+}
+
+.country-search-select__options::-webkit-scrollbar-thumb {
+    background: rgba(49, 69, 106, 0.2);
+    border-radius: 999px;
+}
+
+.country-search-select__empty {
+    padding: 14px 12px;
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: #8b919b;
+}
+
 /* BRAND STRIP */
 .brand-strip {
     background: #050505;
     height: 96px;
     display: flex;
     align-items: center;
-    overflow: hidden;
+    overflow: visible;
+    position: relative;
+    z-index: 1;
 }
 
 .brand-strip__viewport {

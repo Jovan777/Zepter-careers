@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import CustomSelect from "./CustomSelect";
+import CountrySearchSelect from "./CountrySearchSelect";
 import { getJobFilters } from "../api/jobsApi";
 import type { JobFiltersResponse } from "../types/jobs";
 import type { JobsFiltersState } from "../pages/JobsPage";
@@ -13,6 +14,10 @@ const JobsHeroSection = ({ filters, onChangeFilters }: JobsHeroSectionProps) => 
   const [keywordInput, setKeywordInput] = useState(filters.search);
   const [availableFilters, setAvailableFilters] = useState<JobFiltersResponse | null>(null);
   const [isLoadingFilters, setIsLoadingFilters] = useState(true);
+
+  useEffect(() => {
+    setKeywordInput(filters.search);
+  }, [filters.search]);
 
   useEffect(() => {
     const loadFilters = async () => {
@@ -31,13 +36,10 @@ const JobsHeroSection = ({ filters, onChangeFilters }: JobsHeroSectionProps) => 
 
   const regionOptions = useMemo(() => {
     const dynamic = availableFilters?.regions || [];
-    return [
-      { value: "", label: "Sve regije" },
-      ...dynamic.map((item) => ({
-        value: item.value,
-        label: item.label,
-      })),
-    ];
+    return dynamic.map((item) => ({
+      value: item.value,
+      label: item.label,
+    }));
   }, [availableFilters]);
 
   const locationTypeOptions = useMemo(() => {
@@ -123,7 +125,7 @@ const JobsHeroSection = ({ filters, onChangeFilters }: JobsHeroSectionProps) => 
           </div>
 
           <div className="jobs-hero__filters">
-            <CustomSelect
+            <CountrySearchSelect
               placeholder={isLoadingFilters ? "Učitavanje..." : "Sve regije"}
               value={filters.region}
               onChange={(value) =>
