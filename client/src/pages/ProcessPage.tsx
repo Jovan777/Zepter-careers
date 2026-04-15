@@ -36,7 +36,7 @@ const ProcessPage = () => {
 
       <section className="info-page-hero">
         <div className="info-page-hero__inner">
-          <h1 className="info-page-hero__title">Process</h1>
+          <h1 className="info-page-hero__title">Proces Prijave</h1>
           <p className="info-page-hero__subtitle">
             Jednostavan i pregledan proces prijave i selekcije kandidata.
           </p>

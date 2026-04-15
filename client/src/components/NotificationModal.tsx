@@ -275,6 +275,7 @@ const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) => {
             </span>
           </label>
 
+          {/*
           <label className="notification-modal__checkbox">
             <input
               type="checkbox"
@@ -286,6 +287,7 @@ const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) => {
               popustima.
             </span>
           </label>
+          */}
 
           {submitError && <p className="notification-modal__error">{submitError}</p>}
 

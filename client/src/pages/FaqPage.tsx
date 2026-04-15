@@ -42,7 +42,7 @@ const FaqPage = () => {
 
       <section className="info-page-hero">
         <div className="info-page-hero__inner">
-          <h1 className="info-page-hero__title">FAQ</h1>
+          <h1 className="info-page-hero__title">Najčešće postavljana pitanja</h1>
           <p className="info-page-hero__subtitle">
             Odgovori na najčešća pitanja o prijavi, konkursima i obaveštenjima.
           </p>

@@ -55,7 +55,7 @@ const ApplyJobModal = ({
         email.trim() &&
         phone.trim() &&
         cvFile &&
-        coverLetter.trim() &&
+        //coverLetter.trim() &&
         acceptedTerms &&
         jobPublicId
     );
@@ -242,7 +242,7 @@ const ApplyJobModal = ({
           </div>
 
           <div className="apply-modal__field">
-            <label>Propratno pismo *</label>
+            <label>Propratno pismo</label>
             <textarea
               placeholder="Recite nam zašto ste zainteresovani za ovu poziciju..."
               value={coverLetter}
@@ -275,6 +275,7 @@ const ApplyJobModal = ({
             </span>
           </label>
 
+          {/* 
           <label className="apply-modal__checkbox">
             <input
               type="checkbox"
@@ -285,6 +286,7 @@ const ApplyJobModal = ({
               Želim da primam obaveštenja o Zepter proizvodima, akcijama i popustima.
             </span>
           </label>
+          */}
 
           {submitError ? (
             <p

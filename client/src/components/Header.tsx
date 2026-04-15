@@ -22,11 +22,11 @@ const Header = ({ onOpenNotifications }: HeaderProps) => {
 
         <nav className="header__nav">
           <Link to="/jobs" className="header__nav-link">
-            Jobs
+            Poslovi
           </Link>
 
           <Link to="/process" className="header__nav-link">
-            Process
+            Kako se prijaviti
           </Link>
 
           <a
@@ -35,11 +35,11 @@ const Header = ({ onOpenNotifications }: HeaderProps) => {
             target="_blank"
             rel="noopener noreferrer"
           >
-            Contact
+            Kontakt
           </a>
 
           <Link to="/faq" className="header__nav-link">
-            FAQ
+            Najčešća pitanja
           </Link>
         </nav>
 
