@@ -27,7 +27,7 @@ const OfficialHeader = () => {
           </a>
 
           <Link to="/our-team" className="official-header__nav-link official-header__nav-link--active">
-            Our Team
+            Naš Tim
           </Link>
 
           <a
