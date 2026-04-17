@@ -21,6 +21,7 @@ import AdminPresencesPage from "./admin/pages/AdminPresencesPage";
 import AdminSchedulerPage from "./admin/pages/AdminSchedulerPage";
 import ProcessPage from "./pages/ProcessPage";
 import FaqPage from "./pages/FaqPage";
+import OurTeamPage from "./pages/OurTeamPage";
 
 function App() {
   return (
@@ -30,6 +31,8 @@ function App() {
         <Route path="/jobs" element={<JobsPage />} />
         <Route path="/process" element={<ProcessPage />} />
         <Route path="/faq" element={<FaqPage />} />
+        <Route path="/our-team" element={<OurTeamPage />} />
+
 
         <Route path="/admin/login" element={<AdminLoginPage />} />
 
