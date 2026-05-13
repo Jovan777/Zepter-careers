@@ -76,12 +76,16 @@ export type AdminApplicationListItem = {
   publicId: string;
   appliedAt: string;
   candidate: {
+    publicId?: string;
     firstName: string;
     lastName: string;
     email: string;
     phone?: string;
     country?: string;
     city?: string;
+    isArchived?: boolean;
+    archivedAt?: string | null;
+    archivedReason?: string;
   };
   job: {
     publicId?: string;
@@ -151,6 +155,12 @@ export type AdminCandidate = {
   phone?: string;
   country?: string;
   city?: string;
+  isArchived?: boolean;
+  archivedAt?: string | null;
+  archivedReason?: string;
+  restoredAt?: string | null;
+  createdAt?: string;
+  updatedAt?: string;
 };
 
 export type AdminCandidateDetailsResponse = {
@@ -163,6 +173,15 @@ export type AdminCandidateDetailsResponse = {
     phone?: string;
     country?: string;
     city?: string;
+    isArchived?: boolean;
+    archivedAt?: string | null;
+    archivedReason?: string;
+    restoredAt?: string | null;
+    archivedBy?: {
+      _id?: string;
+      email?: string;
+      role?: string;
+    } | null;
     documents?: {
       fileName: string;
       fileUrl: string;
@@ -172,7 +191,8 @@ export type AdminCandidateDetailsResponse = {
   applications: {
     _id: string;
     publicId: string;
-    createdAt: string;
+    createdAt?: string;
+    appliedAt?: string;
     status: string;
     statusLabel?: string;
     reason?: string;

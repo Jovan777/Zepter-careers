@@ -79,11 +79,38 @@ const candidateSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+
+    isArchived: {
+      type: Boolean,
+      default: false,
+      index: true,
+    },
+    archivedAt: {
+      type: Date,
+      default: null,
+    },
+    archivedReason: {
+      type: String,
+      default: "",
+      trim: true,
+    },
+    archivedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Admin",
+      default: null,
+    },
+    restoredAt: {
+      type: Date,
+      default: null,
+    },
   },
   {
     timestamps: true,
     collection: "candidates",
   }
 );
+
+candidateSchema.index({ isArchived: 1, email: 1 });
+candidateSchema.index({ isArchived: 1, createdAt: -1 });
 
 module.exports = mongoose.model("Candidate", candidateSchema);

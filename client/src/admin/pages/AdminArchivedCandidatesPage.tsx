@@ -2,13 +2,13 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAdminAuth } from "../context/AdminAuthContext";
 import {
-  archiveAdminCandidate,
-  exportAdminCandidates,
-  getAdminCandidates,
+  exportAdminArchivedCandidates,
+  getAdminArchivedCandidates,
+  restoreAdminCandidate,
 } from "../api/adminCandidatesApi";
 import type { AdminCandidate } from "../types/admin";
 
-const AdminCandidatesPage = () => {
+const AdminArchivedCandidatesPage = () => {
   const { token } = useAdminAuth();
 
   const [candidates, setCandidates] = useState<AdminCandidate[]>([]);
@@ -18,10 +18,6 @@ const AdminCandidatesPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
 
-  const [candidateToArchive, setCandidateToArchive] = useState<AdminCandidate | null>(null);
-  const [archiveReason, setArchiveReason] = useState("");
-  const [isArchiving, setIsArchiving] = useState(false);
-
   const loadCandidates = async () => {
     if (!token) return;
 
@@ -29,7 +25,7 @@ const AdminCandidatesPage = () => {
       setIsLoading(true);
       setError("");
 
-      const data = await getAdminCandidates(token, {
+      const data = await getAdminArchivedCandidates(token, {
         email,
         search,
       });
@@ -39,7 +35,7 @@ const AdminCandidatesPage = () => {
       setError(
         err instanceof Error
           ? err.message
-          : "Greška pri dohvatanju kandidata."
+          : "Greška pri dohvatanju arhiviranih kandidata."
       );
     } finally {
       setIsLoading(false);
@@ -50,41 +46,25 @@ const AdminCandidatesPage = () => {
     loadCandidates();
   }, [token]);
 
-  const openArchiveModal = (candidate: AdminCandidate) => {
-    setCandidateToArchive(candidate);
-    setArchiveReason("");
-  };
+  const handleRestoreCandidate = async (candidate: AdminCandidate) => {
+    if (!token) return;
 
-  const closeArchiveModal = () => {
-    if (isArchiving) return;
+    const confirmed = window.confirm(
+      `Vratiti kandidata ${candidate.firstName} ${candidate.lastName} među aktivne?`
+    );
 
-    setCandidateToArchive(null);
-    setArchiveReason("");
-  };
-
-  const handleArchiveCandidate = async () => {
-    if (!token || !candidateToArchive) return;
+    if (!confirmed) return;
 
     try {
-      setIsArchiving(true);
       setError("");
-
-      await archiveAdminCandidate(token, candidateToArchive.publicId, {
-        reason: archiveReason,
-      });
-
-      setCandidateToArchive(null);
-      setArchiveReason("");
-
+      await restoreAdminCandidate(token, candidate.publicId);
       await loadCandidates();
     } catch (err) {
       setError(
         err instanceof Error
           ? err.message
-          : "Greška pri arhiviranju kandidata."
+          : "Greška pri vraćanju kandidata."
       );
-    } finally {
-      setIsArchiving(false);
     }
   };
 
@@ -95,7 +75,7 @@ const AdminCandidatesPage = () => {
       setIsExporting(true);
       setError("");
 
-      await exportAdminCandidates(token, {
+      await exportAdminArchivedCandidates(token, {
         email,
         search,
       });
@@ -103,7 +83,7 @@ const AdminCandidatesPage = () => {
       setError(
         err instanceof Error
           ? err.message
-          : "Greška pri exportu kandidata."
+          : "Greška pri exportu arhiviranih kandidata."
       );
     } finally {
       setIsExporting(false);
@@ -114,16 +94,16 @@ const AdminCandidatesPage = () => {
     <section className="admin-page">
       <div className="admin-page__header admin-page__header--row">
         <div>
-          <h2>Candidates</h2>
-          <p>Pregled aktivnih kandidata i njihovih osnovnih podataka.</p>
+          <h2>Archived Candidates</h2>
+          <p>Pregled arhiviranih kandidata koji trenutno nisu u aktivnom fokusu.</p>
         </div>
 
         <div className="admin-page__actions">
           <Link
-            to="/admin/candidates/archived"
+            to="/admin/candidates"
             className="admin-button admin-button--ghost"
           >
-            Archived candidates
+            Active candidates
           </Link>
 
           <button
@@ -165,7 +145,7 @@ const AdminCandidatesPage = () => {
 
       <div className="admin-panel admin-table-wrapper">
         {isLoading ? (
-          <p>Učitavanje kandidata...</p>
+          <p>Učitavanje arhiviranih kandidata...</p>
         ) : (
           <table className="admin-table">
             <thead>
@@ -176,6 +156,8 @@ const AdminCandidatesPage = () => {
                 <th>Telefon</th>
                 <th>Država</th>
                 <th>Grad</th>
+                <th>Arhivirano</th>
+                <th>Razlog</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -192,6 +174,12 @@ const AdminCandidatesPage = () => {
                   <td>{candidate.country || "-"}</td>
                   <td>{candidate.city || "-"}</td>
                   <td>
+                    {candidate.archivedAt
+                      ? new Date(candidate.archivedAt).toLocaleString("sr-RS")
+                      : "-"}
+                  </td>
+                  <td>{candidate.archivedReason || "-"}</td>
+                  <td>
                     <div className="admin-inline-actions">
                       <Link
                         to={`/admin/candidates/${candidate.publicId}`}
@@ -202,10 +190,10 @@ const AdminCandidatesPage = () => {
 
                       <button
                         type="button"
-                        className="admin-button admin-button--danger"
-                        onClick={() => openArchiveModal(candidate)}
+                        className="admin-button admin-button--primary"
+                        onClick={() => handleRestoreCandidate(candidate)}
                       >
-                        Archive
+                        Restore
                       </button>
                     </div>
                   </td>
@@ -214,61 +202,15 @@ const AdminCandidatesPage = () => {
 
               {!candidates.length && (
                 <tr>
-                  <td colSpan={7}>Nema pronađenih aktivnih kandidata.</td>
+                  <td colSpan={9}>Nema pronađenih arhiviranih kandidata.</td>
                 </tr>
               )}
             </tbody>
           </table>
         )}
       </div>
-      {candidateToArchive && (
-        <div className="admin-modal-backdrop" role="dialog" aria-modal="true">
-          <div className="admin-modal">
-            <h3>Arhiviranje kandidata</h3>
-
-            <p>
-              Da li ste sigurni da želite da arhivirate kandidata{" "}
-              <strong>
-                {candidateToArchive.firstName} {candidateToArchive.lastName}
-              </strong>
-              ?
-            </p>
-
-            <label className="admin-form-field">
-              Razlog
-              <textarea
-                className="admin-input admin-input--textarea"
-                placeholder="Unesite razlog arhiviranja..."
-                value={archiveReason}
-                onChange={(e) => setArchiveReason(e.target.value)}
-                disabled={isArchiving}
-              />
-            </label>
-
-            <div className="admin-modal__actions">
-              <button
-                type="button"
-                className="admin-button admin-button--ghost"
-                onClick={closeArchiveModal}
-                disabled={isArchiving}
-              >
-                Otkaži
-              </button>
-
-              <button
-                type="button"
-                className="admin-button admin-button--danger"
-                onClick={handleArchiveCandidate}
-                disabled={isArchiving}
-              >
-                {isArchiving ? "Arhiviranje..." : "Arhiviraj"}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </section>
   );
 };
 
-export default AdminCandidatesPage;
+export default AdminArchivedCandidatesPage;

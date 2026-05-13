@@ -22,6 +22,8 @@ import AdminSchedulerPage from "./admin/pages/AdminSchedulerPage";
 import ProcessPage from "./pages/ProcessPage";
 import FaqPage from "./pages/FaqPage";
 import OurTeamPage from "./pages/OurTeamPage";
+import AdminArchivedCandidatesPage from "./admin/pages/AdminArchivedCandidatesPage";
+
 
 function App() {
   return (
@@ -53,6 +55,7 @@ function App() {
           <Route path="applications" element={<AdminApplicationsPage />} />
           <Route path="applications/:publicId" element={<AdminApplicationDetailsPage />} />
           <Route path="candidates" element={<AdminCandidatesPage />} />
+          <Route path="candidates/archived" element={<AdminArchivedCandidatesPage />} />
           <Route path="candidates/:publicId" element={<AdminCandidateDetailsPage />} />
           <Route path="companies" element={<AdminCompaniesPage />} />
           <Route path="regions" element={<AdminRegionsPage />} />

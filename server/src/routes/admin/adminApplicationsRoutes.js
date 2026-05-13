@@ -4,6 +4,7 @@ const {
   getAdminApplications,
   getAdminApplicationById,
   updateAdminApplicationStatus,
+  exportAdminApplications,
 } = require("../../controllers/admin/adminApplicationsController");
 
 const router = express.Router();
@@ -11,6 +12,8 @@ const router = express.Router();
 router.use(adminAuthMiddleware);
 
 router.get("/", getAdminApplications);
+router.get("/export", exportAdminApplications);
+
 router.get("/:publicId", getAdminApplicationById);
 router.put("/:publicId/status", updateAdminApplicationStatus);
 
