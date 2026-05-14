@@ -89,6 +89,7 @@ export type AdminApplicationListItem = {
   };
   job: {
     publicId?: string;
+    positionName?: string;
     company?: { name?: string };
     region?: { name?: string };
   };
@@ -131,6 +132,7 @@ export type AdminApplicationDetailsResponse = {
     job: {
       _id?: string;
       publicId?: string;
+      positionName?: string;
       company?: {
         _id?: string;
         name?: string;
@@ -199,6 +201,7 @@ export type AdminCandidateDetailsResponse = {
     job?: {
       _id?: string;
       publicId?: string;
+      positionName?: string;
       company?: {
         _id?: string;
         name?: string;

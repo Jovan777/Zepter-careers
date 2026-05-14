@@ -1,6 +1,7 @@
 const ExcelJS = require("exceljs");
 const Candidate = require("../../models/Candidate");
 const Application = require("../../models/Application");
+const JobTranslation = require("../../models/JobTranslation");
 require("../../models/Job");
 require("../../models/Company");
 require("../../models/Region");
@@ -38,6 +39,32 @@ const buildCandidateFilter = ({ email, archived }) => {
   }
 
   return filter;
+};
+
+const getJobPositionName = async (jobId, preferredLocale = "sr") => {
+  if (!jobId) return "";
+
+  let translation = await JobTranslation.findOne({
+    job: jobId,
+    locale: preferredLocale,
+  }).select("name locale");
+
+  if (!translation && preferredLocale !== "en") {
+    translation = await JobTranslation.findOne({
+      job: jobId,
+      locale: "en",
+    }).select("name locale");
+  }
+
+  if (!translation) {
+    translation = await JobTranslation.findOne({
+      job: jobId,
+    })
+      .sort({ locale: 1 })
+      .select("name locale");
+  }
+
+  return translation?.name || "";
 };
 
 const filterCandidatesBySearch = (candidates, search) => {
@@ -161,16 +188,34 @@ const getAdminCandidateById = async (req, res) => {
       })
       .sort({ createdAt: -1 });
 
-    const mappedApplications = applications.map((application) => ({
-      _id: application._id,
-      publicId: application.publicId,
-      createdAt: application.createdAt,
-      appliedAt: application.createdAt,
-      status: application.status,
-      statusLabel: formatStatusLabel(application.status),
-      reason: application.reason,
-      job: application.job,
-    }));
+    const mappedApplications = await Promise.all(
+      applications.map(async (application) => {
+        const jobObject = application.job?.toObject
+          ? application.job.toObject()
+          : application.job;
+
+        const positionName = await getJobPositionName(
+          application.job?._id,
+          "sr"
+        );
+
+        return {
+          _id: application._id,
+          publicId: application.publicId,
+          createdAt: application.createdAt,
+          appliedAt: application.createdAt,
+          status: application.status,
+          statusLabel: formatStatusLabel(application.status),
+          reason: application.reason,
+          job: jobObject
+            ? {
+              ...jobObject,
+              positionName,
+            }
+            : null,
+        };
+      })
+    );
 
     return res.status(200).json({
       candidate,

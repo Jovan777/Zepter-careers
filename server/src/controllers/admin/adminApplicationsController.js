@@ -1,6 +1,7 @@
 const Application = require("../../models/Application");
 const Candidate = require("../../models/Candidate");
 const ExcelJS = require("exceljs");
+const JobTranslation = require("../../models/JobTranslation");
 require("../../models/Job");
 require("../../models/Company");
 require("../../models/Region");
@@ -43,18 +44,62 @@ const buildApplicationsFilter = async ({ status, email }) => {
   return filter;
 };
 
-const mapApplicationListItems = (applications) => {
-  return applications.map((application) => ({
-    _id: application._id,
-    publicId: application.publicId,
-    appliedAt: application.createdAt,
-    candidate: application.candidate,
-    job: application.job,
-    status: application.status,
-    statusLabel: formatStatusLabel(application.status),
-    reason: application.reason,
-    cvDocument: application.cvDocument,
-  }));
+const mapApplicationListItems = async (applications, preferredLocale = "sr") => {
+  return Promise.all(
+    applications.map(async (application) => {
+      const jobObject = application.job?.toObject
+        ? application.job.toObject()
+        : application.job;
+
+      const positionName = await getJobPositionName(
+        application.job?._id,
+        preferredLocale
+      );
+
+      return {
+        _id: application._id,
+        publicId: application.publicId,
+        appliedAt: application.createdAt,
+        candidate: application.candidate,
+        job: jobObject
+          ? {
+            ...jobObject,
+            positionName,
+          }
+          : null,
+        status: application.status,
+        statusLabel: formatStatusLabel(application.status),
+        reason: application.reason,
+        cvDocument: application.cvDocument,
+      };
+    })
+  );
+};
+
+const getJobPositionName = async (jobId, preferredLocale = "sr") => {
+  if (!jobId) return "";
+
+  let translation = await JobTranslation.findOne({
+    job: jobId,
+    locale: preferredLocale,
+  }).select("name locale");
+
+  if (!translation && preferredLocale !== "en") {
+    translation = await JobTranslation.findOne({
+      job: jobId,
+      locale: "en",
+    }).select("name locale");
+  }
+
+  if (!translation) {
+    translation = await JobTranslation.findOne({
+      job: jobId,
+    })
+      .sort({ locale: 1 })
+      .select("name locale");
+  }
+
+  return translation?.name || "";
 };
 
 const filterApplicationsBySearch = (items, search) => {
@@ -71,6 +116,7 @@ const filterApplicationsBySearch = (items, search) => {
     const regionName = String(item.job?.region?.name || "").toLowerCase();
     const jobPublicId = String(item.job?.publicId || "").toLowerCase();
     const applicationPublicId = String(item.publicId || "").toLowerCase();
+    const positionName = String(item.job?.positionName || "").toLowerCase();
 
     return (
       fullName.includes(search) ||
@@ -81,7 +127,8 @@ const filterApplicationsBySearch = (items, search) => {
       companyName.includes(search) ||
       regionName.includes(search) ||
       jobPublicId.includes(search) ||
-      applicationPublicId.includes(search)
+      applicationPublicId.includes(search) ||
+      positionName.includes(search)
     );
   });
 };
@@ -103,7 +150,7 @@ const getApplicationsList = async ({ status, email, search }) => {
     })
     .sort({ createdAt: -1 });
 
-  let result = mapApplicationListItems(applications);
+  let result = await mapApplicationListItems(applications);
   result = filterApplicationsBySearch(result, search);
 
   return result;
@@ -256,6 +303,7 @@ const exportAdminApplications = async (req, res) => {
       { header: "Last name", key: "lastName", width: 18 },
       { header: "Email", key: "email", width: 30 },
       { header: "Phone", key: "phone", width: 18 },
+      { header: "Position", key: "positionName", width: 24 },
       { header: "Country", key: "country", width: 18 },
       { header: "City", key: "city", width: 18 },
       { header: "Candidate archived", key: "candidateArchived", width: 20 },
@@ -279,6 +327,7 @@ const exportAdminApplications = async (req, res) => {
         lastName: sanitizeExcelCell(application.candidate?.lastName),
         email: sanitizeExcelCell(application.candidate?.email),
         phone: sanitizeExcelCell(application.candidate?.phone),
+        positionName: sanitizeExcelCell(application.job?.positionName),
         country: sanitizeExcelCell(application.candidate?.country),
         city: sanitizeExcelCell(application.candidate?.city),
         candidateArchived: application.candidate?.isArchived ? "Yes" : "No",
@@ -341,23 +390,35 @@ const getAdminApplicationById = async (req, res) => {
       });
     }
 
+    const jobObject = application.job?.toObject
+      ? application.job.toObject()
+      : application.job;
+
+    const positionName = await getJobPositionName(
+      application.job?._id,
+      "sr"
+    );
+
     return res.status(200).json({
-  application: {
-    _id: application._id,
-    publicId: application.publicId,
-    appliedAt: application.createdAt,
-    candidate: application.candidate,
-    job: application.job,
-    status: application.status,
-    statusLabel: formatStatusLabel(application.status),
-    reason: application.reason,
-    cvDocument: application.cvDocument,
-    extraDocuments: application.extraDocuments,
-    events: [...application.events].sort(
-      (a, b) => new Date(b.timestamp) - new Date(a.timestamp)
-    ),
-  },
-});
+      application: {
+        _id: application._id,
+        publicId: application.publicId,
+        appliedAt: application.createdAt,
+        candidate: application.candidate,
+        job: jobObject ? {
+          ...jobObject,
+          positionName,
+        } : null,
+        status: application.status,
+        statusLabel: formatStatusLabel(application.status),
+        reason: application.reason,
+        cvDocument: application.cvDocument,
+        extraDocuments: application.extraDocuments,
+        events: [...application.events].sort(
+          (a, b) => new Date(b.timestamp) - new Date(a.timestamp)
+        ),
+      },
+    });
   } catch (error) {
     console.error("Greška u getAdminApplicationById:", error);
     return res.status(500).json({

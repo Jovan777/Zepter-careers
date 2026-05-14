@@ -155,11 +155,22 @@ const AdminApplicationDetailsPage = () => {
               {application.candidate.city || "-"}
             </p>
           </div>
-
+          <br />
           <h3 className="admin-mt">Job</h3>
           <div className="admin-details-stack">
-            <p>{application.job?.company?.name || "-"}</p>
-            <p>{application.job?.region?.name || "-"}</p>
+            <p>
+              <strong>Position:</strong>{" "}
+              {application.job?.positionName || application.job?.publicId || "-"}
+            </p>
+            <p>
+              <strong>Job ID:</strong> {application.job?.publicId || "-"}
+            </p>
+            <p>
+              <strong>Company:</strong> {application.job?.company?.name || "-"}
+            </p>
+            <p>
+              <strong>Region:</strong> {application.job?.region?.name || "-"}
+            </p>
           </div>
 
           <h3 className="admin-mt">Documents</h3>

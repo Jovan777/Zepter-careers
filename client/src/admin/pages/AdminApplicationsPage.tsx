@@ -133,6 +133,7 @@ const AdminApplicationsPage = () => {
               <th>Application ID</th>
               <th>Candidate</th>
               <th>Email</th>
+              <th>Position</th>
               <th>Company</th>
               <th>Region</th>
               <th>Status</th>
@@ -158,9 +159,9 @@ const AdminApplicationsPage = () => {
                 </td>
 
                 <td>{item.candidate.email}</td>
+                <td>{item.job?.positionName || "-"}</td>
                 <td>{item.job?.company?.name || "-"}</td>
                 <td>{item.job?.region?.name || "-"}</td>
-
                 <td>
                   <span className={`admin-badge admin-badge--${item.status}`}>
                     {item.statusLabel}

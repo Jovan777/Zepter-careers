@@ -197,14 +197,17 @@ const AdminCandidateDetailsPage = () => {
               {applications.map((application) => (
                 <div key={application.publicId} className="admin-simple-list__item">
                   <div>
-                    <strong>{application.publicId}</strong>
-                    <div>{application.job?.company?.name || "-"}</div>
-                    <div>{application.job?.region?.name || "-"}</div>
+                    <strong>
+                      {application.job?.positionName || application.job?.publicId || "-"}
+                    </strong>
+                    <div>Company: {application.job?.company?.name || "-"}</div>
+                    <div>Region: {application.job?.region?.name || "-"}</div>
                     <div>
+                      Applied at:{" "}
                       {application.createdAt || application.appliedAt
                         ? new Date(
-                            application.createdAt || application.appliedAt || ""
-                          ).toLocaleString("sr-RS")
+                          application.createdAt || application.appliedAt || ""
+                        ).toLocaleString("sr-RS")
                         : "-"}
                     </div>
                   </div>
