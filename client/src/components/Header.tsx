@@ -56,7 +56,7 @@ const Header = ({ onOpenNotifications }: HeaderProps) => {
 
           <a href="https://www.zepter.rs/zepterclub" className="header__club-logo">
             <img
-              src="/Zepter-Careers images/zk_kockica 2.png"
+              src="/Zepter-Careers images/Zepter_Club_Logo_New-Photoroom.png"
               alt="Zepter Club"
             />
           </a>
