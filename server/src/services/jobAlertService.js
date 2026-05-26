@@ -116,6 +116,7 @@ const sendJobAlertsForPublishedJob = async (job) => {
         subject,
         text,
         html,
+        category: "Job Alerts",
       });
 
       alert.lastSentAt = new Date();

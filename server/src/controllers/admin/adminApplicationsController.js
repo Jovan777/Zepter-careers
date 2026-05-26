@@ -2,6 +2,10 @@ const Application = require("../../models/Application");
 const Candidate = require("../../models/Candidate");
 const ExcelJS = require("exceljs");
 const JobTranslation = require("../../models/JobTranslation");
+const { sendEmail } = require("../../services/emailService");
+const {
+  applicationStatusEmailTemplate,
+} = require("../../services/emailTemplates/applicationStatusEmailTemplate");
 require("../../models/Job");
 require("../../models/Company");
 require("../../models/Region");
@@ -13,6 +17,11 @@ const {
 
 const findApplicationByPublicId = async (publicId) => {
   return Application.findOne({ publicId: String(publicId).trim() });
+};
+
+const getCandidateName = (candidate) => {
+  const fullName = `${candidate?.firstName || ""} ${candidate?.lastName || ""}`.trim();
+  return fullName || candidate?.email || "";
 };
 
 const sanitizeExcelCell = (value) => {
@@ -100,6 +109,43 @@ const getJobPositionName = async (jobId, preferredLocale = "sr") => {
   }
 
   return translation?.name || "";
+};
+
+const sendApplicationStatusEmail = async (applicationId) => {
+  const application = await Application.findById(applicationId)
+    .populate("candidate", "firstName lastName email")
+    .populate({
+      path: "job",
+      populate: [{ path: "company", select: "name legalEntity" }],
+    });
+
+  const candidateEmail = application?.candidate?.email;
+
+  if (!candidateEmail) {
+    console.warn(
+      `Skipping application status email for ${application?.publicId || applicationId}: candidate email is missing.`
+    );
+    return;
+  }
+
+  const jobTitle = await getJobPositionName(application.job?._id, "sr");
+  const companyName =
+    application.job?.company?.name || application.job?.company?.legalEntity || "";
+
+  const email = applicationStatusEmailTemplate({
+    candidateName: getCandidateName(application.candidate),
+    jobTitle,
+    companyName,
+    status: application.status,
+    reason: application.reason,
+    applicationPublicId: application.publicId,
+    appBaseUrl: process.env.APP_BASE_URL || "",
+  });
+
+  await sendEmail({
+    to: candidateEmail,
+    ...email,
+  });
 };
 
 const filterApplicationsBySearch = (items, search) => {
@@ -471,8 +517,22 @@ const updateAdminApplicationStatus = async (req, res) => {
 
     await application.save();
 
+    let emailWarning;
+
+    try {
+      await sendApplicationStatusEmail(application._id);
+    } catch (emailError) {
+      console.error(
+        `Greška pri slanju email obaveštenja za prijavu ${application.publicId}:`,
+        emailError.message
+      );
+      emailWarning =
+        "Status updated, but email notification could not be sent.";
+    }
+
     return res.status(200).json({
       message: "Status prijave je uspešno izmenjen.",
+      ...(emailWarning ? { emailWarning } : {}),
       application: {
         _id: application._id,
         publicId: application.publicId,

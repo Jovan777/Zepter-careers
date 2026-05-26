@@ -2,8 +2,92 @@ const mongoose = require("mongoose");
 const SchedulerEvent = require("../../models/SchedulerEvent");
 const Application = require("../../models/Application");
 const Candidate = require("../../models/Candidate");
+const JobTranslation = require("../../models/JobTranslation");
+const { sendEmail } = require("../../services/emailService");
+const {
+  schedulerEventEmailTemplate,
+} = require("../../services/emailTemplates/schedulerEventEmailTemplate");
+require("../../models/Job");
+require("../../models/Company");
 
 const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
+
+const getCandidateName = (candidate) => {
+  const fullName = `${candidate?.firstName || ""} ${candidate?.lastName || ""}`.trim();
+  return fullName || candidate?.email || "";
+};
+
+const getJobPositionName = async (jobId, preferredLocale = "sr") => {
+  if (!jobId) return "";
+
+  let translation = await JobTranslation.findOne({
+    job: jobId,
+    locale: preferredLocale,
+  }).select("name locale");
+
+  if (!translation && preferredLocale !== "en") {
+    translation = await JobTranslation.findOne({
+      job: jobId,
+      locale: "en",
+    }).select("name locale");
+  }
+
+  if (!translation) {
+    translation = await JobTranslation.findOne({ job: jobId })
+      .sort({ locale: 1 })
+      .select("name locale");
+  }
+
+  return translation?.name || "";
+};
+
+const getSchedulerNotificationEvent = async (eventId) => {
+  return SchedulerEvent.findById(eventId)
+    .populate("candidate", "firstName lastName email")
+    .populate({
+      path: "application",
+      select: "publicId status job",
+      populate: {
+        path: "job",
+        select: "publicId company",
+        populate: {
+          path: "company",
+          select: "name legalEntity",
+        },
+      },
+    });
+};
+
+const sendSchedulerEventEmail = async (eventId, action) => {
+  const event = await getSchedulerNotificationEvent(eventId);
+  const candidateEmail = event?.candidate?.email;
+
+  if (!candidateEmail) {
+    console.warn(
+      `Skipping scheduler ${action} email for event ${eventId}: candidate email is missing.`
+    );
+    return;
+  }
+
+  const jobId = event.application?.job?._id;
+  const jobTitle = await getJobPositionName(jobId, "sr");
+  const email = schedulerEventEmailTemplate({
+    candidateName: getCandidateName(event.candidate),
+    jobTitle,
+    eventType: event.type,
+    start: event.startAt,
+    end: event.endAt,
+    timezone: event.timezone,
+    locationOrLink: event.locationOrLink,
+    notes: event.notes,
+    action,
+  });
+
+  await sendEmail({
+    to: candidateEmail,
+    ...email,
+  });
+};
 
 const getSchedulerEvents = async (req, res) => {
   try {
@@ -106,8 +190,22 @@ const createSchedulerEvent = async (req, res) => {
       .populate("candidate", "firstName lastName email")
       .populate("application", "status");
 
+    let emailWarning;
+
+    try {
+      await sendSchedulerEventEmail(event._id, "created");
+    } catch (emailError) {
+      console.error(
+        `Greška pri slanju email obaveštenja za scheduler event ${event._id}:`,
+        emailError.message
+      );
+      emailWarning =
+        "Scheduler event saved, but email notification could not be sent.";
+    }
+
     return res.status(201).json({
       message: "Scheduler događaj je uspešno kreiran.",
+      ...(emailWarning ? { emailWarning } : {}),
       event: populated,
     });
   } catch (error) {
@@ -175,8 +273,22 @@ const updateSchedulerEvent = async (req, res) => {
       .populate("candidate", "firstName lastName email")
       .populate("application", "status");
 
+    let emailWarning;
+
+    try {
+      await sendSchedulerEventEmail(event._id, "updated");
+    } catch (emailError) {
+      console.error(
+        `Greška pri slanju email obaveštenja za scheduler event ${event._id}:`,
+        emailError.message
+      );
+      emailWarning =
+        "Scheduler event saved, but email notification could not be sent.";
+    }
+
     return res.status(200).json({
       message: "Scheduler događaj je uspešno izmenjen.",
+      ...(emailWarning ? { emailWarning } : {}),
       event: populated,
     });
   } catch (error) {
