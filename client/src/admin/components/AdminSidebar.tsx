@@ -6,7 +6,6 @@ const links = [
   { to: "/admin/translations", label: "Translations" },
   { to: "/admin/applications", label: "Applications" },
   { to: "/admin/candidates", label: "Candidates" },
-  { to: "/admin/candidates/archived", label: "Archived Candidates" },
   { to: "/admin/scheduler", label: "Scheduler" },
   { to: "/admin/companies", label: "Companies" },
   { to: "/admin/regions", label: "Regions" },
