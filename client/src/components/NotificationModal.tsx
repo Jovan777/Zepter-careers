@@ -183,7 +183,7 @@ const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) => {
                     if (submitError) setSubmitError("");
                   }}
                 />
-                <span>Samo remote pozicije</span>
+                <span>Remote</span>
               </label>
 
               <label className="notification-modal__radio">

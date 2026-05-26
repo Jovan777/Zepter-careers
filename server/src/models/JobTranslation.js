@@ -15,6 +15,9 @@ const jobTranslationSchema = new mongoose.Schema({
   responsibilities: { type: [String], default: [] },
   requirements: { type: [String], default: [] },
   whatZepterOffers: { type: [String], default: [] },
+  howToApply: { type: [String], default: [] },
+  closingText: { type: String, default: "", trim: true },
+  footerNote: { type: String, default: "", trim: true },
 
   applyLabel: { type: String, default: "Apply", trim: true },
   notes: { type: String, default: "", trim: true },

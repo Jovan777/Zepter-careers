@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
+import { QRCodeSVG } from "qrcode.react";
 import ApplyJobModal from "./ApplyJobModal";
 import { getJobById, getPublishedJobs } from "../api/jobsApi";
 import type { JobDetailsResponse, JobListItem } from "../types/jobs";
@@ -8,6 +9,8 @@ import type { JobsFiltersState } from "../pages/JobsPage";
 type JobsResultsSectionProps = {
   filters: JobsFiltersState;
 };
+
+const isSectionHeading = (value: string) => value.trim().endsWith(":");
 
 const JobsResultsSection = ({ filters }: JobsResultsSectionProps) => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -149,6 +152,16 @@ const JobsResultsSection = ({ filters }: JobsResultsSectionProps) => {
   }, [selectedJobId, filters.locale]);
 
   const isSwitchingDetails = isLoadingDetails && !!selectedJobDetails;
+  const qrTargetUrl = selectedJobDetails?.qr?.targetUrl?.trim() || "";
+  const shouldShowQr = Boolean(selectedJobDetails?.qr?.isEnabled === true && qrTargetUrl);
+  const qualifications = selectedJobDetails?.translation.qualifications || [];
+  const intro = selectedJobDetails?.translation.intro || [];
+  const responsibilities = selectedJobDetails?.translation.responsibilities || [];
+  const requirements = selectedJobDetails?.translation.requirements || [];
+  const whatZepterOffers = selectedJobDetails?.translation.whatZepterOffers || [];
+  const howToApply = selectedJobDetails?.translation.howToApply || [];
+  const closingText = selectedJobDetails?.translation.closingText?.trim() || "";
+  const footerNote = selectedJobDetails?.translation.footerNote?.trim() || "";
 
   return (
     <section className="jobs-results">
@@ -298,7 +311,7 @@ const JobsResultsSection = ({ filters }: JobsResultsSectionProps) => {
                 <div className="job-details-card__block">
                   <h3 className="job-details-card__section-title">Kvalifikacije</h3>
                   <div className="job-details-card__tags">
-                    {selectedJobDetails.translation.qualifications.map((tag) => (
+                    {qualifications.map((tag) => (
                       <span key={tag} className="job-details-card__tag">
                         {tag}
                       </span>
@@ -308,12 +321,17 @@ const JobsResultsSection = ({ filters }: JobsResultsSectionProps) => {
 
                 <div className="job-details-card__divider" />
 
-                <div className="job-details-card__block">
-                  {selectedJobDetails.translation.intro.map((paragraph, index) => (
-                    <p key={index} className="job-details-card__text">
-                      {paragraph}
-                    </p>
-                  ))}
+                <div
+                  className={`job-details-card__content-layout ${shouldShowQr ? "job-details-card__content-layout--with-qr" : ""
+                    }`}
+                >
+                  <div className="job-details-card__main-content">
+                    <div className="job-details-card__block">
+                      {intro.map((paragraph, index) => (
+                        <p key={index} className="job-details-card__text">
+                          {paragraph}
+                        </p>
+                      ))}
 
                   <h3 className="job-details-card__section-title">Zašto ova pozicija?</h3>
                   <p className="job-details-card__text">
@@ -327,17 +345,85 @@ const JobsResultsSection = ({ filters }: JobsResultsSectionProps) => {
 
                   <h3 className="job-details-card__section-title">Odgovornosti</h3>
                   <ul className="job-details-card__list">
-                    {selectedJobDetails.translation.responsibilities.map((item) => (
+                    {responsibilities.map((item) => (
                       <li key={item}>{item}</li>
                     ))}
                   </ul>
 
                   <h3 className="job-details-card__section-title">Uslovi</h3>
-                  <ul className="job-details-card__list">
-                    {selectedJobDetails.translation.requirements.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
+                  <div className="job-details-card__list-with-sections">
+                    {requirements.map((item, index) => {
+                      const trimmed = item.trim();
+
+                      if (!trimmed) {
+                        return null;
+                      }
+
+                      if (isSectionHeading(trimmed)) {
+                        return (
+                          <h4
+                            key={`${trimmed}-${index}`}
+                            className="job-details-card__subsection-title"
+                          >
+                            {trimmed.replace(/:$/, "")}
+                          </h4>
+                        );
+                      }
+
+                      return (
+                        <div
+                          key={`${trimmed}-${index}`}
+                          className="job-details-card__list-item"
+                        >
+                          {trimmed}
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {whatZepterOffers.length > 0 && (
+                    <>
+                      <h3 className="job-details-card__section-title">Šta Zepter nudi</h3>
+                      <ul className="job-details-card__list">
+                        {whatZepterOffers.map((item) => (
+                          <li key={item}>{item}</li>
+                        ))}
+                      </ul>
+                    </>
+                  )}
+
+                  {howToApply.length > 0 && (
+                    <>
+                      <h3 className="job-details-card__section-title">Kako se prijaviti?</h3>
+                      <ul className="job-details-card__list">
+                        {howToApply.map((item) => (
+                          <li key={item}>{item}</li>
+                        ))}
+                      </ul>
+                    </>
+                  )}
+
+                  {closingText && (
+                    <p className="job-details-card__closing">{closingText}</p>
+                  )}
+
+                  {footerNote && (
+                    <p className="job-details-card__footer-note">{footerNote}</p>
+                  )}
+                    </div>
+                  </div>
+
+                  {shouldShowQr && (
+                    <aside className="job-details-card__qr-box job-details-card__qr-box--body">
+                      <QRCodeSVG value={qrTargetUrl} size={140} level="M" />
+                      <span className="job-details-card__qr-label">
+                        Skenirajte QR kod
+                      </span>
+                      <span className="job-details-card__qr-hint">
+                        Otvorite oglas na telefonu
+                      </span>
+                    </aside>
+                  )}
                 </div>
               </article>
             ) : (

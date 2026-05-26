@@ -35,6 +35,17 @@ export type AdminJobListItem = {
   locationType: string;
 };
 
+export type AdminJobQr = {
+  targetUrl?: string;
+  isEnabled?: boolean;
+  scanCount?: number;
+};
+
+export type AdminJobViewStats = {
+  totalViews: number;
+  qrViews: number;
+};
+
 export type AdminJobDetailsResponse = {
   supportedLocales: string[];
   job: {
@@ -49,6 +60,10 @@ export type AdminJobDetailsResponse = {
     workArea: string;
     employmentType: string;
     locationType: string;
+    qr?: AdminJobQr;
+    qrTargetUrl?: string;
+    qrTrackingEnabled?: boolean;
+    viewStats?: AdminJobViewStats;
   };
   activeTranslation: AdminTranslation | null;
   translations: AdminTranslation[];
@@ -67,8 +82,32 @@ export type AdminTranslation = {
   responsibilities: string[];
   requirements: string[];
   whatZepterOffers: string[];
+  howToApply?: string[];
+  closingText?: string;
+  footerNote?: string;
   applyLabel: string;
   notes: string;
+};
+
+export type AdminJobPdfImportResponse = {
+  parsed: {
+    locale?: string;
+    name?: string;
+    locationLabel?: string;
+    shortDescription?: string;
+    intro?: string[];
+    whyThisPosition?: string;
+    aboutZepter?: string;
+    qualifications?: string[];
+    responsibilities?: string[];
+    requirements?: string[];
+    whatZepterOffers?: string[];
+    howToApply?: string[];
+    closingText?: string;
+    footerNote?: string;
+    applyLabel?: string;
+  };
+  rawTextPreview?: string;
 };
 
 export type AdminApplicationListItem = {

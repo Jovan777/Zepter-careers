@@ -9,6 +9,8 @@ const {
   normalizeLocale,
 } = require("./adminHelpers");
 
+const hasOwn = (source, key) => Object.prototype.hasOwnProperty.call(source, key);
+
 const buildTranslationPayload = (body, localeOverride = null) => {
   const locale = localeOverride || normalizeLocale(body.locale);
 
@@ -28,6 +30,14 @@ const buildTranslationPayload = (body, localeOverride = null) => {
     responsibilities: parseStringArray(body.responsibilities),
     requirements: parseStringArray(body.requirements),
     whatZepterOffers: parseStringArray(body.whatZepterOffers),
+    howToApply: parseStringArray(body.howToApply),
+    closingText: body.closingText ? String(body.closingText).trim() : "",
+    footerNote: body.footerNote ? String(body.footerNote).trim() : "",
+    fieldPresence: {
+      howToApply: hasOwn(body, "howToApply"),
+      closingText: hasOwn(body, "closingText"),
+      footerNote: hasOwn(body, "footerNote"),
+    },
     applyLabel: body.applyLabel ? String(body.applyLabel).trim() : "Apply",
     notes: body.notes ? String(body.notes).trim() : "",
   };
@@ -50,9 +60,12 @@ const upsertTranslation = async (jobObjectId, locale, body) => {
   });
 
   if (!translation) {
+    const createInput = { ...payload };
+    delete createInput.fieldPresence;
+
     translation = await JobTranslation.create({
       job: jobObjectId,
-      ...payload,
+      ...createInput,
     });
     return translation;
   }
@@ -67,6 +80,15 @@ const upsertTranslation = async (jobObjectId, locale, body) => {
   translation.responsibilities = payload.responsibilities;
   translation.requirements = payload.requirements;
   translation.whatZepterOffers = payload.whatZepterOffers;
+  if (payload.fieldPresence?.howToApply) {
+    translation.howToApply = payload.howToApply;
+  }
+  if (payload.fieldPresence?.closingText) {
+    translation.closingText = payload.closingText;
+  }
+  if (payload.fieldPresence?.footerNote) {
+    translation.footerNote = payload.footerNote;
+  }
   translation.applyLabel = payload.applyLabel;
   translation.notes = payload.notes;
 
@@ -168,6 +190,9 @@ const getJobTranslationsOverview = async (req, res) => {
       responsibilities: t.responsibilities,
       requirements: t.requirements,
       whatZepterOffers: t.whatZepterOffers,
+      howToApply: t.howToApply || [],
+      closingText: t.closingText || "",
+      footerNote: t.footerNote || "",
       applyLabel: t.applyLabel,
       notes: t.notes,
     }));
@@ -411,6 +436,9 @@ const copyJobTranslation = async (req, res) => {
         responsibilities: sourceTranslation.responsibilities,
         requirements: sourceTranslation.requirements,
         whatZepterOffers: sourceTranslation.whatZepterOffers,
+        howToApply: sourceTranslation.howToApply || [],
+        closingText: sourceTranslation.closingText || "",
+        footerNote: sourceTranslation.footerNote || "",
         applyLabel: sourceTranslation.applyLabel,
         notes: sourceTranslation.notes,
       });
@@ -425,6 +453,9 @@ const copyJobTranslation = async (req, res) => {
       targetTranslation.responsibilities = sourceTranslation.responsibilities;
       targetTranslation.requirements = sourceTranslation.requirements;
       targetTranslation.whatZepterOffers = sourceTranslation.whatZepterOffers;
+      targetTranslation.howToApply = sourceTranslation.howToApply || [];
+      targetTranslation.closingText = sourceTranslation.closingText || "";
+      targetTranslation.footerNote = sourceTranslation.footerNote || "";
       targetTranslation.applyLabel = sourceTranslation.applyLabel;
       targetTranslation.notes = sourceTranslation.notes;
       await targetTranslation.save();

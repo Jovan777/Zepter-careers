@@ -1,6 +1,8 @@
 const express = require("express");
 const adminAuthMiddleware = require("../../middlewares/adminAuthMiddleware");
+const uploadPdf = require("../../middlewares/pdfUploadMiddleware");
 const {
+  importJobPdf,
   getAdminJobs,
   getAdminJobById,
   createAdminJob,
@@ -14,6 +16,7 @@ const router = express.Router();
 router.use(adminAuthMiddleware);
 
 router.get("/", getAdminJobs);
+router.post("/import-pdf", uploadPdf, importJobPdf);
 router.get("/:publicId", getAdminJobById);
 router.post("/", createAdminJob);
 router.put("/:publicId", updateAdminJob);

@@ -218,6 +218,10 @@ const getJobById = async (req, res) => {
       postedAt: job.publishStartAt || job.createdAt,
       appliedCount: job.appliedCount,
       notes: job.notes,
+      qr: {
+        targetUrl: job.qr?.targetUrl || "",
+        isEnabled: job.qr?.isEnabled ?? true,
+      },
       company: job.company,
       location: {
         regionId: job.region?._id || null,
@@ -240,6 +244,9 @@ const getJobById = async (req, res) => {
         responsibilities: translation.responsibilities || [],
         requirements: translation.requirements || [],
         whatZepterOffers: translation.whatZepterOffers || [],
+        howToApply: translation.howToApply || [],
+        closingText: translation.closingText || "",
+        footerNote: translation.footerNote || "",
         applyLabel: translation.applyLabel,
       },
     });

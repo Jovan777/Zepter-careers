@@ -32,12 +32,18 @@ export type JobsListResponse = {
   };
 };
 
+export type JobQr = {
+  targetUrl?: string;
+  isEnabled?: boolean;
+};
+
 export type JobDetailsResponse = {
   publicId: string;
   status: string;
   postedAt: string;
   appliedCount: number;
   notes: string;
+  qr?: JobQr;
   company: {
     _id?: string;
     name: string;
@@ -63,7 +69,10 @@ export type JobDetailsResponse = {
     qualifications: string[];
     responsibilities: string[];
     requirements: string[];
-    whatZepterOffers: string[];
+    whatZepterOffers?: string[];
+    howToApply?: string[];
+    closingText?: string;
+    footerNote?: string;
     applyLabel: string;
   };
 };

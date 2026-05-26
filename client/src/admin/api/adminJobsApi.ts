@@ -1,5 +1,9 @@
 import { adminHttp } from "./adminHttp";
-import type { AdminJobDetailsResponse, AdminJobListItem } from "../types/admin";
+import type {
+  AdminJobDetailsResponse,
+  AdminJobListItem,
+  AdminJobPdfImportResponse,
+} from "../types/admin";
 
 export const getAdminJobs = async (token: string, locale = "sr") =>
   adminHttp.get<{ supportedLocales: string[]; jobs: AdminJobListItem[] }>(
@@ -18,6 +22,17 @@ export const updateAdminJob = async (
   publicId: string,
   body: Record<string, unknown>
 ) => adminHttp.put(`/admin/jobs/${publicId}`, body, token);
+
+export const importAdminJobPdf = async (token: string, file: File) => {
+  const formData = new FormData();
+  formData.append("pdf", file);
+
+  return adminHttp.post<AdminJobPdfImportResponse>(
+    `/admin/jobs/import-pdf`,
+    formData,
+    token
+  );
+};
 
 export const repostAdminJob = async (
   token: string,

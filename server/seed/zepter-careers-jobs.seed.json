@@ -1,0 +1,271 @@
+[
+  {
+    "_id": {
+      "$oid": "720000000000000000000001"
+    },
+    "publicId": "1",
+    "company": {
+      "$oid": "700000000000000000000001"
+    },
+    "region": {
+      "$oid": "710000000000000000000001"
+    },
+    "workArea": "hr",
+    "employmentType": "full_time",
+    "locationType": "hybrid",
+    "status": "published",
+    "publishStartAt": {
+      "$date": "2026-04-01T08:00:00.000Z"
+    },
+    "publishEndAt": {
+      "$date": "2026-06-30T20:00:00.000Z"
+    },
+    "notes": "Primary Serbia HR opening",
+    "appliedCount": 2,
+    "createdAt": {
+      "$date": "2026-04-01T08:00:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2026-04-04T18:10:00.000Z"
+    },
+    "qr": {
+      "targetUrl": "https://zepter-careers.vercel.app/jobs?job=1&utm_source=qr&utm_medium=print&utm_campaign=job-1",
+      "isEnabled": true,
+      "scanCount": 0
+    },
+    "viewStats": {
+      "totalViews": 0,
+      "qrViews": 0
+    }
+  },
+  {
+    "_id": {
+      "$oid": "720000000000000000000002"
+    },
+    "publicId": "2",
+    "company": {
+      "$oid": "700000000000000000000001"
+    },
+    "region": {
+      "$oid": "710000000000000000000001"
+    },
+    "workArea": "finance",
+    "employmentType": "full_time",
+    "locationType": "onsite",
+    "status": "published",
+    "publishStartAt": {
+      "$date": "2026-04-02T08:00:00.000Z"
+    },
+    "publishEndAt": {
+      "$date": "2026-06-30T20:00:00.000Z"
+    },
+    "notes": "Finance role in Belgrade",
+    "appliedCount": 1,
+    "createdAt": {
+      "$date": "2026-04-02T08:00:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2026-04-04T18:10:00.000Z"
+    },
+    "qr": {
+      "targetUrl": "https://zepter-careers.vercel.app/jobs?job=2&utm_source=qr&utm_medium=print&utm_campaign=job-2",
+      "isEnabled": true,
+      "scanCount": 0
+    },
+    "viewStats": {
+      "totalViews": 0,
+      "qrViews": 0
+    }
+  },
+  {
+    "_id": {
+      "$oid": "720000000000000000000003"
+    },
+    "publicId": "3",
+    "company": {
+      "$oid": "700000000000000000000002"
+    },
+    "region": {
+      "$oid": "710000000000000000000001"
+    },
+    "workArea": "sales",
+    "employmentType": "full_time",
+    "locationType": "remote",
+    "status": "published",
+    "publishStartAt": {
+      "$date": "2026-04-03T08:00:00.000Z"
+    },
+    "publishEndAt": {
+      "$date": "2026-07-15T20:00:00.000Z"
+    },
+    "notes": "Remote medical sales role",
+    "appliedCount": 1,
+    "createdAt": {
+      "$date": "2026-04-03T08:00:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2026-04-04T18:10:00.000Z"
+    },
+    "qr": {
+      "targetUrl": "https://zepter-careers.vercel.app/jobs?job=3&utm_source=qr&utm_medium=print&utm_campaign=job-3",
+      "isEnabled": true,
+      "scanCount": 0
+    },
+    "viewStats": {
+      "totalViews": 0,
+      "qrViews": 0
+    }
+  },
+  {
+    "_id": {
+      "$oid": "720000000000000000000004"
+    },
+    "publicId": "4",
+    "company": {
+      "$oid": "700000000000000000000003"
+    },
+    "region": {
+      "$oid": "710000000000000000000001"
+    },
+    "workArea": "operations",
+    "employmentType": "part_time",
+    "locationType": "onsite",
+    "status": "published",
+    "publishStartAt": {
+      "$date": "2026-04-03T10:00:00.000Z"
+    },
+    "publishEndAt": {
+      "$date": "2026-06-01T20:00:00.000Z"
+    },
+    "notes": "Operations support for hotel",
+    "appliedCount": 0,
+    "createdAt": {
+      "$date": "2026-04-03T10:00:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2026-04-04T18:10:00.000Z"
+    },
+    "qr": {
+      "targetUrl": "https://zepter-careers.vercel.app/jobs?job=4&utm_source=qr&utm_medium=print&utm_campaign=job-4",
+      "isEnabled": true,
+      "scanCount": 0
+    },
+    "viewStats": {
+      "totalViews": 0,
+      "qrViews": 0
+    }
+  },
+  {
+    "_id": {
+      "$oid": "720000000000000000000005"
+    },
+    "publicId": "5",
+    "company": {
+      "$oid": "700000000000000000000001"
+    },
+    "region": {
+      "$oid": "710000000000000000000002"
+    },
+    "workArea": "finance",
+    "employmentType": "contract",
+    "locationType": "hybrid",
+    "status": "published",
+    "publishStartAt": {
+      "$date": "2026-04-01T09:00:00.000Z"
+    },
+    "publishEndAt": {
+      "$date": "2026-07-01T20:00:00.000Z"
+    },
+    "notes": "Poland finance controller",
+    "appliedCount": 0,
+    "createdAt": {
+      "$date": "2026-04-01T09:00:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2026-04-04T18:10:00.000Z"
+    },
+    "qr": {
+      "targetUrl": "https://zepter-careers.vercel.app/jobs?job=5&utm_source=qr&utm_medium=print&utm_campaign=job-5",
+      "isEnabled": true,
+      "scanCount": 0
+    },
+    "viewStats": {
+      "totalViews": 0,
+      "qrViews": 0
+    }
+  },
+  {
+    "_id": {
+      "$oid": "720000000000000000000006"
+    },
+    "publicId": "6",
+    "company": {
+      "$oid": "700000000000000000000001"
+    },
+    "region": {
+      "$oid": "710000000000000000000003"
+    },
+    "workArea": "marketing",
+    "employmentType": "full_time",
+    "locationType": "hybrid",
+    "status": "draft",
+    "publishStartAt": null,
+    "publishEndAt": null,
+    "notes": "Draft marketing role for Croatia",
+    "appliedCount": 0,
+    "createdAt": {
+      "$date": "2026-04-04T09:00:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2026-04-04T18:10:00.000Z"
+    },
+    "qr": {
+      "targetUrl": "https://zepter-careers.vercel.app/jobs?job=6&utm_source=qr&utm_medium=print&utm_campaign=job-6",
+      "isEnabled": true,
+      "scanCount": 0
+    },
+    "viewStats": {
+      "totalViews": 0,
+      "qrViews": 0
+    }
+  },
+  {
+    "_id": {
+      "$oid": "720000000000000000000007"
+    },
+    "publicId": "7",
+    "company": {
+      "$oid": "700000000000000000000001"
+    },
+    "region": {
+      "$oid": "710000000000000000000001"
+    },
+    "workArea": "it",
+    "employmentType": "full_time",
+    "locationType": "onsite",
+    "status": "published",
+    "publishStartAt": {
+      "$date": "2026-04-05T08:00:00.000Z"
+    },
+    "publishEndAt": {
+      "$date": "2026-07-31T20:00:00.000Z"
+    },
+    "notes": "Seeded from Development Team Lead PDF",
+    "appliedCount": 0,
+    "createdAt": {
+      "$date": "2026-04-05T08:00:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2026-04-05T08:00:00.000Z"
+    },
+    "qr": {
+      "targetUrl": "https://zepter-careers.vercel.app/jobs?job=7&utm_source=qr&utm_medium=print&utm_campaign=development-team-lead",
+      "isEnabled": true,
+      "scanCount": 0
+    },
+    "viewStats": {
+      "totalViews": 0,
+      "qrViews": 0
+    }
+  }
+]

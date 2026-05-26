@@ -37,6 +37,31 @@ const jobSchema = new mongoose.Schema({
   publishEndAt: { type: Date, default: null },
   notes: { type: String, default: "", trim: true },
   appliedCount: { type: Number, default: 0, min: 0 },
+  qr: {
+    targetUrl: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+    isEnabled: {
+      type: Boolean,
+      default: true,
+    },
+    scanCount: {
+      type: Number,
+      default: 0,
+    },
+  },
+  viewStats: {
+    totalViews: {
+      type: Number,
+      default: 0,
+    },
+    qrViews: {
+      type: Number,
+      default: 0,
+    },
+  },
 }, { timestamps: true, collection: "jobs" });
 
 jobSchema.index({ status: 1, publishStartAt: -1 });

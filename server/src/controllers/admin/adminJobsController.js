@@ -3,6 +3,7 @@ const JobTranslation = require("../../models/JobTranslation");
 const Company = require("../../models/Company");
 const Region = require("../../models/Region");
 const Application = require("../../models/Application");
+const { PDFParse } = require("pdf-parse");
 const {
   SUPPORTED_LOCALES,
   parseStringArray,
@@ -10,6 +11,49 @@ const {
   isValidObjectId,
 } = require("./adminHelpers");
 const { sendJobAlertsForPublishedJob } = require("../../services/jobAlertService");
+const {
+  SELECTABLE_TEXT_ERROR,
+  normalizeText,
+  parseSerbianJobAdText,
+} = require("../../services/jobPdfParserService");
+
+const hasOwn = (source, key) => Object.prototype.hasOwnProperty.call(source, key);
+
+const parseQrEnabled = (value) => {
+  if (value === false) {
+    return false;
+  }
+
+  if (typeof value === "string") {
+    const normalized = value.trim().toLowerCase();
+    return normalized !== "false" && normalized !== "0";
+  }
+
+  if (typeof value === "number") {
+    return value !== 0;
+  }
+
+  return true;
+};
+
+const normalizeQrInput = (body = {}) => {
+  const nestedQr = body.qr && typeof body.qr === "object" ? body.qr : {};
+  const hasTargetUrl = hasOwn(body, "qrTargetUrl") || hasOwn(nestedQr, "targetUrl");
+  const hasIsEnabled = hasOwn(body, "qrTrackingEnabled") || hasOwn(nestedQr, "isEnabled");
+
+  return {
+    hasTargetUrl,
+    targetUrl: hasOwn(body, "qrTargetUrl")
+      ? String(body.qrTargetUrl || "").trim()
+      : String(nestedQr.targetUrl || "").trim(),
+    hasIsEnabled,
+    isEnabled: parseQrEnabled(
+      hasOwn(body, "qrTrackingEnabled")
+        ? body.qrTrackingEnabled
+        : nestedQr.isEnabled
+    ),
+  };
+};
 
 const buildTranslationPayload = (body, localeOverride = null) => {
   const locale = localeOverride || normalizeLocale(body.locale);
@@ -30,6 +74,14 @@ const buildTranslationPayload = (body, localeOverride = null) => {
     responsibilities: parseStringArray(body.responsibilities),
     requirements: parseStringArray(body.requirements),
     whatZepterOffers: parseStringArray(body.whatZepterOffers),
+    howToApply: parseStringArray(body.howToApply),
+    closingText: body.closingText ? String(body.closingText).trim() : "",
+    footerNote: body.footerNote ? String(body.footerNote).trim() : "",
+    fieldPresence: {
+      howToApply: hasOwn(body, "howToApply"),
+      closingText: hasOwn(body, "closingText"),
+      footerNote: hasOwn(body, "footerNote"),
+    },
     applyLabel: body.applyLabel ? String(body.applyLabel).trim() : "Apply",
     notes: body.translationNotes
       ? String(body.translationNotes).trim()
@@ -97,16 +149,76 @@ const upsertJobTranslation = async (jobObjectId, translationInput) => {
     existing.responsibilities = translationInput.responsibilities;
     existing.requirements = translationInput.requirements;
     existing.whatZepterOffers = translationInput.whatZepterOffers;
+    if (translationInput.fieldPresence?.howToApply) {
+      existing.howToApply = translationInput.howToApply;
+    }
+    if (translationInput.fieldPresence?.closingText) {
+      existing.closingText = translationInput.closingText;
+    }
+    if (translationInput.fieldPresence?.footerNote) {
+      existing.footerNote = translationInput.footerNote;
+    }
     existing.applyLabel = translationInput.applyLabel;
     existing.notes = translationInput.notes;
     await existing.save();
     return existing;
   }
 
+  const createInput = { ...translationInput };
+  delete createInput.fieldPresence;
+
   return JobTranslation.create({
     job: jobObjectId,
-    ...translationInput,
+    ...createInput,
   });
+};
+
+const importJobPdf = async (req, res) => {
+  let parser = null;
+
+  try {
+    if (!req.file) {
+      return res.status(400).json({
+        message: "PDF file is required under field name pdf.",
+      });
+    }
+
+    parser = new PDFParse({ data: req.file.buffer });
+    const result = await parser.getText();
+    const text = normalizeText(result.text || "");
+
+    if (!text || text.length < 50) {
+      return res.status(400).json({
+        message: SELECTABLE_TEXT_ERROR,
+      });
+    }
+
+    const parsed = parseSerbianJobAdText(text);
+
+    return res.status(200).json({
+      parsed,
+      rawTextPreview: text.slice(0, 1000),
+    });
+  } catch (error) {
+    console.error("Greška u importJobPdf:", error);
+
+    const statusCode = error.statusCode || 500;
+    return res.status(statusCode).json({
+      message:
+        statusCode === 400
+          ? error.message
+          : "Greška pri parsiranju PDF oglasa.",
+      error: error.message,
+    });
+  } finally {
+    if (parser) {
+      try {
+        await parser.destroy();
+      } catch (destroyError) {
+        console.error("Greška pri zatvaranju PDF parsera:", destroyError);
+      }
+    }
+  }
 };
 
 const getAdminJobs = async (req, res) => {
@@ -202,6 +314,7 @@ const getAdminJobById = async (req, res) => {
 const createAdminJob = async (req, res) => {
   try {
     const normalized = normalizeJobInput(req.body);
+    const qrInput = normalizeQrInput(req.body);
 
     const {
       publicId,
@@ -261,6 +374,10 @@ const createAdminJob = async (req, res) => {
       workArea,
       employmentType,
       locationType: locationType || "onsite",
+      qr: {
+        targetUrl: qrInput.hasTargetUrl ? qrInput.targetUrl : "",
+        isEnabled: qrInput.hasIsEnabled ? qrInput.isEnabled : true,
+      },
     });
 
     const translationPayload = buildTranslationPayload(req.body);
@@ -324,6 +441,7 @@ const updateAdminJob = async (req, res) => {
       employmentType,
       locationType,
     } = normalizeJobInput(req.body);
+    const qrInput = normalizeQrInput(req.body);
 
     if (nextPublicId && nextPublicId !== job.publicId) {
       const duplicatePublicId = await Job.findOne({
@@ -400,6 +518,14 @@ const updateAdminJob = async (req, res) => {
 
     if (typeof req.body.locationType === "string") {
       job.locationType = locationType || "onsite";
+    }
+
+    if (qrInput.hasTargetUrl) {
+      job.set("qr.targetUrl", qrInput.targetUrl);
+    }
+
+    if (qrInput.hasIsEnabled) {
+      job.set("qr.isEnabled", qrInput.isEnabled);
     }
 
     await job.save();
@@ -517,6 +643,7 @@ const deleteAdminJob = async (req, res) => {
 };
 
 module.exports = {
+  importJobPdf,
   getAdminJobs,
   getAdminJobById,
   createAdminJob,
