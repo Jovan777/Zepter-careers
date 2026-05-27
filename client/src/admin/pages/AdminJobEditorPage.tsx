@@ -348,7 +348,17 @@ const AdminJobEditorPage = ({ mode }: Props) => {
 
           <label className="admin-form-field">
             <span>Public ID</span>
-            <input className="admin-input" value={form.publicId} onChange={(e) => setForm({ ...form, publicId: e.target.value })} />
+            <input
+              className="admin-input"
+              value={form.publicId}
+              placeholder="If empty, it will be generated automatically"
+              onChange={(e) => setForm({ ...form, publicId: e.target.value })}
+            />
+            {mode === "create" && (
+              <small className="admin-form-hint">
+                Leave empty to automatically use the next available Public ID.
+              </small>
+            )}
           </label>
 
           <label className="admin-form-field">

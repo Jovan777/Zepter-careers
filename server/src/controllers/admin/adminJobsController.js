@@ -112,6 +112,32 @@ const findJobByPublicId = async (publicId) => {
   return Job.findOne({ publicId: String(publicId).trim() });
 };
 
+const getNextJobPublicId = async () => {
+  const latestNumericJob = await Job.aggregate([
+    {
+      $match: {
+        publicId: { $regex: "^\\d+$" },
+      },
+    },
+    {
+      $addFields: {
+        publicIdNumber: { $toInt: "$publicId" },
+      },
+    },
+    {
+      $sort: {
+        publicIdNumber: -1,
+      },
+    },
+    {
+      $limit: 1,
+    },
+  ]);
+
+  const lastNumber = latestNumericJob[0]?.publicIdNumber || 0;
+  return String(lastNumber + 1);
+};
+
 const resolveTranslationForLocale = async (jobId, locale) => {
   let translation = await JobTranslation.findOne({
     job: jobId,
@@ -329,10 +355,10 @@ const createAdminJob = async (req, res) => {
       locationType,
     } = normalized;
 
-    if (!publicId) {
-      return res.status(400).json({
-        message: "publicId je obavezan.",
-      });
+    let finalPublicId = publicId;
+
+    if (!finalPublicId) {
+      finalPublicId = await getNextJobPublicId();
     }
 
     if (!company || !region) {
@@ -347,7 +373,7 @@ const createAdminJob = async (req, res) => {
       });
     }
 
-    const existingPublicId = await Job.findOne({ publicId });
+    const existingPublicId = await Job.findOne({ publicId: finalPublicId });
     if (existingPublicId) {
       return res.status(409).json({
         message: "Job sa ovim publicId već postoji.",
@@ -364,7 +390,7 @@ const createAdminJob = async (req, res) => {
     }
 
     const job = await Job.create({
-      publicId,
+      publicId: finalPublicId,
       company,
       region,
       status: status || "draft",
@@ -401,6 +427,13 @@ const createAdminJob = async (req, res) => {
     });
   } catch (error) {
     console.error("Greška u createAdminJob:", error);
+
+    if (error.code === 11000 && error.keyPattern?.publicId) {
+      return res.status(409).json({
+        message: "Job publicId already exists. Please try again.",
+      });
+    }
+
     return res.status(500).json({
       message: "Greška pri kreiranju job-a.",
       error: error.message,
