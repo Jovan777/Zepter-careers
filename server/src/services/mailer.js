@@ -52,7 +52,7 @@ const getSmtpTransporter = () => {
   return nodemailer.createTransport(transportConfig);
 };
 
-const sendSmtpMail = async ({ to, subject, text, html }) => {
+const sendSmtpMail = async ({ to, subject, text, html, replyTo }) => {
   const transporter = getSmtpTransporter();
   const from = `"${getFromName()}" <${getFromEmail()}>`;
 
@@ -62,10 +62,11 @@ const sendSmtpMail = async ({ to, subject, text, html }) => {
     subject,
     text,
     html,
+    ...(replyTo ? { replyTo } : {}),
   });
 };
 
-const sendMailtrapMail = async ({ to, subject, text, html, category }) => {
+const sendMailtrapMail = async ({ to, subject, text, html, category, replyTo }) => {
   const client = getClient();
 
   return client.send({
@@ -78,16 +79,18 @@ const sendMailtrapMail = async ({ to, subject, text, html, category }) => {
     text,
     html,
     category,
+    ...(replyTo ? { reply_to: { email: replyTo } } : {}),
   });
 };
 
-const sendMail = async ({ to, subject, text, html, category = "Zepter Careers" }) => {
+const sendMail = async ({ to, subject, text, html, category = "Zepter Careers", replyTo }) => {
   if (hasSmtpConfig()) {
     return sendSmtpMail({
       to,
       subject,
       text,
       html,
+      replyTo,
     });
   }
 
@@ -97,6 +100,7 @@ const sendMail = async ({ to, subject, text, html, category = "Zepter Careers" }
     text,
     html,
     category,
+    replyTo,
   });
 };
 

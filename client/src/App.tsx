@@ -23,6 +23,7 @@ import AdminSchedulerPage from "./admin/pages/AdminSchedulerPage";
 import ProcessPage from "./pages/ProcessPage";
 import FaqPage from "./pages/FaqPage";
 import OurTeamPage from "./pages/OurTeamPage";
+import ContactPage from "./pages/ContactPage";
 import AdminArchivedCandidatesPage from "./admin/pages/AdminArchivedCandidatesPage";
 
 
@@ -35,6 +36,7 @@ function App() {
         <Route path="/process" element={<ProcessPage />} />
         <Route path="/faq" element={<FaqPage />} />
         <Route path="/our-team" element={<OurTeamPage />} />
+        <Route path="/contact" element={<ContactPage />} />
 
 
         <Route path="/admin/login" element={<AdminLoginPage />} />

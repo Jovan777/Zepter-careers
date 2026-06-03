@@ -29,14 +29,9 @@ const Header = ({ onOpenNotifications }: HeaderProps) => {
             Kako se prijaviti
           </Link>
 
-          <a
-            href="https://www.zepter.rs/contacts"
-            className="header__nav-link"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+          <Link to="/contact" className="header__nav-link">
             Kontakt
-          </a>
+          </Link>
 
           <Link to="/faq" className="header__nav-link">
             Najčešća pitanja

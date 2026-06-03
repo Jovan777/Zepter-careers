@@ -1,6 +1,6 @@
 const { sendMail } = require("./mailer");
 
-const sendEmail = async ({ to, subject, html, text }) => {
+const sendEmail = async ({ to, subject, html, text, replyTo, category }) => {
   if (!to || !String(to).trim()) {
     throw new Error("Recipient email is required.");
   }
@@ -10,6 +10,8 @@ const sendEmail = async ({ to, subject, html, text }) => {
     subject,
     html,
     text,
+    replyTo,
+    category,
   });
 };
 
