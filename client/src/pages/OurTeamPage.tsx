@@ -1,6 +1,7 @@
 import { useState } from "react";
 import OfficialHeader from "../components/OfficialHeader";
 import Footer from "../components/Footer";
+import Header from "../components/Header";
 import NotificationModal from "../components/NotificationModal";
 import "../styles/our-team.css";
 
@@ -66,7 +67,7 @@ const OurTeamPage = () => {
 
   return (
     <>
-      <OfficialHeader />
+      <Header onOpenNotifications={() => setIsNotificationModalOpen(true)} />
 
       <section className="our-team-hero">
         <div className="our-team-hero__overlay" />

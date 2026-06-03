@@ -21,20 +21,25 @@ const Header = ({ onOpenNotifications }: HeaderProps) => {
         </a>
 
         <nav className="header__nav">
+
+          <Link to="/our-team" className="header__nav-link">
+            O nama
+          </Link>
+
           <Link to="/jobs" className="header__nav-link">
-            Poslovi
+            Otvorene pozicije
           </Link>
 
           <Link to="/process" className="header__nav-link">
             Kako se prijaviti
           </Link>
 
-          <Link to="/contact" className="header__nav-link">
-            Kontakt
-          </Link>
-
           <Link to="/faq" className="header__nav-link">
             Najčešća pitanja
+          </Link>
+
+          <Link to="/contact" className="header__nav-link">
+            Kontakt
           </Link>
         </nav>
 

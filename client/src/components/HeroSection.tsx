@@ -106,12 +106,28 @@ const HeroSection = () => {
 
   return (
     <section className="hero">
+      <video
+        className="hero__video"
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="metadata"
+        aria-hidden="true"
+      >
+        <source
+          src="/Zepter-Careers images/Zepter Careers WallpLive2.mp4"
+          type="video/mp4"
+        />
+      </video>
+
       <div className="hero__overlay" />
+
       <div className="container hero__content">
         <div className="hero__left">
-          <h1 className="hero__title">ZAPOSLI SE U ZEPTER</h1>
+          <h1 className="hero__title">POSTANITE DEO ZEPTER SVETA</h1>
           <p className="hero__subtitle">
-            Vaš talenat. Naša vizija. Zdravija zajednička budućnost.
+            Budite deo tima koji oblikuje budućnost kvalitetnijeg života.
           </p>
 
           <div className="hero__search-box">

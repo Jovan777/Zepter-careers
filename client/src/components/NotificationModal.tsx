@@ -197,7 +197,7 @@ const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) => {
                     if (submitError) setSubmitError("");
                   }}
                 />
-                <span>Specifična lokacija</span>
+                <span>Site/Kancelarija</span>
               </label>
 
               <label className="notification-modal__radio">
