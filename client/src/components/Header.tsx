@@ -22,6 +22,10 @@ const Header = ({ onOpenNotifications }: HeaderProps) => {
 
         <nav className="header__nav">
 
+          <Link to="/" className="header__nav-link">
+            Početna
+          </Link>
+
           <Link to="/our-team" className="header__nav-link">
             O nama
           </Link>

@@ -197,14 +197,7 @@ const JobsResultsSection = ({ filters }: JobsResultsSectionProps) => {
                     className={`jobs-mini-card ${isActive ? "jobs-mini-card--active" : ""}`}
                     onClick={() => handleSelectJob(job.publicId)}
                   >
-                    <button
-                      type="button"
-                      className="jobs-mini-card__favorite"
-                      aria-label="Sačuvaj poziciju"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      ♡
-                    </button>
+                    
 
                     <h3 className="jobs-mini-card__title">{job.title}</h3>
 
@@ -280,13 +273,7 @@ const JobsResultsSection = ({ filters }: JobsResultsSectionProps) => {
                   </div>
 
                   <div className="job-details-card__actions">
-                    <button
-                      type="button"
-                      className="job-details-card__favorite"
-                      aria-label="Sačuvaj poziciju"
-                    >
-                      ♡
-                    </button>
+                    
 
                     <button
                       type="button"

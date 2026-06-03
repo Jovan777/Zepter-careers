@@ -70,14 +70,7 @@ const OpenPositionsSection = () => {
                     }
                   }}
                 >
-                  <button
-                    className="job-card__favorite"
-                    type="button"
-                    aria-label="Sačuvaj poziciju"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    ♡
-                  </button>
+                  
 
                   <h3 className="job-card__title">{position.title}</h3>
 

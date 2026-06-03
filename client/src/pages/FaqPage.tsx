@@ -42,7 +42,26 @@ const faqItems = [
           formu za kontakt
         </Link>      </>
     ),
-  }
+  },
+  {
+    question: "Šta je ZepterClub i zašto je važan za kandidate?",
+    answer: (
+      <>
+        ZepterClub je naš ekosistem koji povezuje kupce, članove, partnere i
+        konsultante u jedinstvenu mrežu privilegija, preporuka i poslovnih
+        mogućnosti.{" "}
+        <a
+          href="https://www.zepter.rs/zepterclub"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="faq__answer-link"
+        >
+          Saznajte više o ZepterClub-u
+        </a>
+        .
+      </>
+    ),
+  },
 ];
 
 const FaqPage = () => {

@@ -24,6 +24,10 @@ const values = [
 
 const benefits = [
   {
+    title: "ZepterClub privilegije",
+    description: "Mogućnost korišćenja i deljenja ZepterClub pogodnosti sa prijateljima, kupcima i saradnicima.",
+  },
+  {
     title: "Specijalne cene",
     description: "Zepter proizvodi dostupni zaposlenima po posebnim uslovima.",
   },

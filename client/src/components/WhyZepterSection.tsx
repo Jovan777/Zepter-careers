@@ -90,7 +90,7 @@ const WhyZepterSection = () => {
               <strong>Ekosistem zdravlja, lepote i dugovečnosti.</strong>{" "}
               Zepter International decenijama pomera granice u razvoju
               tehnologija zdravlja. Nudimo priliku da uz posao postanete deo
-              misije posvećene boljem, zdravijem i dužem životu miliona ljudi.
+              misije posvećene boljem, zdravijem i dužem životu miliona ljudi. Kroz ZepterClub, naš ekosistem povezuje kupce, članove, partnere i konsultante u jedinstvenu mrežu privilegija, preporuka i poslovnih mogućnosti.
             </p>
 
             <button type="button" className="why-zepter__button">
