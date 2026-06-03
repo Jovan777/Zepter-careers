@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import NotificationModal from "../components/NotificationModal";
@@ -8,17 +9,17 @@ const faqItems = [
   {
     question: "Kako mogu da se prijavim na otvorenu poziciju?",
     answer:
-      "Na stranici Jobs izaberite poziciju koja vas interesuje, otvorite detalje oglasa i kliknite na dugme za prijavu. Zatim popunite formu i pošaljite potrebnu dokumentaciju.",
+      "Na delu 'Otvorene pozicije' pronađite oglas koji Vas najviše zanime i kliknite na dugme 'Konkurišite'. Zatim popunite formu sa traženim informacijama i priložite CV.",
   },
   {
     question: "Da li mogu da se prijavim na više pozicija?",
     answer:
-      "Da. Možete poslati prijavu za više različitih pozicija ukoliko smatrate da odgovarate uslovima konkursa.",
+      "Ukoliko prepoznajete sebe u više otvorenih pozicija, možete konkursirati za svaku od njih.",
   },
   {
     question: "Koja dokumenta su obavezna prilikom prijave?",
     answer:
-      "Obavezno je dostaviti CV. Po potrebi možete dodati i dodatna dokumenta poput sertifikata, diploma ili portfolija.",
+      "CV + Motivaciono/Propratno pismo. Možete priložiti i dodatne dokumente poput preporuka, sertifikata ili portfolija, ali nisu obavezni.",
   },
   {
     question: "Da li ću dobiti potvrdu da je prijava uspešno poslata?",
@@ -28,8 +29,20 @@ const faqItems = [
   {
     question: "Kako funkcionišu obaveštenja o novim poslovima?",
     answer:
-      "Možete se prijaviti za obaveštenja unosom email adrese, ključne reči, oblasti rada i željene lokacije. Kada se pojave relevantne pozicije, bićete obavešteni.",
+      "Bićete obavešteni putem email adrese kada se pojave relevantne pozicije.",
   },
+  {
+    question: "Niste pronašli odgovor na svoje pitanje?",
+    answer: (
+      <>
+        Slobodno nas kontaktirajte. Naš HR tim Vam stoji na raspolaganju za sve
+        dodatne informacije na{" "}
+        <a href="mailto:karijera@zepter.rs">karijera@zepter.rs</a> ili popunite{" "}
+        <Link to="/contact" className="faq__answer-link">
+          formu za kontakt
+        </Link>      </>
+    ),
+  }
 ];
 
 const FaqPage = () => {

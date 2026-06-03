@@ -44,7 +44,7 @@ const OpenPositionsSection = () => {
             <div>
               <h2 className="open-positions__title">Otvorene Pozicije</h2>
               <p className="open-positions__subtitle">
-                Pridruži se našem timu — pogledaj slobodna mesta i pošalji prijavu.
+                Pridruži se našem timu — pogledaj aktuelne pozicije i prijavi se!
               </p>
             </div>
 

@@ -106,7 +106,6 @@
 }
 
 .jobs-hero__field--location::after {
-    content: "▾";
     position: absolute;
     right: 4px;
     top: 50%;
@@ -416,7 +415,10 @@
 .job-details-card__qr-box--body {
     max-width: 220px;
     justify-self: end;
-    margin-top: 300px;
+    margin-top: 0;
+    position: sticky;
+    top: 110px;
+    align-self: start;
 }
 
 .job-details-card__qr-label {
@@ -1320,6 +1322,7 @@
         max-width: 240px;
         justify-self: start;
         margin-top: 24px;
+        
     }
 
     .job-details-empty {

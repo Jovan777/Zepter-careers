@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 type FooterProps = {
   onOpenNotifications: () => void;
 };
@@ -111,6 +113,13 @@ const Footer = ({ onOpenNotifications }: FooterProps) => {
               <span>Prijavite se za obaveštenja</span>
               <span className="footer__button-arrow">›</span>
             </button>
+
+            <Link to="/contact" className="footer__contact-button">
+              <span>Kontaktirajte nas</span>
+              <span className="footer__contact-button-arrow">›</span>
+            </Link>
+
+
           </div>
         </div>
 

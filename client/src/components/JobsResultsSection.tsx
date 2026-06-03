@@ -293,7 +293,11 @@ const JobsResultsSection = ({ filters }: JobsResultsSectionProps) => {
                       className="job-details-card__apply-btn"
                       onClick={openApplyModal}
                     >
+
+                      {/* 
                       {selectedJobDetails.translation.applyLabel || "Konkurs za poziciju"}{" "}
+                      */}
+                      Konkurišite
                       <span>›</span>
                     </button>
                   </div>

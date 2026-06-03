@@ -8,23 +8,33 @@ const processSteps = [
   {
     step: "01",
     title: "Prijava",
-    text: "Izaberite poziciju koja vam odgovara i pošaljite prijavu sa potrebnim dokumentima.",
+    text: "Izaberite poziciju koja Vam odgovara i pošaljite prijavu sa potrebnim dokumentima.",
   },
   {
     step: "02",
     title: "Pregled prijava",
-    text: "Naš tim pregledava pristigle prijave i procenjuje usklađenost kandidata sa zahtevima pozicije.",
+    text: "Naš tim pregleda pristigle prijave i procenjuje usklađenost kandidata sa zahtevima pozicije.",
   },
   {
     step: "03",
-    title: "Intervju",
-    text: "Kandidati koji uđu u uži izbor biće kontaktirani radi dogovora o intervjuu ili narednim koracima.",
+    title: "Izrada Case Study",
+    text: "Kratak zadatak kroz koji želimo da vaš način razmišljanja i pristup radu.",
   },
   {
     step: "04",
-    title: "Povratna informacija",
-    text: "Nakon završenog procesa selekcije, kandidati dobijaju informaciju o statusu prijave.",
+    title: "Pregled Case Study",
+    text: "Zadatak se interno pregleda i ocenjuje, nakon čega se kontaktiraju kandidati koji su ušli u uži izbor.",
   },
+  {
+    step: "05",
+    title: "Intervju",
+    text: "Razgovaramo o Vašem iskustvo, motivaciji i potencijalo, dok Vam istovremeno predstavljamo tim, način rada i mogućnosti razvoja unutar kompanije.",
+  },
+  {
+    step: "06",
+    title: "Povratna informacija",
+    text: "Nakon završenog procesa selekcije, dobijate informaciju o statusu Vaše prijave.",
+  }
 ];
 
 const ProcessPage = () => {

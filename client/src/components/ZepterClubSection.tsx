@@ -10,11 +10,7 @@ const ZepterClubSection = () => {
               className="zepter-club__image"
             />
 
-            <img
-              src="/Zepter-Careers images/zepterclub_logo 1.png"
-              alt="Zepter Club"
-              className="zepter-club__logo"
-            />
+
           </div>
 
           <div className="zepter-club__content">
@@ -27,7 +23,7 @@ const ZepterClubSection = () => {
 
             <p className="zepter-club__text">
               <strong>STATUS PARTNERA:</strong> Izgradite sopstveni biznis kao
-              konsultant uz provizije od <strong>5% do 40%</strong> i dodatne
+              konsultant uz konsultantsku prodajnu proviziju <strong>5% do 40%</strong> i dodatne
               korporativne privilegije.
             </p>
 
@@ -39,6 +35,17 @@ const ZepterClubSection = () => {
               <span>Postani član</span>
               <span className="zepter-club__button-arrow">›</span>
             </button>
+
+            <button
+              type="button"
+              className="zepter-club__friend-button"
+              onClick={() => window.open("https://www.zepter.rs/zepterclub", "_blank")}
+            >
+              <span>Dodeli prijateljima ZepterClub privilegije</span>
+              <span className="zepter-club__friend-button-arrow">›</span>
+            </button>
+
+
           </div>
         </div>
       </div>
