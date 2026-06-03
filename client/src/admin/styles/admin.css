@@ -326,12 +326,19 @@
 
 .admin-badge--draft,
 .admin-badge--new,
+.admin-badge--reviewed,
+.admin-badge--contacted,
 .admin-badge--screening,
 .admin-badge--interview,
 .admin-badge--offer,
 .admin-badge--onboarding {
   background: #edf4fb;
   color: #2b5d8f;
+}
+
+.admin-badge--talent_pool {
+  background: #e9f7ef;
+  color: #237a45;
 }
 
 .admin-badge--closed,
@@ -974,6 +981,30 @@
 
 .admin-modal .admin-input {
   background: #fff;
+}
+
+.admin-modal--wide {
+  max-width: 860px;
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
+}
+
+.admin-modal__header-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.admin-modal__header-row p {
+  margin: 0;
+}
+
+.admin-talent-pool-details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 

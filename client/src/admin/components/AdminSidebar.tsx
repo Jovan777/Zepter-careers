@@ -5,6 +5,7 @@ const links = [
   { to: "/admin/jobs", label: "Jobs" },
   { to: "/admin/translations", label: "Translations" },
   { to: "/admin/applications", label: "Applications" },
+  { to: "/admin/talent-pool", label: "Talent Pool" },
   { to: "/admin/candidates", label: "Candidates" },
   { to: "/admin/scheduler", label: "Scheduler" },
   { to: "/admin/companies", label: "Companies" },

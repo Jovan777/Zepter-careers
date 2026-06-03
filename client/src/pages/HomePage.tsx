@@ -2,6 +2,8 @@ import Header from "../components/Header";
 import HeroSection from "../components/HeroSection";
 import BrandStrip from "../components/BrandStrip";
 import OpenPositionsSection from "../components/OpenPositionsSection";
+import TalentPoolSection from "../components/TalentPoolSection";
+import TalentPoolModal from "../components/TalentPoolModal";
 import WhyZepterSection from "../components/WhyZepterSection";
 import QuoteSection from "../components/QuoteSection";
 import ZepterClubSection from "../components/ZepterClubSection";
@@ -14,9 +16,12 @@ import "../styles/home.css";
 
 const HomePage = () => {
   const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false);
+  const [isTalentPoolModalOpen, setIsTalentPoolModalOpen] = useState(false);
 
   const openNotifications = () => setIsNotificationModalOpen(true);
   const closeNotifications = () => setIsNotificationModalOpen(false);
+  const openTalentPool = () => setIsTalentPoolModalOpen(true);
+  const closeTalentPool = () => setIsTalentPoolModalOpen(false);
 
   return (
     <>
@@ -24,6 +29,7 @@ const HomePage = () => {
       <HeroSection />
       <BrandStrip />
       <OpenPositionsSection />
+      <TalentPoolSection onOpen={openTalentPool} />
       <WhyZepterSection />
       <QuoteSection />
       <ZepterClubSection />
@@ -34,6 +40,10 @@ const HomePage = () => {
       <NotificationModal
         isOpen={isNotificationModalOpen}
         onClose={closeNotifications}
+      />
+      <TalentPoolModal
+        isOpen={isTalentPoolModalOpen}
+        onClose={closeTalentPool}
       />
     </>
   );

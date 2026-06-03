@@ -24,6 +24,7 @@ app.get("/", (req, res) => {
 
 app.use("/api/jobs", require("./routes/publicJobRoutes"));
 app.use("/api/applications", require("./routes/applicationRoutes"));
+app.use("/api/talent-pool", require("./routes/talentPoolRoutes"));
 
 app.use("/api/admin/auth", require("./routes/admin/adminAuthRoutes"));
 app.use("/api/admin/dashboard", require("./routes/admin/adminDashboardRoutes"));
@@ -34,6 +35,7 @@ app.use("/api/admin/jobs", require("./routes/admin/adminJobsRoutes"));
 app.use("/api/admin/translations", require("./routes/admin/adminTranslationsRoutes"));
 
 app.use("/api/admin/applications", require("./routes/admin/adminApplicationsRoutes"));
+app.use("/api/admin/talent-pool", require("./routes/admin/adminTalentPoolRoutes"));
 app.use("/api/admin/candidates", require("./routes/admin/adminCandidatesRoutes"));
 app.use("/api/admin/scheduler", require("./routes/admin/adminSchedulerRoutes"));
 

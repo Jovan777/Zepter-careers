@@ -2247,3 +2247,421 @@
 
 
 }
+
+/* TALENT POOL */
+
+.talent-pool-section {
+    background: #ffffff;
+    padding: 0 0 54px;
+}
+
+.talent-pool-section__card {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 36px;
+    padding: 34px 42px;
+    border: 1px solid rgba(181, 156, 104, 0.28);
+    border-radius: 28px;
+    background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.94) 0%, rgba(244, 248, 252, 0.96) 100%),
+        radial-gradient(circle at 14% 16%, rgba(181, 156, 104, 0.12), transparent 36%);
+    box-shadow: 0 22px 54px rgba(16, 45, 84, 0.08);
+}
+
+.talent-pool-section__content {
+    max-width: 920px;
+}
+
+.talent-pool-section__eyebrow {
+    margin: 0 0 8px;
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-size: 13px;
+    line-height: 1.35;
+    font-weight: 700;
+    color: #b59c68;
+    text-transform: uppercase;
+    letter-spacing: 0;
+}
+
+.talent-pool-section__title {
+    margin: 0 0 12px;
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-size: 30px;
+    line-height: 1.2;
+    font-weight: 700;
+    color: #102d54;
+}
+
+.talent-pool-section__text {
+    margin: 0;
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-size: 15px;
+    line-height: 1.75;
+    font-weight: 400;
+    color: #31456a;
+}
+
+.talent-pool-section__button {
+    min-height: 50px;
+    border: none;
+    border-radius: 999px;
+    padding: 0 28px;
+    background: #102d54;
+    color: #ffffff;
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    white-space: nowrap;
+    box-shadow: 0 14px 28px rgba(16, 45, 84, 0.16);
+    transition: transform 0.2s ease, opacity 0.2s ease, box-shadow 0.2s ease;
+}
+
+.talent-pool-section__button:hover {
+    transform: translateY(-1px);
+    opacity: 0.96;
+    box-shadow: 0 18px 34px rgba(16, 45, 84, 0.2);
+}
+
+.talent-pool-section__button span {
+    font-size: 18px;
+    line-height: 1;
+}
+
+.talent-pool-modal__overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 2200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(7, 16, 25, 0.58);
+}
+
+.talent-pool-modal {
+    width: min(720px, 100%);
+    max-height: calc(100vh - 40px);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    background: #ffffff;
+    border-radius: 18px;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.28);
+}
+
+.talent-pool-modal__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 24px 30px 20px;
+    border-bottom: 1px solid #dde1ea;
+}
+
+.talent-pool-modal__eyebrow {
+    margin: 0 0 6px;
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-size: 12px;
+    line-height: 1.35;
+    font-weight: 700;
+    color: #b59c68;
+    text-transform: uppercase;
+    letter-spacing: 0;
+}
+
+.talent-pool-modal__title {
+    margin: 0;
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-size: 24px;
+    line-height: 1.25;
+    font-weight: 700;
+    color: #1a234f;
+}
+
+.talent-pool-modal__close {
+    border: none;
+    background: transparent;
+    padding: 0;
+    font-size: 38px;
+    line-height: 1;
+    color: #222222;
+    cursor: pointer;
+}
+
+.talent-pool-modal__body {
+    overflow-y: auto;
+    padding: 22px 30px 26px;
+}
+
+.talent-pool-modal__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.talent-pool-modal__field {
+    margin-bottom: 16px;
+}
+
+.talent-pool-modal__field label {
+    display: block;
+    margin-bottom: 9px;
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.3;
+    font-weight: 700;
+    color: #1a234f;
+}
+
+.talent-pool-modal__field input,
+.talent-pool-modal__field select,
+.talent-pool-modal__field textarea {
+    width: 100%;
+    border: 1px solid #ccd2de;
+    border-radius: 10px;
+    background: #ffffff;
+    padding: 0 14px;
+    box-sizing: border-box;
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-size: 14px;
+    color: #313131;
+    outline: none;
+}
+
+.talent-pool-modal__field input,
+.talent-pool-modal__field select {
+    height: 44px;
+}
+
+.talent-pool-modal__field textarea {
+    min-height: 104px;
+    padding: 12px 14px;
+    resize: vertical;
+}
+
+.talent-pool-modal__field input::placeholder,
+.talent-pool-modal__field textarea::placeholder {
+    color: #b4b8c3;
+}
+
+.talent-pool-modal__upload-box {
+    min-height: 56px;
+    border: 1px dashed #bcc5d5;
+    border-radius: 14px;
+    background: #f9fbfe;
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.talent-pool-modal__upload-box:hover,
+.talent-pool-modal__upload-box:focus-within {
+    border-color: #b59c68;
+    background: #ffffff;
+}
+
+.talent-pool-modal__upload-box input {
+    display: none;
+}
+
+.talent-pool-modal__upload-text {
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: #8d95a6;
+}
+
+.talent-pool-modal__upload-text--selected {
+    color: #102d54;
+}
+
+.talent-pool-modal__file-note {
+    margin: 8px 0 0;
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-size: 12.5px;
+    line-height: 1.45;
+    color: #7a8798;
+}
+
+.talent-pool-modal__checkbox {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 12px;
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.55;
+    color: #1f2a56;
+}
+
+.talent-pool-modal__checkbox input {
+    margin-top: 3px;
+    accent-color: #1a234f;
+}
+
+.talent-pool-modal__checkbox a {
+    color: #b59c68;
+}
+
+.talent-pool-modal__error {
+    margin: 0 0 10px;
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-size: 13px;
+    line-height: 1.45;
+    color: #c62828;
+}
+
+.talent-pool-modal__submit {
+    width: 100%;
+    min-height: 52px;
+    border: none;
+    border-radius: 12px;
+    background: #b59c68;
+    color: #ffffff;
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.talent-pool-modal__submit:hover:not(:disabled) {
+    transform: translateY(-1px);
+    opacity: 0.96;
+}
+
+.talent-pool-modal__submit:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.talent-pool-modal__success-card {
+    text-align: center;
+    padding: 12px 8px 4px;
+}
+
+.talent-pool-modal__success-logo-wrap {
+    width: 84px;
+    height: 84px;
+    margin: 0 auto 16px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 1px solid #e2e7f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.talent-pool-modal__success-logo {
+    width: 42px;
+    height: 42px;
+}
+
+.talent-pool-modal__success-card h3 {
+    margin: 0 0 10px;
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-size: 22px;
+    line-height: 1.3;
+    color: #102d54;
+}
+
+.talent-pool-modal__success-card p {
+    max-width: 430px;
+    margin: 0 auto 18px;
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.65;
+    color: #586984;
+}
+
+@media (max-width: 992px) {
+    .talent-pool-section {
+        padding-bottom: 38px;
+    }
+
+    .talent-pool-section__card {
+        grid-template-columns: 1fr;
+        gap: 24px;
+        padding: 30px 26px;
+    }
+
+    .talent-pool-section__title {
+        font-size: 26px;
+    }
+
+    .talent-pool-section__button {
+        justify-self: start;
+    }
+}
+
+@media (max-width: 768px) {
+    .talent-pool-section {
+        padding-bottom: 32px;
+    }
+
+    .talent-pool-section__card {
+        border-radius: 22px;
+        padding: 24px 18px;
+    }
+
+    .talent-pool-section__title {
+        font-size: 22px;
+    }
+
+    .talent-pool-section__text {
+        font-size: 14px;
+        line-height: 1.65;
+    }
+
+    .talent-pool-section__button {
+        width: 100%;
+        white-space: normal;
+    }
+
+    .talent-pool-modal__overlay {
+        padding: 12px;
+    }
+
+    .talent-pool-modal {
+        max-height: calc(100vh - 24px);
+    }
+
+    .talent-pool-modal__header {
+        padding: 18px 18px 16px;
+    }
+
+    .talent-pool-modal__title {
+        font-size: 20px;
+    }
+
+    .talent-pool-modal__close {
+        font-size: 34px;
+    }
+
+    .talent-pool-modal__body {
+        padding: 18px;
+    }
+
+    .talent-pool-modal__grid {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+
+    .talent-pool-modal__submit {
+        min-height: 48px;
+        font-size: 15px;
+    }
+}

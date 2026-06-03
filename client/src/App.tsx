@@ -13,6 +13,7 @@ import AdminJobEditorPage from "./admin/pages/AdminJobEditorPage";
 import AdminTranslationsPage from "./admin/pages/AdminTranslationsPage";
 import AdminApplicationsPage from "./admin/pages/AdminApplicationsPage";
 import AdminApplicationDetailsPage from "./admin/pages/AdminApplicationDetailsPage";
+import AdminTalentPoolPage from "./admin/pages/AdminTalentPoolPage";
 import AdminCandidatesPage from "./admin/pages/AdminCandidatesPage";
 import AdminCandidateDetailsPage from "./admin/pages/AdminCandidateDetailsPage";
 import AdminCompaniesPage from "./admin/pages/AdminCompaniesPage";
@@ -54,6 +55,7 @@ function App() {
           <Route path="translations" element={<AdminTranslationsPage />} />
           <Route path="applications" element={<AdminApplicationsPage />} />
           <Route path="applications/:publicId" element={<AdminApplicationDetailsPage />} />
+          <Route path="talent-pool" element={<AdminTalentPoolPage />} />
           <Route path="candidates" element={<AdminCandidatesPage />} />
           <Route path="candidates/archived" element={<AdminArchivedCandidatesPage />} />
           <Route path="candidates/:publicId" element={<AdminCandidateDetailsPage />} />
