@@ -2914,6 +2914,344 @@
     color: #586984;
 }
 
+/* SALES CONSULTANT */
+
+.sales-consultant {
+    background: #ffffff;
+    padding: 0 0 54px;
+}
+
+.sales-consultant__card {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 36px;
+    padding: 34px 42px;
+    border: 1px solid rgba(181, 156, 104, 0.42);
+    border-radius: 28px;
+    background:
+        linear-gradient(135deg, #ffffff 0%, #fffaf0 48%, #f6efe1 100%);
+    box-shadow: 0 22px 54px rgba(181, 156, 104, 0.13);
+}
+
+.sales-consultant__content {
+    max-width: 920px;
+}
+
+.sales-consultant__kicker {
+    margin: 0 0 8px;
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-size: 13px;
+    line-height: 1.35;
+    font-weight: 700;
+    color: #b59c68;
+    text-transform: uppercase;
+    letter-spacing: 0;
+}
+
+.sales-consultant__title {
+    margin: 0 0 12px;
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-size: 30px;
+    line-height: 1.2;
+    font-weight: 700;
+    color: #102d54;
+}
+
+.sales-consultant__text {
+    margin: 0;
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-size: 15px;
+    line-height: 1.75;
+    font-weight: 400;
+    color: #31456a;
+}
+
+.sales-consultant__button {
+    min-height: 50px;
+    border: none;
+    border-radius: 999px;
+    padding: 0 28px;
+    background: #b59c68;
+    color: #ffffff;
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    white-space: nowrap;
+    box-shadow: 0 14px 28px rgba(181, 156, 104, 0.22);
+    transition: transform 0.2s ease, opacity 0.2s ease, box-shadow 0.2s ease;
+}
+
+.sales-consultant__button:hover {
+    transform: translateY(-1px);
+    opacity: 0.96;
+    box-shadow: 0 18px 34px rgba(181, 156, 104, 0.26);
+}
+
+.sales-consultant__button span {
+    font-size: 18px;
+    line-height: 1;
+}
+
+.sales-consultant-modal__overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 2200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(7, 16, 25, 0.58);
+}
+
+.sales-consultant-modal {
+    width: min(720px, 100%);
+    max-height: calc(100vh - 40px);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    background: #ffffff;
+    border-radius: 18px;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.28);
+}
+
+.sales-consultant-modal__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 24px 30px 20px;
+    border-bottom: 1px solid #dde1ea;
+}
+
+.sales-consultant-modal__eyebrow {
+    margin: 0 0 6px;
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-size: 12px;
+    line-height: 1.35;
+    font-weight: 700;
+    color: #b59c68;
+    text-transform: uppercase;
+    letter-spacing: 0;
+}
+
+.sales-consultant-modal__title {
+    margin: 0;
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-size: 24px;
+    line-height: 1.25;
+    font-weight: 700;
+    color: #1a234f;
+}
+
+.sales-consultant-modal__close {
+    border: none;
+    background: transparent;
+    padding: 0;
+    font-size: 38px;
+    line-height: 1;
+    color: #222222;
+    cursor: pointer;
+}
+
+.sales-consultant-modal__body {
+    overflow-y: auto;
+    padding: 22px 30px 26px;
+}
+
+.sales-consultant-modal__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.sales-consultant-modal__field {
+    margin-bottom: 16px;
+}
+
+.sales-consultant-modal__field label {
+    display: block;
+    margin-bottom: 9px;
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.3;
+    font-weight: 700;
+    color: #1a234f;
+}
+
+.sales-consultant-modal__field input,
+.sales-consultant-modal__field select,
+.sales-consultant-modal__field textarea {
+    width: 100%;
+    border: 1px solid #ccd2de;
+    border-radius: 10px;
+    background: #ffffff;
+    padding: 0 14px;
+    box-sizing: border-box;
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-size: 14px;
+    color: #313131;
+    outline: none;
+}
+
+.sales-consultant-modal__field input,
+.sales-consultant-modal__field select {
+    height: 44px;
+}
+
+.sales-consultant-modal__field textarea {
+    min-height: 104px;
+    padding: 12px 14px;
+    resize: vertical;
+}
+
+.sales-consultant-modal__field input::placeholder,
+.sales-consultant-modal__field textarea::placeholder {
+    color: #b4b8c3;
+}
+
+.sales-consultant-modal__upload-box {
+    min-height: 56px;
+    border: 1px dashed #bcc5d5;
+    border-radius: 14px;
+    background: #f9fbfe;
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.sales-consultant-modal__upload-box:hover,
+.sales-consultant-modal__upload-box:focus-within {
+    border-color: #b59c68;
+    background: #ffffff;
+}
+
+.sales-consultant-modal__upload-box input {
+    display: none;
+}
+
+.sales-consultant-modal__upload-text {
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: #8d95a6;
+}
+
+.sales-consultant-modal__upload-text--selected {
+    color: #102d54;
+}
+
+.sales-consultant-modal__file-note {
+    margin: 8px 0 0;
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-size: 12.5px;
+    line-height: 1.45;
+    color: #7a8798;
+}
+
+.sales-consultant-modal__checkbox {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 12px;
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.55;
+    color: #1f2a56;
+}
+
+.sales-consultant-modal__checkbox input {
+    margin-top: 3px;
+    accent-color: #1a234f;
+}
+
+.sales-consultant-modal__checkbox a {
+    color: #b59c68;
+}
+
+.sales-consultant-modal__error {
+    margin: 0 0 10px;
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-size: 13px;
+    line-height: 1.45;
+    color: #c62828;
+}
+
+.sales-consultant-modal__submit {
+    width: 100%;
+    min-height: 52px;
+    border: none;
+    border-radius: 12px;
+    background: #b59c68;
+    color: #ffffff;
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.sales-consultant-modal__submit:hover:not(:disabled) {
+    transform: translateY(-1px);
+    opacity: 0.96;
+}
+
+.sales-consultant-modal__submit:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.sales-consultant-modal__success-card {
+    text-align: center;
+    padding: 12px 8px 4px;
+}
+
+.sales-consultant-modal__success-logo-wrap {
+    width: 84px;
+    height: 84px;
+    margin: 0 auto 16px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 1px solid #e2e7f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sales-consultant-modal__success-logo {
+    width: 42px;
+    height: 42px;
+}
+
+.sales-consultant-modal__success-card h3 {
+    margin: 0 0 10px;
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-size: 22px;
+    line-height: 1.3;
+    color: #102d54;
+}
+
+.sales-consultant-modal__success-card p {
+    max-width: 430px;
+    margin: 0 auto 18px;
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.65;
+    color: #586984;
+}
+
 /* CONTACT */
 
 .contact-page {
@@ -3111,6 +3449,24 @@
         justify-self: start;
     }
 
+    .sales-consultant {
+        padding-bottom: 38px;
+    }
+
+    .sales-consultant__card {
+        grid-template-columns: 1fr;
+        gap: 24px;
+        padding: 30px 26px;
+    }
+
+    .sales-consultant__title {
+        font-size: 26px;
+    }
+
+    .sales-consultant__button {
+        justify-self: start;
+    }
+
     .contact-section {
         padding: 28px 0 56px;
     }
@@ -3182,6 +3538,63 @@
     }
 
     .talent-pool-modal__submit {
+        min-height: 48px;
+        font-size: 15px;
+    }
+
+    .sales-consultant {
+        padding-bottom: 32px;
+    }
+
+    .sales-consultant__card {
+        border-radius: 22px;
+        padding: 24px 18px;
+    }
+
+    .sales-consultant__title {
+        font-size: 22px;
+    }
+
+    .sales-consultant__text {
+        font-size: 14px;
+        line-height: 1.65;
+    }
+
+    .sales-consultant__button {
+        width: 100%;
+        white-space: normal;
+    }
+
+    .sales-consultant-modal__overlay {
+        padding: 12px;
+    }
+
+    .sales-consultant-modal {
+        max-height: calc(100vh - 24px);
+    }
+
+    .sales-consultant-modal__header {
+        padding: 18px 18px 16px;
+    }
+
+    .sales-consultant-modal__title {
+        font-size: 20px;
+    }
+
+    .sales-consultant-modal__close {
+        font-size: 34px;
+    }
+
+    .sales-consultant-modal__body {
+        padding: 18px;
+    }
+
+    .sales-consultant-modal__grid {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+
+    .sales-consultant-modal__submit {
         min-height: 48px;
         font-size: 15px;
     }

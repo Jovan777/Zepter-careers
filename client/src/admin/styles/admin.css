@@ -319,7 +319,8 @@
 }
 
 .admin-badge--published,
-.admin-badge--hired {
+.admin-badge--hired,
+.admin-badge--accepted {
   background: #e6f6ec;
   color: #237a45;
 }
@@ -330,6 +331,7 @@
 .admin-badge--contacted,
 .admin-badge--screening,
 .admin-badge--interview,
+.admin-badge--in_progress,
 .admin-badge--offer,
 .admin-badge--onboarding {
   background: #edf4fb;

@@ -238,6 +238,51 @@ export type AdminTalentPoolListResponse = {
   applications: AdminTalentPoolListItem[];
 };
 
+export type AdminSalesConsultantDocument = {
+  fileName: string;
+  fileUrl: string;
+};
+
+export type AdminSalesConsultantEvent = {
+  type: string;
+  timestamp: string;
+  data?: Record<string, unknown>;
+};
+
+export type AdminSalesConsultantApplication = {
+  _id: string;
+  publicId: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone?: string;
+  country?: string;
+  city?: string;
+  message?: string;
+  motivation?: string;
+  cvDocument?: AdminSalesConsultantDocument | null;
+  acceptedTerms: boolean;
+  acceptedTermsAt?: string | null;
+  marketingConsent: boolean;
+  status: string;
+  statusLabel: string;
+  reason?: string;
+  createdAt: string;
+  updatedAt?: string;
+};
+
+export type AdminSalesConsultantListResponse = {
+  statuses: string[];
+  applications: AdminSalesConsultantApplication[];
+};
+
+export type AdminSalesConsultantDetailsResponse = {
+  statuses: string[];
+  application: AdminSalesConsultantApplication & {
+    events: AdminSalesConsultantEvent[];
+  };
+};
+
 export type AdminCandidate = {
   _id: string;
   publicId: string;
