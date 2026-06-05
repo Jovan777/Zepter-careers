@@ -224,7 +224,6 @@ const JobsResultsSection = ({ filters }: JobsResultsSectionProps) => {
                     <div className="jobs-mini-card__footer">
                       <span>{job.employmentTypeLabel || "-"}</span>
                       <span>{new Date(job.postedAt).toLocaleDateString("sr-RS")}</span>
-                      <span>Applied {job.appliedCount}</span>
                     </div>
                   </article>
                 );
@@ -408,11 +407,9 @@ const JobsResultsSection = ({ filters }: JobsResultsSectionProps) => {
                     <aside className="job-details-card__qr-box job-details-card__qr-box--body">
                       <QRCodeSVG value={qrTargetUrl} size={140} level="M" />
                       <span className="job-details-card__qr-label">
-                        Skenirajte QR kod
+                        Registrujte se u ZepterClub i ostvarite višestruke pogodnosti
                       </span>
-                      <span className="job-details-card__qr-hint">
-                        Otvorite oglas na telefonu
-                      </span>
+                      
                     </aside>
                   )}
                 </div>

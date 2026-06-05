@@ -32,18 +32,6 @@ const faqItems = [
       "Bićete obavešteni putem email adrese kada se pojave relevantne pozicije.",
   },
   {
-    question: "Niste pronašli odgovor na svoje pitanje?",
-    answer: (
-      <>
-        Slobodno nas kontaktirajte. Naš HR tim Vam stoji na raspolaganju za sve
-        dodatne informacije na{" "}
-        <a href="mailto:karijera@zepter.rs">karijera@zepter.rs</a> ili popunite{" "}
-        <Link to="/contact" className="faq__answer-link">
-          formu za kontakt
-        </Link>      </>
-    ),
-  },
-  {
     question: "Šta je ZepterClub i zašto je važan za kandidate?",
     answer: (
       <>
@@ -62,6 +50,19 @@ const faqItems = [
       </>
     ),
   },
+  {
+    question: "Niste pronašli odgovor na svoje pitanje?",
+    answer: (
+      <>
+        Slobodno nas kontaktirajte. Naš HR tim Vam stoji na raspolaganju za sve
+        dodatne informacije na{" "}
+        <a href="mailto:karijera@zepter.rs">karijera@zepter.rs</a> ili popunite{" "}
+        <Link to="/contact" className="faq__answer-link">
+          formu za kontakt
+        </Link>      </>
+    ),
+  },
+  
 ];
 
 const FaqPage = () => {

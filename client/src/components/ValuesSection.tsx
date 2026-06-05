@@ -1,4 +1,6 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import type { MouseEvent } from "react";
+
 const values = [
   {
     icon: "/Zepter-Careers images/Heart.png",
@@ -25,7 +27,8 @@ const values = [
 const benefits = [
   {
     title: "ZepterClub privilegije",
-    description: "Mogućnost korišćenja i deljenja ZepterClub pogodnosti sa prijateljima, kupcima i saradnicima.",
+    description:
+      "Mogućnost korišćenja i deljenja ZepterClub pogodnosti sa prijateljima, kupcima i saradnicima.",
   },
   {
     title: "Specijalne cene",
@@ -45,7 +48,8 @@ const benefits = [
   },
   {
     title: "Prodajna i menadžerska provizija",
-    description: "Mogućnost dodatne zarade kroz prodajne i menadžerske rezultate.",
+    description:
+      "Mogućnost dodatne zarade kroz prodajne i menadžerske rezultate.",
   },
   {
     title: "Benefitni obroci",
@@ -53,18 +57,44 @@ const benefits = [
   },
   {
     title: "Zepter proizvodi u svakodnevici",
-    description: "Svakodnevno korišćenje proizvoda koji podržavaju zdraviji život.",
+    description:
+      "Svakodnevno korišćenje proizvoda koji podržavaju zdraviji život.",
   },
 ];
 
 const ValuesSection = () => {
-
   const sliderRef = useRef<HTMLDivElement | null>(null);
+
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
 
-  const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+
+  const updateScrollButtons = () => {
+    const element = sliderRef.current;
+
+    if (!element) return;
+
+    setCanScrollLeft(element.scrollLeft > 4);
+    setCanScrollRight(
+      element.scrollLeft + element.clientWidth < element.scrollWidth - 4
+    );
+  };
+
+  const scrollBenefits = (direction: "left" | "right") => {
+    const element = sliderRef.current;
+
+    if (!element) return;
+
+    element.scrollBy({
+      left: direction === "right" ? element.clientWidth : -element.clientWidth,
+      behavior: "smooth",
+    });
+  };
+
+  const handleMouseDown = (e: MouseEvent<HTMLDivElement>) => {
     if (!sliderRef.current) return;
 
     setIsDragging(true);
@@ -80,7 +110,7 @@ const ValuesSection = () => {
     setIsDragging(false);
   };
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+  const handleMouseMove = (e: MouseEvent<HTMLDivElement>) => {
     if (!isDragging || !sliderRef.current) return;
 
     e.preventDefault();
@@ -90,10 +120,22 @@ const ValuesSection = () => {
 
     sliderRef.current.scrollLeft = scrollLeft - walk;
   };
+
+  useEffect(() => {
+    updateScrollButtons();
+
+    window.addEventListener("resize", updateScrollButtons);
+
+    return () => {
+      window.removeEventListener("resize", updateScrollButtons);
+    };
+  }, []);
+
   return (
     <section className="values-section">
       <div className="values-section__inner">
         <h2 className="values-section__title">Naše vrednosti</h2>
+
         <p className="values-section__subtitle">
           Karijera koja počiva na najčistijim temeljima.
         </p>
@@ -110,6 +152,7 @@ const ValuesSection = () => {
               </div>
 
               <h3 className="values-section__item-title">{item.title}</h3>
+
               <p className="values-section__item-description">
                 {item.description}
               </p>
@@ -117,34 +160,77 @@ const ValuesSection = () => {
           ))}
         </div>
 
-
         <div className="values-section__benefits-block">
-          <div
-            ref={sliderRef}
-            className={`values-section__benefits-track ${isDragging ? "values-section__benefits-track--dragging" : ""
+          <div className="values-section__benefits-header">
+            <span className="values-section__benefits-kicker">
+              Zepter Careers
+            </span>
+
+            <h2 className="values-section__benefits-title">
+              Zepter Benefiti
+            </h2>
+
+            <p className="values-section__benefits-subtitle">
+              Pogodnosti koje zaposlenima pružaju dodatnu vrednost, razvoj i
+              kvalitetniju svakodnevicu.
+            </p>
+          </div>
+
+          <div className="values-section__benefits-carousel">
+            {canScrollLeft && (
+              <button
+                type="button"
+                className="values-section__benefits-arrow values-section__benefits-arrow--left"
+                onClick={() => scrollBenefits("left")}
+                aria-label="Prikaži prethodne benefite"
+              >
+                ‹
+              </button>
+            )}
+
+            <div
+              ref={sliderRef}
+              className={`values-section__benefits-track ${
+                isDragging ? "values-section__benefits-track--dragging" : ""
               }`}
-            onMouseDown={handleMouseDown}
-            onMouseLeave={handleMouseLeave}
-            onMouseUp={handleMouseUp}
-            onMouseMove={handleMouseMove}
-          >
-            {benefits.map((benefit, index) => (
-              <article key={benefit.title} className="values-section__benefit-card">
-                <div className="values-section__benefit-number">
-                  {String(index + 1).padStart(2, "0")}
-                </div>
+              onMouseDown={handleMouseDown}
+              onMouseLeave={handleMouseLeave}
+              onMouseUp={handleMouseUp}
+              onMouseMove={handleMouseMove}
+              onScroll={updateScrollButtons}
+            >
+              {benefits.map((benefit, index) => (
+                <article
+                  key={benefit.title}
+                  className="values-section__benefit-card"
+                >
+                  <div className="values-section__benefit-number">
+                    {String(index + 1).padStart(2, "0")}
+                  </div>
 
-                <h3 className="values-section__benefit-title">{benefit.title}</h3>
+                  <h3 className="values-section__benefit-title">
+                    {benefit.title}
+                  </h3>
 
-                <p className="values-section__benefit-description">
-                  {benefit.description}
-                </p>
-              </article>
-            ))}
+                  <p className="values-section__benefit-description">
+                    {benefit.description}
+                  </p>
+                </article>
+              ))}
+            </div>
+
+            {canScrollRight && (
+              <button
+                type="button"
+                className="values-section__benefits-arrow values-section__benefits-arrow--right"
+                onClick={() => scrollBenefits("right")}
+                aria-label="Prikaži sledeće benefite"
+              >
+                ›
+              </button>
+            )}
           </div>
         </div>
-
-
       </div>
     </section>
   );
