@@ -32,17 +32,44 @@ const normalizeSmtpRecipients = (to) =>
     )
     : to;
 
+const getBooleanEnv = (name, defaultValue = false) => {
+  const value = process.env[name];
+
+  if (value === undefined || value === null || value === "") {
+    return defaultValue;
+  }
+
+  return String(value).trim().toLowerCase() === "true";
+};
+
 const getSmtpTransporter = () => {
   const smtpUser = process.env.SMTP_USER;
   const smtpPass = process.env.SMTP_PASS;
 
+  const smtpAuthEnabled = getBooleanEnv("SMTP_AUTH", Boolean(smtpUser && smtpPass));
+  const smtpTlsMinVersion = String(process.env.SMTP_TLS_MIN_VERSION || "").trim();
+  const tlsConfig = {
+    servername: getSmtpHost(),
+  };
+
+  if (smtpTlsMinVersion) {
+    tlsConfig.minVersion = smtpTlsMinVersion;
+  }
+
   const transportConfig = {
     host: getSmtpHost(),
     port: Number.parseInt(process.env.SMTP_PORT || "587", 10),
-    secure: process.env.SMTP_SECURE === "true",
+    secure: getBooleanEnv("SMTP_SECURE", false),
+    ignoreTLS: getBooleanEnv("SMTP_IGNORE_TLS", false),
+    requireTLS: getBooleanEnv("SMTP_REQUIRE_TLS", false),
+    tls: tlsConfig,
   };
 
-  if (smtpUser && smtpPass) {
+  if (smtpAuthEnabled) {
+    if (!smtpUser || !smtpPass) {
+      throw new Error("SMTP_AUTH je uključen, ali SMTP_USER ili SMTP_PASS nisu podešeni.");
+    }
+
     transportConfig.auth = {
       user: smtpUser,
       pass: smtpPass,
