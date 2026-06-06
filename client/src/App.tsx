@@ -26,6 +26,7 @@ import FaqPage from "./pages/FaqPage";
 import OurTeamPage from "./pages/OurTeamPage";
 import ContactPage from "./pages/ContactPage";
 import AdminArchivedCandidatesPage from "./admin/pages/AdminArchivedCandidatesPage";
+import { ADMIN_LOGIN_PATH } from "./config/adminRoutes";
 
 
 function App() {
@@ -39,8 +40,8 @@ function App() {
         <Route path="/our-team" element={<OurTeamPage />} />
         <Route path="/contact" element={<ContactPage />} />
 
-
-        <Route path="/admin/login" element={<AdminLoginPage />} />
+        <Route path="/admin/login" element={<Navigate to="/" replace />} />
+        <Route path={ADMIN_LOGIN_PATH} element={<AdminLoginPage />} />
 
         <Route
           path="/admin"

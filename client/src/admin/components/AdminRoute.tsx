@@ -1,5 +1,6 @@
 import { Navigate } from "react-router-dom";
 import { useAdminAuth } from "../context/AdminAuthContext";
+import { ADMIN_LOGIN_PATH } from "../../config/adminRoutes";
 
 const AdminRoute = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated, isLoading } = useAdminAuth();
@@ -9,7 +10,7 @@ const AdminRoute = ({ children }: { children: React.ReactNode }) => {
   }
 
   if (!isAuthenticated) {
-    return <Navigate to="/admin/login" replace />;
+    return <Navigate to={ADMIN_LOGIN_PATH} replace />;
   }
 
   return <>{children}</>;
