@@ -23,6 +23,7 @@ app.get("/", (req, res) => {
 
 
 app.use("/api/jobs", require("./routes/publicJobRoutes"));
+app.use("/api/captcha", require("./routes/captchaRoutes"));
 app.use("/api/applications", require("./routes/applicationRoutes"));
 app.use("/api/talent-pool", require("./routes/talentPoolRoutes"));
 app.use(

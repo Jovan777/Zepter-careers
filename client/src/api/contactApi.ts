@@ -9,6 +9,9 @@ export type SubmitContactPayload = {
   contactReason: string;
   message: string;
   locale?: string;
+  captchaId: string;
+  captchaAnswer: string;
+  companyWebsite?: string;
 };
 
 export type SubmitContactResponse = {

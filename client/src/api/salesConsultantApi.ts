@@ -10,6 +10,9 @@ export type SubmitSalesConsultantPayload = {
   message?: string;
   acceptedTerms: boolean;
   marketingConsent?: boolean;
+  captchaId: string;
+  captchaAnswer: string;
+  companyWebsite?: string;
   cv?: File | null;
 };
 
@@ -35,6 +38,9 @@ export const submitSalesConsultantApplication = async (
   formData.append("message", payload.message || "");
   formData.append("acceptedTerms", String(payload.acceptedTerms));
   formData.append("marketingConsent", String(Boolean(payload.marketingConsent)));
+  formData.append("captchaId", payload.captchaId);
+  formData.append("captchaAnswer", payload.captchaAnswer);
+  formData.append("companyWebsite", payload.companyWebsite || "");
 
   if (payload.cv) {
     formData.append("cv", payload.cv);

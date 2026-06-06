@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { submitApplication } from "../api/applicationsApi";
+import HumanVerification from "./HumanVerification";
+import { useHumanVerification } from "../hooks/useHumanVerification";
 
 type ApplyJobModalProps = {
   isOpen: boolean;
@@ -48,6 +50,7 @@ const ApplyJobModal = ({
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
+  const humanVerification = useHumanVerification({ isActive: isOpen });
 
   const isFormValid = useMemo(() => {
     return Boolean(
@@ -90,14 +93,16 @@ const ApplyJobModal = ({
     setAcceptedTerms(false);
     setMarketingConsent(false);
     setSubmitError("");
+    humanVerification.reset();
   };
 
   const handleSubmit = async () => {
     if (!isFormValid || !cvFile) return;
+    setSubmitError("");
+    if (!humanVerification.validate()) return;
 
     try {
       setIsSubmitting(true);
-      setSubmitError("");
 
       const { firstName, lastName } = splitFullName(fullName);
 
@@ -111,16 +116,25 @@ const ApplyJobModal = ({
         acceptedTerms,
         marketingConsent,
         locale: "sr",
+        ...humanVerification.getPayload(),
         cv: cvFile,
         extraFiles,
       });
 
+      humanVerification.reset();
       setShowSuccessModal(true);
     } catch (error) {
       console.error(error);
-      setSubmitError(
-        error instanceof Error ? error.message : "Greška pri slanju prijave."
-      );
+      const errorMessage =
+        error instanceof Error ? error.message : "Greška pri slanju prijave.";
+
+      if (errorMessage.includes("Bezbednosna provera")) {
+        setSubmitError("");
+        await humanVerification.handleBackendError(errorMessage);
+      } else {
+        setSubmitError(errorMessage);
+        await humanVerification.refresh();
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -302,10 +316,32 @@ const ApplyJobModal = ({
             </p>
           ) : null}
 
+          <input
+            type="text"
+            name="companyWebsite"
+            value={humanVerification.companyWebsite}
+            onChange={(event) =>
+              humanVerification.setCompanyWebsite(event.target.value)
+            }
+            className="form-honeypot"
+            tabIndex={-1}
+            autoComplete="off"
+            aria-hidden={true}
+          />
+
+          <HumanVerification
+            question={humanVerification.question}
+            answer={humanVerification.answer}
+            error={humanVerification.error}
+            isLoading={humanVerification.isLoading}
+            onAnswerChange={humanVerification.setAnswer}
+            onRefresh={humanVerification.refresh}
+          />
+
           <button
             type="button"
             className="apply-modal__submit"
-            disabled={!isFormValid || isSubmitting}
+            disabled={!isFormValid || isSubmitting || humanVerification.isLoading}
             onClick={handleSubmit}
           >
             {isSubmitting ? "Slanje..." : "Pošalji prijavu"}
