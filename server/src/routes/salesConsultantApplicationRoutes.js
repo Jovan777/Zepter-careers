@@ -4,6 +4,10 @@ const {
   submitSalesConsultantApplication,
 } = require("../controllers/salesConsultantApplicationController");
 const uploadApplicationFiles = require("../middlewares/applicationUploadMiddleware");
+const { publicSubmissionRateLimit } = require("../middlewares/publicRateLimitMiddleware");
+const {
+  createHumanVerificationMiddleware,
+} = require("../middlewares/verifyCaptchaMiddleware");
 
 const router = express.Router();
 
@@ -23,6 +27,12 @@ const uploadOptionalCv = (req, res, next) => {
   });
 };
 
-router.post("/", uploadOptionalCv, submitSalesConsultantApplication);
+router.post(
+  "/",
+  publicSubmissionRateLimit,
+  uploadOptionalCv,
+  createHumanVerificationMiddleware(),
+  submitSalesConsultantApplication
+);
 
 module.exports = router;

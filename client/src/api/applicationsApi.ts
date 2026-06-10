@@ -12,6 +12,9 @@ export type SubmitApplicationPayload = {
   acceptedTerms: boolean;
   marketingConsent: boolean;
   locale?: string;
+  captchaId: string;
+  captchaAnswer: string;
+  companyWebsite?: string;
   cv: File;
   extraFiles?: File[];
 };
@@ -32,6 +35,9 @@ export const submitApplication = async (
   formData.append("acceptedTerms", String(payload.acceptedTerms));
   formData.append("marketingConsent", String(payload.marketingConsent));
   formData.append("locale", payload.locale || "sr");
+  formData.append("captchaId", payload.captchaId);
+  formData.append("captchaAnswer", payload.captchaAnswer);
+  formData.append("companyWebsite", payload.companyWebsite || "");
   formData.append("cv", payload.cv);
 
   (payload.extraFiles || []).forEach((file) => {

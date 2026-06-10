@@ -4,6 +4,10 @@ const {
   submitTalentPoolApplication,
 } = require("../controllers/talentPoolController");
 const uploadApplicationFiles = require("../middlewares/applicationUploadMiddleware");
+const { publicSubmissionRateLimit } = require("../middlewares/publicRateLimitMiddleware");
+const {
+  createHumanVerificationMiddleware,
+} = require("../middlewares/verifyCaptchaMiddleware");
 
 const router = express.Router();
 
@@ -23,6 +27,12 @@ const uploadTalentPoolCv = (req, res, next) => {
   });
 };
 
-router.post("/", uploadTalentPoolCv, submitTalentPoolApplication);
+router.post(
+  "/",
+  publicSubmissionRateLimit,
+  uploadTalentPoolCv,
+  createHumanVerificationMiddleware(),
+  submitTalentPoolApplication
+);
 
 module.exports = router;

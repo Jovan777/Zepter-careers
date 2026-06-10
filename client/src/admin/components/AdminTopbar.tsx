@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useAdminAuth } from "../context/AdminAuthContext";
+import { ADMIN_LOGIN_PATH } from "../../config/adminRoutes";
 
 const AdminTopbar = () => {
   const { admin, logout } = useAdminAuth();
@@ -23,7 +24,7 @@ const AdminTopbar = () => {
           className="admin-button admin-button--ghost"
           onClick={() => {
             logout();
-            navigate("/admin/login");
+            navigate(ADMIN_LOGIN_PATH);
           }}
         >
           Logout

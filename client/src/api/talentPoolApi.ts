@@ -10,6 +10,9 @@ export type SubmitTalentPoolPayload = {
   acceptedTerms: boolean;
   marketingConsent?: boolean;
   locale?: string;
+  captchaId: string;
+  captchaAnswer: string;
+  companyWebsite?: string;
   cv: File;
 };
 
@@ -35,6 +38,9 @@ export const submitTalentPoolApplication = async (
   formData.append("acceptedTerms", String(payload.acceptedTerms));
   formData.append("marketingConsent", String(Boolean(payload.marketingConsent)));
   formData.append("locale", payload.locale || "sr");
+  formData.append("captchaId", payload.captchaId);
+  formData.append("captchaAnswer", payload.captchaAnswer);
+  formData.append("companyWebsite", payload.companyWebsite || "");
   formData.append("cv", payload.cv);
 
   return http.post<SubmitTalentPoolResponse>("/talent-pool", formData);

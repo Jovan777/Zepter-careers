@@ -1,5 +1,7 @@
 import { useMemo, useState } from "react";
 import { submitContactMessage } from "../api/contactApi";
+import HumanVerification from "./HumanVerification";
+import { useHumanVerification } from "../hooks/useHumanVerification";
 
 const countryOptions = [
   { value: "serbia", label: "Srbija" },
@@ -29,6 +31,7 @@ const ContactSection = () => {
   const [submitError, setSubmitError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const humanVerification = useHumanVerification();
 
   const validationError = useMemo(() => {
     if (!firstName.trim()) return "Ime je obavezno.";
@@ -66,9 +69,11 @@ const ContactSection = () => {
       return;
     }
 
+    clearMessages();
+    if (!humanVerification.validate()) return;
+
     try {
       setIsSubmitting(true);
-      clearMessages();
 
       const response = await submitContactMessage({
         firstName: firstName.trim(),
@@ -79,16 +84,26 @@ const ContactSection = () => {
         contactReason,
         message: message.trim(),
         locale: "sr",
+        ...humanVerification.getPayload(),
       });
 
       resetForm();
+      humanVerification.reset();
+      await humanVerification.refresh();
       setSuccessMessage(response.message || "Poruka je uspešno poslata.");
     } catch (error) {
-      setSubmitError(
+      const errorMessage =
         error instanceof Error
           ? error.message
-          : "Greška pri slanju poruke. Pokušajte ponovo."
-      );
+          : "Greška pri slanju poruke. Pokušajte ponovo.";
+
+      if (errorMessage.includes("Bezbednosna provera")) {
+        setSubmitError("");
+        await humanVerification.handleBackendError(errorMessage);
+      } else {
+        setSubmitError(errorMessage);
+        await humanVerification.refresh();
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -213,6 +228,28 @@ const ContactSection = () => {
             />
           </label>
 
+          <input
+            type="text"
+            name="companyWebsite"
+            value={humanVerification.companyWebsite}
+            onChange={(event) =>
+              humanVerification.setCompanyWebsite(event.target.value)
+            }
+            className="form-honeypot"
+            tabIndex={-1}
+            autoComplete="off"
+            aria-hidden={true}
+          />
+
+          <HumanVerification
+            question={humanVerification.question}
+            answer={humanVerification.answer}
+            error={humanVerification.error}
+            isLoading={humanVerification.isLoading}
+            onAnswerChange={humanVerification.setAnswer}
+            onRefresh={humanVerification.refresh}
+          />
+
           {submitError ? (
             <p className="contact-section__error">{submitError}</p>
           ) : null}
@@ -230,7 +267,7 @@ const ContactSection = () => {
           <button
             type="submit"
             className="contact-section__submit"
-            disabled={isSubmitting}
+            disabled={isSubmitting || humanVerification.isLoading}
           >
             {isSubmitting ? "Slanje..." : "Pošalji poruku"}
           </button>

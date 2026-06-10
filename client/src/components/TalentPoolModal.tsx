@@ -1,5 +1,7 @@
 import { useMemo, useState } from "react";
 import { submitTalentPoolApplication } from "../api/talentPoolApi";
+import HumanVerification from "./HumanVerification";
+import { useHumanVerification } from "../hooks/useHumanVerification";
 
 type TalentPoolModalProps = {
   isOpen: boolean;
@@ -41,6 +43,7 @@ const TalentPoolModal = ({ isOpen, onClose }: TalentPoolModalProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+  const humanVerification = useHumanVerification({ isActive: isOpen });
 
   const validationError = useMemo(() => {
     if (!firstName.trim()) return "Ime je obavezno.";
@@ -70,6 +73,7 @@ const TalentPoolModal = ({ isOpen, onClose }: TalentPoolModalProps) => {
     setMessage("");
     setAcceptedTerms(false);
     setSubmitError("");
+    humanVerification.reset();
   };
 
   const handleClose = () => {
@@ -91,9 +95,11 @@ const TalentPoolModal = ({ isOpen, onClose }: TalentPoolModalProps) => {
       return;
     }
 
+    setSubmitError("");
+    if (!humanVerification.validate()) return;
+
     try {
       setIsSubmitting(true);
-      setSubmitError("");
 
       await submitTalentPoolApplication({
         firstName: firstName.trim(),
@@ -105,6 +111,7 @@ const TalentPoolModal = ({ isOpen, onClose }: TalentPoolModalProps) => {
         acceptedTerms,
         marketingConsent,
         locale: "sr",
+        ...humanVerification.getPayload(),
         cv: cvFile,
       });
 
@@ -112,11 +119,18 @@ const TalentPoolModal = ({ isOpen, onClose }: TalentPoolModalProps) => {
       resetForm();
     } catch (error) {
       console.error(error);
-      setSubmitError(
+      const errorMessage =
         error instanceof Error
           ? error.message
-          : "Greška pri slanju otvorene prijave."
-      );
+          : "Greška pri slanju otvorene prijave.";
+
+      if (errorMessage.includes("Bezbednosna provera")) {
+        setSubmitError("");
+        await humanVerification.handleBackendError(errorMessage);
+      } else {
+        setSubmitError(errorMessage);
+        await humanVerification.refresh();
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -297,10 +311,32 @@ const TalentPoolModal = ({ isOpen, onClose }: TalentPoolModalProps) => {
                 <p className="talent-pool-modal__error">{submitError}</p>
               ) : null}
 
+              <input
+                type="text"
+                name="companyWebsite"
+                value={humanVerification.companyWebsite}
+                onChange={(event) =>
+                  humanVerification.setCompanyWebsite(event.target.value)
+                }
+                className="form-honeypot"
+                tabIndex={-1}
+                autoComplete="off"
+                aria-hidden={true}
+              />
+
+              <HumanVerification
+                question={humanVerification.question}
+                answer={humanVerification.answer}
+                error={humanVerification.error}
+                isLoading={humanVerification.isLoading}
+                onAnswerChange={humanVerification.setAnswer}
+                onRefresh={humanVerification.refresh}
+              />
+
               <button
                 type="button"
                 className="talent-pool-modal__submit"
-                disabled={isSubmitting}
+                disabled={isSubmitting || humanVerification.isLoading}
                 onClick={handleSubmit}
               >
                 {isSubmitting ? "Slanje..." : "Pošalji otvorenu prijavu"}

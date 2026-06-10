@@ -1,0 +1,104 @@
+.human-verification {
+    margin: 0 0 14px;
+    font-family: 'Montserrat', Arial, sans-serif;
+}
+
+.human-verification__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.human-verification__label {
+    font-size: 14px;
+    line-height: 1.3;
+    font-weight: 700;
+    color: #1a234f;
+}
+
+.human-verification__refresh {
+    border: none;
+    background: transparent;
+    padding: 0;
+    color: #b59c68;
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-size: 12px;
+    line-height: 1.3;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.human-verification__refresh:hover:not(:disabled) {
+    text-decoration: underline;
+}
+
+.human-verification__refresh:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.human-verification__panel {
+    border: 1px solid #dde5ef;
+    border-radius: 12px;
+    background: #f8fbff;
+    padding: 12px;
+}
+
+.human-verification__question {
+    margin: 0 0 10px;
+    color: #102d54;
+    font-size: 14px;
+    line-height: 1.35;
+    font-weight: 700;
+}
+
+.human-verification__panel input {
+    width: 100%;
+    height: 44px;
+    border: 1px solid #ccd2de;
+    border-radius: 10px;
+    background: #ffffff;
+    padding: 0 14px;
+    box-sizing: border-box;
+    color: #313131;
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.human-verification__panel input:focus {
+    border-color: #b59c68;
+    box-shadow: 0 0 0 4px rgba(181, 156, 104, 0.14);
+}
+
+.human-verification__helper {
+    margin: 8px 0 0;
+    color: #6e7c91;
+    font-size: 12px;
+    line-height: 1.45;
+}
+
+.human-verification__error {
+    margin: 8px 0 0;
+    color: #c62828;
+    font-size: 13px;
+    line-height: 1.45;
+}
+
+.form-honeypot {
+    position: absolute;
+    left: -9999px;
+    opacity: 0;
+    pointer-events: none;
+}
+
+@media (max-width: 520px) {
+    .human-verification__header {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 6px;
+    }
+}

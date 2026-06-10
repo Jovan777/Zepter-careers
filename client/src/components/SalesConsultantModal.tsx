@@ -1,5 +1,7 @@
 import { useMemo, useState } from "react";
 import { submitSalesConsultantApplication } from "../api/salesConsultantApi";
+import HumanVerification from "./HumanVerification";
+import { useHumanVerification } from "../hooks/useHumanVerification";
 
 type SalesConsultantModalProps = {
   isOpen: boolean;
@@ -35,6 +37,7 @@ const SalesConsultantModal = ({ isOpen, onClose }: SalesConsultantModalProps) =>
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+  const humanVerification = useHumanVerification({ isActive: isOpen });
 
   const validationError = useMemo(() => {
     if (!firstName.trim()) return "Ime je obavezno.";
@@ -63,6 +66,7 @@ const SalesConsultantModal = ({ isOpen, onClose }: SalesConsultantModalProps) =>
     setCvFile(null);
     setAcceptedTerms(false);
     setSubmitError("");
+    humanVerification.reset();
   };
 
   const handleClose = () => {
@@ -84,9 +88,11 @@ const SalesConsultantModal = ({ isOpen, onClose }: SalesConsultantModalProps) =>
       return;
     }
 
+    setSubmitError("");
+    if (!humanVerification.validate()) return;
+
     try {
       setIsSubmitting(true);
-      setSubmitError("");
 
       const response = await submitSalesConsultantApplication({
         firstName: firstName.trim(),
@@ -98,6 +104,7 @@ const SalesConsultantModal = ({ isOpen, onClose }: SalesConsultantModalProps) =>
         message: message.trim(),
         acceptedTerms,
         marketingConsent,
+        ...humanVerification.getPayload(),
         cv: cvFile,
       });
 
@@ -108,11 +115,18 @@ const SalesConsultantModal = ({ isOpen, onClose }: SalesConsultantModalProps) =>
       resetForm();
     } catch (error) {
       console.error(error);
-      setSubmitError(
+      const errorMessage =
         error instanceof Error
           ? error.message
-          : "Greška pri slanju prijave za konsultanta prodaje."
-      );
+          : "Greška pri slanju prijave za konsultanta prodaje.";
+
+      if (errorMessage.includes("Bezbednosna provera")) {
+        setSubmitError("");
+        await humanVerification.handleBackendError(errorMessage);
+      } else {
+        setSubmitError(errorMessage);
+        await humanVerification.refresh();
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -307,10 +321,32 @@ const SalesConsultantModal = ({ isOpen, onClose }: SalesConsultantModalProps) =>
                 <p className="sales-consultant-modal__error">{submitError}</p>
               ) : null}
 
+              <input
+                type="text"
+                name="companyWebsite"
+                value={humanVerification.companyWebsite}
+                onChange={(event) =>
+                  humanVerification.setCompanyWebsite(event.target.value)
+                }
+                className="form-honeypot"
+                tabIndex={-1}
+                autoComplete="off"
+                aria-hidden={true}
+              />
+
+              <HumanVerification
+                question={humanVerification.question}
+                answer={humanVerification.answer}
+                error={humanVerification.error}
+                isLoading={humanVerification.isLoading}
+                onAnswerChange={humanVerification.setAnswer}
+                onRefresh={humanVerification.refresh}
+              />
+
               <button
                 type="button"
                 className="sales-consultant-modal__submit"
-                disabled={isSubmitting}
+                disabled={isSubmitting || humanVerification.isLoading}
                 onClick={handleSubmit}
               >
                 {isSubmitting ? "Slanje..." : "Pošalji prijavu"}
