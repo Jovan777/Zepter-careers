@@ -7,7 +7,7 @@ const countryOptions = [
   { value: "serbia", label: "Srbija" },
   { value: "bosnia", label: "Bosna i Hercegovina" },
   { value: "croatia", label: "Hrvatska" },
-  { value: "montenegro", label: "Crna Goraaaaa" },
+  { value: "montenegro", label: "Crna Gora" },
 ];
 
 const contactReasonOptions = [
