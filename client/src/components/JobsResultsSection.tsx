@@ -162,6 +162,11 @@ const JobsResultsSection = ({ filters }: JobsResultsSectionProps) => {
   const howToApply = selectedJobDetails?.translation.howToApply || [];
   const closingText = selectedJobDetails?.translation.closingText?.trim() || "";
   const footerNote = selectedJobDetails?.translation.footerNote?.trim() || "";
+  const selectedCompanyName = selectedJobDetails?.company?.name || "Zepter";
+  const selectedLocationLabel =
+    selectedJobDetails?.location?.label ||
+    selectedJobDetails?.location?.regionName ||
+    "Lokacija nije navedena";
 
   return (
     <section className="jobs-results">
@@ -208,7 +213,7 @@ const JobsResultsSection = ({ filters }: JobsResultsSectionProps) => {
                           alt="Company"
                           className="jobs-mini-card__meta-icon"
                         />
-                        {job.company.name}
+                        {job.company?.name || "Zepter"}
                       </span>
 
                       <span className="jobs-mini-card__meta-item">
@@ -217,7 +222,7 @@ const JobsResultsSection = ({ filters }: JobsResultsSectionProps) => {
                           alt="Location"
                           className="jobs-mini-card__meta-icon"
                         />
-                        {job.location.label}
+                        {job.location?.label || job.location?.regionName || "Lokacija nije navedena"}
                       </span>
                     </div>
 
@@ -256,7 +261,7 @@ const JobsResultsSection = ({ filters }: JobsResultsSectionProps) => {
                             alt="Company"
                             className="job-details-card__meta-icon"
                           />
-                          {selectedJobDetails.company.name}
+                          {selectedCompanyName}
                         </span>
 
                         <span className="job-details-card__meta-item">
@@ -265,7 +270,7 @@ const JobsResultsSection = ({ filters }: JobsResultsSectionProps) => {
                             alt="Location"
                             className="job-details-card__meta-icon"
                           />
-                          {selectedJobDetails.location.label}
+                          {selectedLocationLabel}
                         </span>
                       </div>
                     </div>

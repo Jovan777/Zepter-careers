@@ -5,12 +5,94 @@
 //
 // Notes:
 // - This script uses upsert, so it can update existing documents or insert missing ones.
-// - It expects company and region documents with the referenced ObjectIds to already exist.
+// - This script seeds the local admin user, then referenced companies and regions before jobs.
 // - It does not reset appliedCount for existing jobs; appliedCount is only set on insert.
 // - Change DB_NAME if your Atlas database name is different.
 
 const DB_NAME = "zepter-careers";
 const targetDb = db.getSiblingDB(DB_NAME);
+
+const admins = [
+  {
+    _id: ObjectId("69b2c28d5bd8beef7b17f2f6"),
+    email: "admin@local",
+    passwordHash: "$2b$10$rxWcZ4pK5o2nsNtXUvxqBukhBVTfqb3qyGTlGOh5Sbfte6aJU8ErK",
+    role: "superadmin",
+    isActive: true,
+    createdAt: new Date("2026-04-01T08:00:00.000Z"),
+    updatedAt: new Date("2026-04-01T08:00:00.000Z")
+  }
+];
+
+const companies = [
+  {
+    _id: ObjectId("700000000000000000000001"),
+    name: "Zepter International",
+    legalEntity: "Zepter International d.o.o.",
+    isActive: true,
+    createdAt: new Date("2026-04-01T08:00:00.000Z"),
+    updatedAt: new Date("2026-04-01T08:00:00.000Z")
+  },
+  {
+    _id: ObjectId("700000000000000000000002"),
+    name: "Zepter Medical",
+    legalEntity: "Zepter Medical d.o.o.",
+    isActive: true,
+    createdAt: new Date("2026-04-01T08:00:00.000Z"),
+    updatedAt: new Date("2026-04-01T08:00:00.000Z")
+  },
+  {
+    _id: ObjectId("700000000000000000000003"),
+    name: "Hotel Zepter",
+    legalEntity: "Hotel Zepter d.o.o.",
+    isActive: true,
+    createdAt: new Date("2026-04-01T08:00:00.000Z"),
+    updatedAt: new Date("2026-04-01T08:00:00.000Z")
+  }
+];
+
+const regions = [
+  {
+    _id: ObjectId("710000000000000000000001"),
+    type: "country",
+    name: "Serbia",
+    isoCode: "RS",
+    parentRegion: null,
+    isActive: true,
+    createdAt: new Date("2026-04-01T08:00:00.000Z"),
+    updatedAt: new Date("2026-04-01T08:00:00.000Z")
+  },
+  {
+    _id: ObjectId("710000000000000000000002"),
+    type: "country",
+    name: "Poland",
+    isoCode: "PL",
+    parentRegion: null,
+    isActive: true,
+    createdAt: new Date("2026-04-01T08:00:00.000Z"),
+    updatedAt: new Date("2026-04-01T08:00:00.000Z")
+  },
+  {
+    _id: ObjectId("710000000000000000000003"),
+    type: "country",
+    name: "Croatia",
+    isoCode: "HR",
+    parentRegion: null,
+    isActive: true,
+    createdAt: new Date("2026-04-01T08:00:00.000Z"),
+    updatedAt: new Date("2026-04-01T08:00:00.000Z")
+  },
+  {
+    _id: ObjectId("710000000000000000000011"),
+    type: "city",
+    name: "Belgrade",
+    isoCode: "RS-BG",
+    parentRegion: ObjectId("710000000000000000000001"),
+    isActive: true,
+    createdAt: new Date("2026-04-01T08:00:00.000Z"),
+    updatedAt: new Date("2026-04-01T08:00:00.000Z")
+  }
+];
 
 const jobs = [
   {
@@ -874,6 +956,48 @@ const jobTranslations = [
   }
 ];
 
+function prepareReferenceUpdate(item) {
+  const { _id, createdAt, ...setFields } = item;
+
+  return {
+    updateOne: {
+      filter: { _id },
+      update: {
+        $set: {
+          ...setFields,
+          updatedAt: item.updatedAt || new Date()
+        },
+        $setOnInsert: {
+          _id,
+          createdAt: createdAt || new Date()
+        }
+      },
+      upsert: true
+    }
+  };
+}
+
+function prepareAdminUpdate(admin) {
+  const { _id, createdAt, ...setFields } = admin;
+
+  return {
+    updateOne: {
+      filter: { email: admin.email },
+      update: {
+        $set: {
+          ...setFields,
+          updatedAt: admin.updatedAt || new Date()
+        },
+        $setOnInsert: {
+          _id,
+          createdAt: createdAt || new Date()
+        }
+      },
+      upsert: true
+    }
+  };
+}
+
 function prepareJobUpdate(job) {
   const { _id, appliedCount, createdAt, ...setFields } = job;
 
@@ -921,10 +1045,22 @@ function prepareTranslationUpdate(translation) {
 }
 
 print(`Using database: ${DB_NAME}`);
-print(`Preparing ${jobs.length} jobs and ${jobTranslations.length} job translations...`);
+print(`Preparing ${admins.length} admins, ${companies.length} companies, ${regions.length} regions, ${jobs.length} jobs and ${jobTranslations.length} job translations...`);
 
+const adminsResult = targetDb.admins.bulkWrite(admins.map(prepareAdminUpdate), { ordered: false });
+const companiesResult = targetDb.companies.bulkWrite(companies.map(prepareReferenceUpdate), { ordered: false });
+const regionsResult = targetDb.regions.bulkWrite(regions.map(prepareReferenceUpdate), { ordered: false });
 const jobsResult = targetDb.jobs.bulkWrite(jobs.map(prepareJobUpdate), { ordered: false });
 const translationsResult = targetDb.jobTranslations.bulkWrite(jobTranslations.map(prepareTranslationUpdate), { ordered: false });
+
+print("Admins upsert result:");
+printjson(adminsResult);
+
+print("Companies upsert result:");
+printjson(companiesResult);
+
+print("Regions upsert result:");
+printjson(regionsResult);
 
 print("Jobs upsert result:");
 printjson(jobsResult);

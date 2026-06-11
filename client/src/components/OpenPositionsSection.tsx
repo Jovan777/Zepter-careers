@@ -81,7 +81,7 @@ const OpenPositionsSection = () => {
                         alt="Company"
                         className="job-card__meta-img"
                       />
-                      {position.company.name}
+                      {position.company?.name || "Zepter"}
                     </span>
 
                     <span className="job-card__meta-item">
@@ -90,7 +90,7 @@ const OpenPositionsSection = () => {
                         alt="Location"
                         className="job-card__meta-img"
                       />
-                      {position.location.label}
+                      {position.location?.label || position.location?.regionName || "Lokacija nije navedena"}
                     </span>
 
                     <span className="job-card__date-pill">

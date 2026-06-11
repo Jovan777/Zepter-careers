@@ -4,14 +4,14 @@ export type JobListItem = {
   company: {
     id: string | null;
     name: string;
-  };
+  } | null;
   location: {
     regionId: string | null;
     regionName: string;
     regionIsoCode: string;
     locationType: string;
     label: string;
-  };
+  } | null;
   employmentType: string;
   employmentTypeLabel: string;
   workArea: string;
@@ -48,14 +48,14 @@ export type JobDetailsResponse = {
     _id?: string;
     name: string;
     legalEntity?: string;
-  };
+  } | null;
   location: {
     regionId: string | null;
     regionName: string;
     regionIsoCode: string;
     locationType: string;
     label: string;
-  };
+  } | null;
   employmentType: string;
   employmentTypeLabel: string;
   workArea: string;
