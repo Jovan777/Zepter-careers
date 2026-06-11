@@ -104,6 +104,42 @@ This deletes named volumes, including MongoDB data and uploaded candidate files.
 - Backend API: `http://localhost:5000`
 - MongoDB: `localhost:27017`
 
+On a server, replace `localhost` with the server IP or domain:
+
+- Frontend: `http://SERVER_IP:8080`
+- Backend API: `http://SERVER_IP:5000`
+
+## Docker Networking
+
+This project intentionally uses Docker Compose default networking. It does not
+use fixed container IP addresses.
+
+Docker Compose creates a project network automatically, and services communicate
+inside that network by service name. The backend connects to MongoDB through:
+
+```text
+mongodb://mongo:27017/zepter-careers
+```
+
+`mongo` is the Compose service name, so no container IP is needed.
+
+External access should use the host/server IP plus the published port:
+
+- Frontend: `http://SERVER_IP:8080`
+- Backend API: `http://SERVER_IP:5000`
+
+Do not access containers directly by Docker-internal IPs such as `172.x.x.x`.
+
+The previously attempted custom subnet `172.17.0.0/24` was removed because it
+can conflict with Docker's existing bridge networks and cause this error:
+
+```text
+Pool overlaps with other one on this address space
+```
+
+Use Docker Compose default networking unless the system administrator explicitly
+provides a free custom subnet.
+
 The frontend Docker image is built with:
 
 ```text
