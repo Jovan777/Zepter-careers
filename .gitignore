@@ -14,6 +14,7 @@ yarn-error.log*
 server/.env
 client/.env
 !.env.example
+!.env.docker.example
 !server/.env.docker.example
 !client/.env.docker.example
 

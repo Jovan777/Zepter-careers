@@ -3,8 +3,6 @@ services:
     image: mongo:7
     container_name: zepter-careers-mongo
     restart: unless-stopped
-    ports:
-      - "27017:27017"
     volumes:
       - mongo_data:/data/db
 
@@ -16,14 +14,14 @@ services:
     depends_on:
       - mongo
     ports:
-      - "5000:5000"
+      - "${BACKEND_BIND_HOST:-127.0.0.1}:${BACKEND_PORT:-11002}:5000"
     environment:
       NODE_ENV: production
       PORT: 5000
       MONGO_URI: mongodb://mongo:27017/zepter-careers
       JWT_SECRET: ${JWT_SECRET:-change-me-in-production}
       CONTACT_SECURITY_SECRET: ${CONTACT_SECURITY_SECRET:-change-me-contact-security}
-      APP_BASE_URL: ${APP_BASE_URL:-http://localhost:8080}
+      APP_BASE_URL: ${APP_BASE_URL:-http://localhost:11001}
       MAIL_FROM_EMAIL: ${MAIL_FROM_EMAIL:-karijera@zepter.rs}
       MAIL_FROM_NAME: ${MAIL_FROM_NAME:-Zepter Careers}
       MAILTRAP_API_TOKEN: ${MAILTRAP_API_TOKEN:-}
@@ -43,14 +41,14 @@ services:
     build:
       context: ./client
       args:
-        VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://localhost:5000/api}
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL:-/api}
         VITE_ADMIN_LOGIN_PATH: ${VITE_ADMIN_LOGIN_PATH:-/secure-zc-panel-8f4k/login}
     container_name: zepter-careers-frontend
     restart: unless-stopped
     depends_on:
       - backend
     ports:
-      - "8080:80"
+      - "${FRONTEND_BIND_HOST:-127.0.0.1}:${FRONTEND_PORT:-11001}:80"
 
   seed:
     image: mongo:7

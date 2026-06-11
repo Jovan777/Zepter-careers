@@ -16,45 +16,58 @@ From the project root:
 docker compose up --build
 ```
 
-The first Docker MongoDB database starts empty. Run the seed command once if
-you need the initial Zepter Careers admin user and job data.
-
-## Start In Background
+Start in the background:
 
 ```bash
 docker compose up --build -d
 ```
 
-## Seed Docker MongoDB
+If your Docker installation uses the legacy command, use `docker-compose` with
+the same arguments.
 
-The seed service uses the official `mongo:7` image and runs `mongosh` against
-the Docker Mongo service.
+## Deployment Env
 
-Run this once after MongoDB is started:
+Docker Compose reads variables from a root `.env` file automatically. For
+deployment setup, copy the example and adjust values:
 
 ```bash
-docker compose run --rm seed
+cp .env.docker.example .env
 ```
 
-This imports/upserts the existing seed data from:
+On Windows PowerShell:
+
+```powershell
+Copy-Item .env.docker.example .env
+```
+
+Do not commit real secrets.
+
+## Default Local URLs
+
+The frontend is intentionally bound to localhost only by default:
 
 ```text
-server/seed/zepter-careers-seed.mongosh.js
+http://localhost:11001
 ```
 
-The seed script inserts/updates the local test admin user, companies, regions,
-jobs and job translations in the Docker MongoDB database at:
+The backend debug port is also bound to localhost only:
 
 ```text
-mongodb://mongo:27017/zepter-careers
+http://localhost:11002
 ```
 
-Seeded data persists because MongoDB uses the `mongo_data` named volume.
+MongoDB is internal to Docker Compose by default and is not exposed on the host.
+This avoids conflicts with an existing local MongoDB service on port `27017`.
+
+The hidden admin login route is:
+
+```text
+http://localhost:11001/secure-zc-panel-8f4k/login
+```
 
 Local Docker/test admin credentials:
 
 ```text
-URL: http://localhost:8080/secure-zc-panel-8f4k/login
 Email: admin@local
 Password: admin123!
 ```
@@ -62,52 +75,49 @@ Password: admin123!
 These credentials are only for local Docker/testing. Do not use them in
 production.
 
-If you already ran an older incomplete seed, the script now uses upsert for the
-missing referenced companies and regions, so this is usually enough:
+## System Administrator Proxy
 
-```bash
-docker compose run --rm seed
+Recommended deployment shape:
+
+```text
+external web traffic -> 127.0.0.1:11001
 ```
 
-For a full local development reset only, you can delete all Docker volumes and
-seed from scratch:
+The system administrator can forward the public domain or external server port
+to the local frontend bind address. The app itself does not need to publish the
+frontend on `0.0.0.0:80` or `0.0.0.0:8080`.
 
-```bash
-docker compose down -v
-docker compose up --build
-docker compose run --rm seed
+If the frontend port needs to change, set this in `.env`:
+
+```text
+FRONTEND_BIND_HOST=127.0.0.1
+FRONTEND_PORT=11001
 ```
 
-This reset deletes MongoDB data and uploaded CV files. Do not use it in
-production.
+## Same-Origin API
 
-## Stop Containers
+For Docker builds, the frontend uses:
 
-```bash
-docker compose down
+```text
+VITE_API_BASE_URL=/api
 ```
 
-This stops and removes the containers, but keeps Docker named volumes.
+This is important because frontend JavaScript runs in the user's browser.
+Hardcoding `http://localhost:5000/api` would make the user's browser call port
+5000 on the user's own machine, not necessarily the server.
 
-## Dangerous Command
+The nginx container proxies backend traffic internally:
 
-```bash
-docker compose down -v
+```text
+/api     -> http://backend:5000/api
+/uploads -> http://backend:5000/uploads
 ```
 
-Do not use this in production unless you intentionally want to delete persistent data.
-This deletes named volumes, including MongoDB data and uploaded candidate files.
+Uploaded CV/document URLs therefore work through the frontend host, for example:
 
-## Local URLs
-
-- Frontend: `http://localhost:8080`
-- Backend API: `http://localhost:5000`
-- MongoDB: `localhost:27017`
-
-On a server, replace `localhost` with the server IP or domain:
-
-- Frontend: `http://SERVER_IP:8080`
-- Backend API: `http://SERVER_IP:5000`
+```text
+http://localhost:11001/uploads/applications/<filename>
+```
 
 ## Docker Networking
 
@@ -115,20 +125,26 @@ This project intentionally uses Docker Compose default networking. It does not
 use fixed container IP addresses.
 
 Docker Compose creates a project network automatically, and services communicate
-inside that network by service name. The backend connects to MongoDB through:
+inside that network by service name:
+
+- backend talks to MongoDB using `mongo`
+- nginx talks to the backend using `backend`
+
+MongoDB is not published to the host by default. The backend still reaches it
+inside Docker through the `mongo` service name.
+
+The backend MongoDB connection remains:
 
 ```text
-mongodb://mongo:27017/zepter-careers
+MONGO_URI=mongodb://mongo:27017/zepter-careers
 ```
 
-`mongo` is the Compose service name, so no container IP is needed.
-
-External access should use the host/server IP plus the published port:
-
-- Frontend: `http://SERVER_IP:8080`
-- Backend API: `http://SERVER_IP:5000`
+Do not replace this with `127.0.0.1` inside Docker. Inside the backend
+container, `127.0.0.1` means the backend container itself, not MongoDB.
 
 Do not access containers directly by Docker-internal IPs such as `172.x.x.x`.
+External access should use the server IP/domain plus the published frontend
+port, or the system administrator's reverse proxy.
 
 The previously attempted custom subnet `172.17.0.0/24` was removed because it
 can conflict with Docker's existing bridge networks and cause this error:
@@ -140,44 +156,58 @@ Pool overlaps with other one on this address space
 Use Docker Compose default networking unless the system administrator explicitly
 provides a free custom subnet.
 
-The frontend Docker image is built with:
+If local MongoDB debugging is needed, expose Mongo manually on a free host port,
+for example `127.0.0.1:27018 -> mongo:27017`. Do not expose MongoDB by default
+in production.
 
-```text
-VITE_API_BASE_URL=http://localhost:5000/api
-VITE_ADMIN_LOGIN_PATH=/secure-zc-panel-8f4k/login
-```
+## Seed Docker MongoDB
 
-You can override it when building through Compose:
+The first Docker MongoDB database starts empty. Run the seed command once after
+MongoDB is started:
 
 ```bash
-VITE_API_BASE_URL=https://your-api.example.com/api VITE_ADMIN_LOGIN_PATH=/your-hidden-login docker compose up --build
+docker compose run --rm seed
 ```
 
-On Windows PowerShell:
-
-```powershell
-$env:VITE_API_BASE_URL="https://your-api.example.com/api"
-$env:VITE_ADMIN_LOGIN_PATH="/your-hidden-login"
-docker compose up --build
-```
-
-For local Docker testing, open the hidden admin login route at:
+The seed service uses the official `mongo:7` image and runs `mongosh` against:
 
 ```text
-http://localhost:8080/secure-zc-panel-8f4k/login
+mongodb://mongo:27017/zepter-careers
 ```
 
-The old `/admin/login` route is intentionally not the admin login page.
+It inserts/updates the local test admin user, companies, regions, jobs and job
+translations.
+
+Seeded data persists because MongoDB uses the `mongo_data` named volume.
+
+## Stop Containers
+
+```bash
+docker compose down
+```
+
+This stops and removes containers, but keeps Docker named volumes.
+
+## Dangerous Command
+
+```bash
+docker compose down -v
+```
+
+Do not use this in production unless you intentionally want to delete persistent
+data. This deletes named volumes, including MongoDB data and uploaded candidate
+files.
 
 ## Persistent Data
 
-MongoDB data is stored in the named Docker volume:
+MongoDB data is stored in:
 
 ```text
 mongo_data
 ```
 
-Backend uploaded files, including candidate CVs and extra documents, are stored in:
+Backend uploaded files, including candidate CVs and extra documents, are stored
+in:
 
 ```text
 backend_uploads
@@ -195,42 +225,25 @@ The existing backend file URLs continue to use paths such as:
 /uploads/applications/<filename>
 ```
 
-The backend serves those files through Express static hosting.
+nginx proxies `/uploads` to the backend, so those links work through the
+frontend host.
 
-## What Happens After A Candidate Uploads A CV
+## Important Defaults
 
-1. The MongoDB application/candidate record is stored in `mongo_data`.
-2. The uploaded CV file is stored in `backend_uploads`.
-3. Both survive container restart.
-4. Both survive image rebuild.
-
-For example:
-
-```bash
-docker compose down
-docker compose up
-```
-
-The database records and uploaded files remain available.
-
-Seeded jobs and translations also remain available after restart/rebuild because
-they live in `mongo_data`.
-
-## Environment Variables
-
-The backend receives these important Docker Compose defaults:
+These are the important Docker Compose defaults:
 
 ```text
-NODE_ENV=production
-PORT=5000
+FRONTEND_BIND_HOST=127.0.0.1
+FRONTEND_PORT=11001
+BACKEND_BIND_HOST=127.0.0.1
+BACKEND_PORT=11002
+VITE_API_BASE_URL=/api
+VITE_ADMIN_LOGIN_PATH=/secure-zc-panel-8f4k/login
+APP_BASE_URL=http://localhost:11001
 MONGO_URI=mongodb://mongo:27017/zepter-careers
-APP_BASE_URL=http://localhost:8080
-MAIL_FROM_EMAIL=karijera@zepter.rs
-MAIL_FROM_NAME=Zepter Careers
 ```
 
-For production, set real secrets in the deployment environment or a local `.env` file
-used by Docker Compose:
+For production, set real secrets in the deployment environment or root `.env`:
 
 ```text
 JWT_SECRET=replace-with-a-strong-secret
@@ -247,22 +260,14 @@ SMTP_AUTH=true
 SMTP_TLS_MIN_VERSION=
 ```
 
-Do not bake real secrets into Docker images.
-
-## Files
-
-- `docker-compose.yml` defines `mongo`, `backend`, and `frontend`.
-- `server/Dockerfile` builds the backend image.
-- `client/Dockerfile` builds and serves the frontend image.
-- `client/nginx.conf` makes React Router routes fall back to `index.html`.
-- `.dockerignore` files keep dependencies, real `.env` files, build output, and uploads out of images.
-
 ## React Router Refresh Support
 
-The nginx config uses:
+The nginx config keeps the SPA fallback:
 
 ```nginx
-try_files $uri $uri/ /index.html;
+location / {
+    try_files $uri $uri/ /index.html;
+}
 ```
 
 This prevents nginx 404 responses when refreshing frontend routes such as:
@@ -271,6 +276,15 @@ This prevents nginx 404 responses when refreshing frontend routes such as:
 - `/admin/dashboard`
 - `/jobs/...`
 - any other client-side route
+
+## Files
+
+- `docker-compose.yml` defines `mongo`, `backend`, `frontend`, and `seed`.
+- `server/Dockerfile` builds the backend image.
+- `client/Dockerfile` builds and serves the frontend image.
+- `client/nginx.conf` serves the React app and proxies `/api` and `/uploads`.
+- `.env.docker.example` contains root Docker deployment defaults.
+- `.dockerignore` files keep dependencies, real `.env` files, build output, and uploads out of images.
 
 ## Notes
 
