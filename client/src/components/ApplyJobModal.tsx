@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { submitApplication } from "../api/applicationsApi";
+import { publicAssetUrl } from "../config/urls";
 import HumanVerification from "./HumanVerification";
 import { useHumanVerification } from "../hooks/useHumanVerification";
 
@@ -353,7 +354,7 @@ const ApplyJobModal = ({
             <div className="apply-modal__success-card">
               <div className="apply-modal__success-logo-wrap">
                 <img
-                  src="/Zepter-Careers images/ZepterJobLogo.png"
+                  src={publicAssetUrl("/Zepter-Careers images/ZepterJobLogo.png")}
                   alt="Zepter"
                   className="apply-modal__success-logo"
                 />

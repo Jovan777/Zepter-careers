@@ -1,5 +1,4 @@
-const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api";
+import { API_BASE_URL, API_ORIGIN } from "../../config/urls";
 
 type RequestOptions = Omit<RequestInit, "body"> & {
   body?: unknown;
@@ -59,4 +58,4 @@ export const adminHttp = {
 };
 
 export const ADMIN_API_BASE_URL = API_BASE_URL;
-export const ADMIN_API_ORIGIN = API_BASE_URL.replace(/\/api$/, "");
+export const ADMIN_API_ORIGIN = API_ORIGIN;

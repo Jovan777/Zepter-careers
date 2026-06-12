@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { submitTalentPoolApplication } from "../api/talentPoolApi";
+import { publicAssetUrl } from "../config/urls";
 import HumanVerification from "./HumanVerification";
 import { useHumanVerification } from "../hooks/useHumanVerification";
 
@@ -162,7 +163,7 @@ const TalentPoolModal = ({ isOpen, onClose }: TalentPoolModalProps) => {
             <div className="talent-pool-modal__success-card">
               <div className="talent-pool-modal__success-logo-wrap">
                 <img
-                  src="/Zepter-Careers images/ZepterJobLogo.png"
+                  src={publicAssetUrl("/Zepter-Careers images/ZepterJobLogo.png")}
                   alt="Zepter"
                   className="talent-pool-modal__success-logo"
                 />

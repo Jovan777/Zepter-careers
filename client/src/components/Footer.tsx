@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { publicAssetUrl } from "../config/urls";
 
 type FooterProps = {
   onOpenNotifications: () => void;
@@ -30,7 +31,7 @@ const Footer = ({ onOpenNotifications }: FooterProps) => {
           <div className="footer__brand">
             <a href="https://www.zepter.rs/">
               <img
-                src="/Zepter-Careers images/zepter_logo_web 1.png"
+                src={publicAssetUrl("/Zepter-Careers images/zepter_logo_web 1.png")}
                 alt="Zepter"
                 className="footer__logo"
               />

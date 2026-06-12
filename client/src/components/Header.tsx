@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { publicAssetUrl } from "../config/urls";
 
 type HeaderProps = {
   onOpenNotifications: () => void;
@@ -15,7 +16,7 @@ const Header = ({ onOpenNotifications }: HeaderProps) => {
           rel="noopener noreferrer"
         >
           <img
-            src="/Zepter-Careers images/zepter_logo_web 1.png"
+            src={publicAssetUrl("/Zepter-Careers images/zepter_logo_web 1.png")}
             alt="Zepter"
           />
         </a>
@@ -50,7 +51,7 @@ const Header = ({ onOpenNotifications }: HeaderProps) => {
         <div className="header__actions">
           <button className="header__alert-btn" onClick={onOpenNotifications}>
             <img
-              src="/Zepter-Careers images/Bell.png"
+              src={publicAssetUrl("/Zepter-Careers images/Bell.png")}
               alt="Bell"
               className="header__alert-bell"
             />
@@ -60,7 +61,7 @@ const Header = ({ onOpenNotifications }: HeaderProps) => {
 
           <a href="https://www.zepter.rs/zepterclub" target="_blank" rel="noopener noreferrer" className="header__club-logo">
             <img
-              src="/Zepter-Careers images/Zepter_Club_Logo_New-Photoroom.png"
+              src={publicAssetUrl("/Zepter-Careers images/Zepter_Club_Logo_New-Photoroom.png")}
               alt="Zepter Club"
             />
           </a>

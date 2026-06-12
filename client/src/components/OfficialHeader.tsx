@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { publicAssetUrl } from "../config/urls";
 
 const OfficialHeader = () => {
   return (
@@ -11,7 +12,7 @@ const OfficialHeader = () => {
           rel="noopener noreferrer"
         >
           <img
-            src="/Zepter-Careers images/zepter_logo_web 1.png"
+            src={publicAssetUrl("/Zepter-Careers images/zepter_logo_web 1.png")}
             alt="Zepter"
           />
         </a>
@@ -56,7 +57,7 @@ const OfficialHeader = () => {
           rel="noopener noreferrer"
         >
           <img
-            src="/Zepter-Careers images/zk_kockica 2.png"
+            src={publicAssetUrl("/Zepter-Careers images/zk_kockica 2.png")}
             alt="Zepter Club"
           />
         </a>

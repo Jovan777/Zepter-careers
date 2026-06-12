@@ -6,7 +6,7 @@ import {
   updateAdminApplicationStatus,
 } from "../api/adminApplicationsApi";
 import type { AdminApplicationDetailsResponse } from "../types/admin";
-import { ADMIN_API_ORIGIN } from "../api/adminHttp";
+import { resolveUploadUrl } from "../../config/urls";
 
 const statusOptions = [
   "new",
@@ -178,7 +178,7 @@ const AdminApplicationDetailsPage = () => {
             {application.cvDocument?.fileUrl ? (
               <a
                 className="admin-link"
-                href={`${ADMIN_API_ORIGIN}${application.cvDocument.fileUrl}`}
+                href={resolveUploadUrl(application.cvDocument.fileUrl)}
                 target="_blank"
                 rel="noreferrer"
               >

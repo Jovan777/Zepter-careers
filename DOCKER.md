@@ -25,10 +25,26 @@ docker compose up --build -d
 If your Docker installation uses the legacy command, use `docker-compose` with
 the same arguments.
 
-## Deployment Env
+## Which Env File Should Be Edited?
 
-Docker Compose reads variables from a root `.env` file automatically. For
-deployment setup, copy the example and adjust values:
+For Docker deployment, edit only the root `.env` file next to
+`docker-compose.yml`.
+
+Docker Compose automatically reads that root `.env` file. The system
+administrator should not edit these files for Docker deployment:
+
+- `client/.env`
+- `server/.env`
+- `client/.env.docker.example`
+- `server/.env.docker.example`
+
+Those files are for local development or folder-specific reference examples.
+
+Do not commit real secrets.
+
+## Deployment Env Steps
+
+Step 1: copy the root Docker env example.
 
 ```bash
 cp .env.docker.example .env
@@ -40,7 +56,58 @@ On Windows PowerShell:
 Copy-Item .env.docker.example .env
 ```
 
-Do not commit real secrets.
+Step 2: edit the root `.env`.
+
+For root deployment:
+
+```text
+VITE_PUBLIC_BASE_PATH=/
+VITE_API_BASE_URL=
+APP_BASE_URL=http://localhost:11001
+```
+
+For subfolder deployment, for example
+`https://promo.zepter.rs/karijera/`:
+
+```text
+VITE_PUBLIC_BASE_PATH=/karijera/
+VITE_API_BASE_URL=
+APP_BASE_URL=https://promo.zepter.rs/karijera
+```
+
+`VITE_PUBLIC_BASE_PATH` is the external folder where the app is served.
+`VITE_API_BASE_URL` should normally stay empty for Docker, so the frontend
+derives `/api` or `/karijera/api` from `VITE_PUBLIC_BASE_PATH`. `APP_BASE_URL`
+must match the external frontend URL, including the subfolder if used.
+
+After changing `VITE_PUBLIC_BASE_PATH`, the frontend must be rebuilt.
+
+Step 3: start or rebuild Docker.
+
+```bash
+docker compose down
+docker compose up --build -d
+docker compose run --rm seed
+```
+
+If your Docker installation uses the legacy command, use `docker-compose` with
+the same arguments.
+
+Step 4: test the public and admin URLs.
+
+Root deployment:
+
+```text
+http://localhost:11001
+http://localhost:11001/secure-zc-panel-8f4k/login
+```
+
+Subfolder deployment:
+
+```text
+http://localhost:11001/karijera/
+http://localhost:11001/karijera/secure-zc-panel-8f4k/login
+```
 
 ## Default Local URLs
 
@@ -96,10 +163,13 @@ FRONTEND_PORT=11001
 
 ## Same-Origin API
 
-For Docker builds, the frontend uses:
+For Docker builds, leave `VITE_API_BASE_URL` empty unless you intentionally need
+a custom API endpoint. The frontend derives the API path from
+`VITE_PUBLIC_BASE_PATH`:
 
 ```text
-VITE_API_BASE_URL=/api
+VITE_PUBLIC_BASE_PATH=/              -> /api
+VITE_PUBLIC_BASE_PATH=/folder/       -> /folder/api
 ```
 
 This is important because frontend JavaScript runs in the user's browser.
@@ -117,6 +187,42 @@ Uploaded CV/document URLs therefore work through the frontend host, for example:
 
 ```text
 http://localhost:11001/uploads/applications/<filename>
+```
+
+## Deploying Under A Subfolder
+
+Example external URL:
+
+```text
+https://promo.zepter.rs/karijera/
+```
+
+Use these values in root `.env`:
+
+```text
+VITE_PUBLIC_BASE_PATH=/karijera/
+APP_BASE_URL=https://promo.zepter.rs/karijera
+VITE_API_BASE_URL=
+```
+
+`VITE_PUBLIC_BASE_PATH` must match the external subfolder. `APP_BASE_URL`
+should include the full external URL, including the subfolder.
+
+Recommended reverse proxy rule:
+
+```text
+https://promo.zepter.rs/karijera/ -> http://127.0.0.1:11001/
+```
+
+Preferably strip `/karijera` before forwarding to Docker nginx. The
+frontend nginx also tolerates prefixed `/api`, `/uploads`, and `/assets` paths,
+but stripping the prefix at the external proxy keeps the internal setup simpler.
+
+After changing `VITE_PUBLIC_BASE_PATH`, rebuild the frontend image:
+
+```bash
+docker compose down
+docker compose up --build -d
 ```
 
 ## Docker Networking
@@ -237,7 +343,8 @@ FRONTEND_BIND_HOST=127.0.0.1
 FRONTEND_PORT=11001
 BACKEND_BIND_HOST=127.0.0.1
 BACKEND_PORT=11002
-VITE_API_BASE_URL=/api
+VITE_PUBLIC_BASE_PATH=/
+VITE_API_BASE_URL=
 VITE_ADMIN_LOGIN_PATH=/secure-zc-panel-8f4k/login
 APP_BASE_URL=http://localhost:11001
 MONGO_URI=mongodb://mongo:27017/zepter-careers
@@ -273,8 +380,11 @@ location / {
 This prevents nginx 404 responses when refreshing frontend routes such as:
 
 - `/secure-zc-panel-8f4k/login`
+- `/karijera/secure-zc-panel-8f4k/login`
 - `/admin/dashboard`
+- `/karijera/admin/dashboard`
 - `/jobs/...`
+- `/karijera/jobs/...`
 - any other client-side route
 
 ## Files

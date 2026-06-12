@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import CustomSelect from "./CustomSelect";
 import CountrySearchSelect from "./CountrySearchSelect";
 import { getJobFilters } from "../api/jobsApi";
+import { publicAssetUrl } from "../config/urls";
 import type { JobFiltersResponse } from "../types/jobs";
 
 const fallbackCountryOptions = [
@@ -116,7 +117,7 @@ const HeroSection = () => {
         aria-hidden="true"
       >
         <source
-          src="/Zepter-Careers images/Zepter Careers WallpLive2.mp4"
+          src={publicAssetUrl("/Zepter-Careers images/Zepter Careers WallpLive2.mp4")}
           type="video/mp4"
         />
       </video>
@@ -151,7 +152,7 @@ const HeroSection = () => {
 
               <div className="hero__field hero__field--location">
                 <img
-                  src="/Zepter-Careers images/VectorLoc.png"
+                  src={publicAssetUrl("/Zepter-Careers images/VectorLoc.png")}
                   alt="Location"
                   className="hero__location-icon"
                 />
@@ -204,7 +205,7 @@ const HeroSection = () => {
 
         <div className="hero__right">
           <img
-            src="/Zepter-Careers images/zepter_40_years 1.png"
+            src={publicAssetUrl("/Zepter-Careers images/zepter_40_years 1.png")}
             alt="Zepter 40 years"
             className="hero__anniversary-logo"
           />

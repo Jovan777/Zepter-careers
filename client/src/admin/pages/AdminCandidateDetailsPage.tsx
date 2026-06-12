@@ -6,7 +6,7 @@ import {
   getAdminCandidateById,
   restoreAdminCandidate,
 } from "../api/adminCandidatesApi";
-import { ADMIN_API_ORIGIN } from "../api/adminHttp";
+import { resolveUploadUrl } from "../../config/urls";
 import type { AdminCandidateDetailsResponse } from "../types/admin";
 
 const AdminCandidateDetailsPage = () => {
@@ -177,7 +177,7 @@ const AdminCandidateDetailsPage = () => {
                 <a
                   key={`${doc.fileUrl}-${index}`}
                   className="admin-link"
-                  href={`${ADMIN_API_ORIGIN}${doc.fileUrl}`}
+                  href={resolveUploadUrl(doc.fileUrl)}
                   target="_blank"
                   rel="noreferrer"
                 >

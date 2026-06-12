@@ -3,6 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import { QRCodeSVG } from "qrcode.react";
 import ApplyJobModal from "./ApplyJobModal";
 import { getJobById, getPublishedJobs } from "../api/jobsApi";
+import { publicAssetUrl } from "../config/urls";
 import type { JobDetailsResponse, JobListItem } from "../types/jobs";
 import type { JobsFiltersState } from "../pages/JobsPage";
 
@@ -209,7 +210,7 @@ const JobsResultsSection = ({ filters }: JobsResultsSectionProps) => {
                     <div className="jobs-mini-card__meta">
                       <span className="jobs-mini-card__meta-item">
                         <img
-                          src="/Zepter-Careers images/JobIcon.png"
+                          src={publicAssetUrl("/Zepter-Careers images/JobIcon.png")}
                           alt="Company"
                           className="jobs-mini-card__meta-icon"
                         />
@@ -218,7 +219,7 @@ const JobsResultsSection = ({ filters }: JobsResultsSectionProps) => {
 
                       <span className="jobs-mini-card__meta-item">
                         <img
-                          src="/Zepter-Careers images/VectorLoc.png"
+                          src={publicAssetUrl("/Zepter-Careers images/VectorLoc.png")}
                           alt="Location"
                           className="jobs-mini-card__meta-icon"
                         />
@@ -244,7 +245,7 @@ const JobsResultsSection = ({ filters }: JobsResultsSectionProps) => {
                 <div className="job-details-card__header">
                   <div className="job-details-card__title-wrap">
                     <img
-                      src="/Zepter-Careers images/ZepterJobLogo.png"
+                      src={publicAssetUrl("/Zepter-Careers images/ZepterJobLogo.png")}
                       alt="Zepter"
                       className="job-details-card__logo"
                     />
@@ -256,8 +257,8 @@ const JobsResultsSection = ({ filters }: JobsResultsSectionProps) => {
 
                       <div className="job-details-card__meta">
                         <span className="job-details-card__meta-item">
-                          <img
-                            src="/Zepter-Careers images/JobIcon.png"
+                        <img
+                            src={publicAssetUrl("/Zepter-Careers images/JobIcon.png")}
                             alt="Company"
                             className="job-details-card__meta-icon"
                           />
@@ -265,8 +266,8 @@ const JobsResultsSection = ({ filters }: JobsResultsSectionProps) => {
                         </span>
 
                         <span className="job-details-card__meta-item">
-                          <img
-                            src="/Zepter-Careers images/VectorLoc.png"
+                        <img
+                            src={publicAssetUrl("/Zepter-Careers images/VectorLoc.png")}
                             alt="Location"
                             className="job-details-card__meta-icon"
                           />
@@ -423,8 +424,8 @@ const JobsResultsSection = ({ filters }: JobsResultsSectionProps) => {
               !detailsError &&
               !isLoadingDetails && (
                 <div className="job-details-empty">
-                  <img
-                    src="/Zepter-Careers images/ZepterJobLogo.png"
+                <img
+                    src={publicAssetUrl("/Zepter-Careers images/ZepterJobLogo.png")}
                     alt="Zepter"
                     className="job-details-empty__logo"
                   />

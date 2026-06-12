@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { publicAssetUrl } from "../config/urls";
 
 type Option = {
   label: string;
@@ -47,7 +48,7 @@ const LocationDropdown = ({
         onClick={() => setIsOpen((prev) => !prev)}
       >
         <img
-          src="/Zepter-Careers images/VectorLoc.png"
+          src={publicAssetUrl("/Zepter-Careers images/VectorLoc.png")}
           alt="Location"
           className="location-dropdown__icon"
         />

@@ -1,24 +1,25 @@
 import { useEffect, useRef, useState } from "react";
 import type { MouseEvent } from "react";
+import { publicAssetUrl } from "../config/urls";
 
 const values = [
   {
-    icon: "/Zepter-Careers images/Heart.png",
+    icon: publicAssetUrl("/Zepter-Careers images/Heart.png"),
     title: "Zdrav život za sve",
     description: "Zdravlje kao apsolutni prioritet, a ne luksuz.",
   },
   {
-    icon: "/Zepter-Careers images/Brain.png",
+    icon: publicAssetUrl("/Zepter-Careers images/Brain.png"),
     title: "Znanja za napredak",
     description: "Kontinuirano učenje kao ključ za vizionarske ideje.",
   },
   {
-    icon: "/Zepter-Careers images/World.png",
+    icon: publicAssetUrl("/Zepter-Careers images/World.png"),
     title: "Odgovornost prema planeti",
     description: "Zajedno gradimo zdraviju i održiviju budućnost.",
   },
   {
-    icon: "/Zepter-Careers images/People.png",
+    icon: publicAssetUrl("/Zepter-Careers images/People.png"),
     title: "Snaga različitosti",
     description: "Negujemo individualan pristup zdravijem i kvalitetnijem životu.",
   },

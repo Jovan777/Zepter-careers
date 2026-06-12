@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import CustomSelect from "./CustomSelect";
 import CountrySearchSelect from "./CountrySearchSelect";
 import { getJobFilters } from "../api/jobsApi";
+import { publicAssetUrl } from "../config/urls";
 import type { JobFiltersResponse } from "../types/jobs";
 import type { JobsFiltersState } from "../pages/JobsPage";
 
@@ -104,7 +105,7 @@ const JobsHeroSection = ({ filters, onApplyFilters }: JobsHeroSectionProps) => {
 
             <div className="jobs-hero__field jobs-hero__field--location">
               <img
-                src="/Zepter-Careers images/VectorLoc.png"
+                src={publicAssetUrl("/Zepter-Careers images/VectorLoc.png")}
                 alt="Location"
                 className="jobs-hero__location-icon"
               />

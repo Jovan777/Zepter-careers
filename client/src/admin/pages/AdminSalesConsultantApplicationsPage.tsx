@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { ADMIN_API_ORIGIN } from "../api/adminHttp";
+import { resolveUploadUrl } from "../../config/urls";
 import {
   getAdminSalesConsultantApplicationById,
   getAdminSalesConsultantApplications,
@@ -259,7 +259,7 @@ const AdminSalesConsultantApplicationsPage = () => {
                     {item.cvDocument?.fileUrl ? (
                       <a
                         className="admin-link"
-                        href={`${ADMIN_API_ORIGIN}${item.cvDocument.fileUrl}`}
+                        href={resolveUploadUrl(item.cvDocument.fileUrl)}
                         target="_blank"
                         rel="noreferrer"
                       >
@@ -360,7 +360,7 @@ const AdminSalesConsultantApplicationsPage = () => {
                     {application.cvDocument?.fileUrl ? (
                       <a
                         className="admin-link"
-                        href={`${ADMIN_API_ORIGIN}${application.cvDocument.fileUrl}`}
+                        href={resolveUploadUrl(application.cvDocument.fileUrl)}
                         target="_blank"
                         rel="noreferrer"
                       >

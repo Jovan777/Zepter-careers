@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { ADMIN_API_ORIGIN } from "../api/adminHttp";
+import { resolveUploadUrl } from "../../config/urls";
 import {
   getAdminTalentPoolApplicationById,
   getAdminTalentPoolApplications,
@@ -271,7 +271,7 @@ const AdminTalentPoolPage = () => {
                     {item.cvDocument?.fileUrl ? (
                       <a
                         className="admin-link"
-                        href={`${ADMIN_API_ORIGIN}${item.cvDocument.fileUrl}`}
+                        href={resolveUploadUrl(item.cvDocument.fileUrl)}
                         target="_blank"
                         rel="noreferrer"
                       >
@@ -364,7 +364,7 @@ const AdminTalentPoolPage = () => {
                     {application.cvDocument?.fileUrl ? (
                       <a
                         className="admin-link"
-                        href={`${ADMIN_API_ORIGIN}${application.cvDocument.fileUrl}`}
+                        href={resolveUploadUrl(application.cvDocument.fileUrl)}
                         target="_blank"
                         rel="noreferrer"
                       >

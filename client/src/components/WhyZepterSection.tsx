@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { publicAssetUrl } from "../config/urls";
 
 const stats = [
   { target: 60, suffix: "", label: "Broj zemalja" },
@@ -77,7 +78,7 @@ const WhyZepterSection = () => {
         <div className="why-zepter__top">
           <div className="why-zepter__image-wrap">
             <img
-              src="/Zepter-Careers images/WhyZepter.png"
+              src={publicAssetUrl("/Zepter-Careers images/WhyZepter.png")}
               alt="Why Zepter"
               className="why-zepter__image"
             />

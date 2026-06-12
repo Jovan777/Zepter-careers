@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { getPublishedJobs } from "../api/jobsApi";
+import { publicAssetUrl } from "../config/urls";
 import type { JobListItem } from "../types/jobs";
 
 const OpenPositionsSection = () => {
@@ -77,7 +78,7 @@ const OpenPositionsSection = () => {
                   <div className="job-card__meta">
                     <span className="job-card__meta-item">
                       <img
-                        src="/Zepter-Careers images/JobIcon.png"
+                        src={publicAssetUrl("/Zepter-Careers images/JobIcon.png")}
                         alt="Company"
                         className="job-card__meta-img"
                       />
@@ -86,7 +87,7 @@ const OpenPositionsSection = () => {
 
                     <span className="job-card__meta-item">
                       <img
-                        src="/Zepter-Careers images/VectorLoc.png"
+                        src={publicAssetUrl("/Zepter-Careers images/VectorLoc.png")}
                         alt="Location"
                         className="job-card__meta-img"
                       />

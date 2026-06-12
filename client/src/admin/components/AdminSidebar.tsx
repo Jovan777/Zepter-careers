@@ -1,4 +1,5 @@
 import { NavLink } from "react-router-dom";
+import { publicAssetUrl } from "../../config/urls";
 
 const links = [
   { to: "/admin/dashboard", label: "Dashboard" },
@@ -18,7 +19,10 @@ const AdminSidebar = () => {
   return (
     <aside className="admin-sidebar">
       <div className="admin-sidebar__brand">
-        <img src="/Zepter-Careers images/zepter_logo_web 1.png" alt="Zepter" />
+        <img
+          src={publicAssetUrl("/Zepter-Careers images/zepter_logo_web 1.png")}
+          alt="Zepter"
+        />
         <span>Admin Portal</span>
       </div>
 

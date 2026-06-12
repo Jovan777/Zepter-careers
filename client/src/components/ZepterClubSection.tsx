@@ -1,3 +1,5 @@
+import { publicAssetUrl } from "../config/urls";
+
 const ZepterClubSection = () => {
   return (
     <section className="zepter-club">
@@ -5,7 +7,7 @@ const ZepterClubSection = () => {
         <div className="zepter-club__top">
           <div className="zepter-club__image-wrap">
             <img
-              src="/Zepter-Careers images/ZepteClubPrivileges.png"
+              src={publicAssetUrl("/Zepter-Careers images/ZepteClubPrivileges.png")}
               alt="Zepter Club Privileges"
               className="zepter-club__image"
             />

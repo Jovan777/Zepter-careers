@@ -1,3 +1,5 @@
+import { publicAssetUrl } from "../config/urls";
+
 const SolutionSection = () => {
   return (
     <section className="solution-section">
@@ -26,7 +28,7 @@ const SolutionSection = () => {
 
         <div className="solution-section__image-wrap">
           <img
-            src="/Zepter-Careers images/worldChange.png"
+            src={publicAssetUrl("/Zepter-Careers images/worldChange.png")}
             alt="Budite deo rešenja koja menjaju svet"
             className="solution-section__image"
           />

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { publicAssetUrl } from "../../config/urls";
 import { useAdminAuth } from "../context/AdminAuthContext";
 
 const AdminLoginPage = () => {
@@ -29,7 +30,7 @@ const AdminLoginPage = () => {
     <div className="admin-login-page">
       <form className="admin-login-card" onSubmit={handleSubmit}>
         <img
-          src="/Zepter-Careers images/zepter_logo_web 1.png"
+          src={publicAssetUrl("/Zepter-Careers images/zepter_logo_web 1.png")}
           alt="Zepter"
           className="admin-login-card__logo"
         />

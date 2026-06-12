@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { subscribeToJobAlerts } from "../api/jobAlertsApi";
+import { publicAssetUrl } from "../config/urls";
 import CustomSelect from "./CustomSelect";
 
 
@@ -110,7 +111,7 @@ const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) => {
         <div className="notification-modal__header">
           <div className="notification-modal__title-wrap">
             <img
-              src="/Zepter-Careers images/BellNews.png"
+              src={publicAssetUrl("/Zepter-Careers images/BellNews.png")}
               alt="Bell"
               className="notification-modal__bell"
             />
@@ -310,7 +311,7 @@ const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) => {
           <div className="notification-modal__success-card">
             <div className="notification-modal__success-logo-wrap">
               <img
-                src="/Zepter-Careers images/ZepterJobLogo.png"
+                src={publicAssetUrl("/Zepter-Careers images/ZepterJobLogo.png")}
                 alt="Zepter"
                 className="notification-modal__success-logo"
               />

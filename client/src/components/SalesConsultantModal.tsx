@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { submitSalesConsultantApplication } from "../api/salesConsultantApi";
+import { publicAssetUrl } from "../config/urls";
 import HumanVerification from "./HumanVerification";
 import { useHumanVerification } from "../hooks/useHumanVerification";
 
@@ -163,7 +164,7 @@ const SalesConsultantModal = ({ isOpen, onClose }: SalesConsultantModalProps) =>
             <div className="sales-consultant-modal__success-card">
               <div className="sales-consultant-modal__success-logo-wrap">
                 <img
-                  src="/Zepter-Careers images/ZepterJobLogo.png"
+                  src={publicAssetUrl("/Zepter-Careers images/ZepterJobLogo.png")}
                   alt="Zepter"
                   className="sales-consultant-modal__success-logo"
                 />
