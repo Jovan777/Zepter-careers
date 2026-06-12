@@ -32,7 +32,7 @@ const benefits = [
   },
   {
     title: "Specijalne cene",
-    description: "Zepter proizvodi dostupni zaposlenima po posebnim uslovima.",
+    description: "Svi zaposleni i registrovani članovi imaju mogućnost kupovine Zepter proizvoda po specijalnim cenama i pod povlašćenim uslovima.",
   },
   {
     title: "FitPass popust",
