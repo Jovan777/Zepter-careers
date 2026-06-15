@@ -2,7 +2,11 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react-swc'
 
 const normalizeBasePath = (value?: string) => {
-  const rawValue = value?.trim() || "/";
+  const rawValue = value?.trim() || "";
+
+  if (!rawValue || rawValue === "." || rawValue === "./" || rawValue === "relative") {
+    return "";
+  }
 
   if (rawValue === "/") {
     return "/";

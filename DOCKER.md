@@ -61,26 +61,30 @@ Step 2: edit the root `.env`.
 For root deployment:
 
 ```text
-VITE_PUBLIC_BASE_PATH=/
+VITE_PUBLIC_BASE_PATH=
 VITE_API_BASE_URL=
 APP_BASE_URL=http://localhost:11001
 ```
 
 For subfolder deployment, for example
-`https://promo.zepter.rs/karijera/`:
+`https://promo.zepter.rs/posao/`:
 
 ```text
-VITE_PUBLIC_BASE_PATH=/karijera/
+VITE_PUBLIC_BASE_PATH=
 VITE_API_BASE_URL=
-APP_BASE_URL=https://promo.zepter.rs/karijera
+APP_BASE_URL=https://promo.zepter.rs/posao
 ```
 
-`VITE_PUBLIC_BASE_PATH` is the external folder where the app is served.
-`VITE_API_BASE_URL` should normally stay empty for Docker, so the frontend
-derives `/api` or `/karijera/api` from `VITE_PUBLIC_BASE_PATH`. `APP_BASE_URL`
-must match the external frontend URL, including the subfolder if used.
+The recommended Docker mode leaves `VITE_PUBLIC_BASE_PATH` empty. This makes
+Vite generate relative asset paths such as `assets/index.js` instead of
+root-absolute paths such as `/assets/index.js`.
 
-After changing `VITE_PUBLIC_BASE_PATH`, the frontend must be rebuilt.
+`VITE_API_BASE_URL` should normally stay empty for Docker, so the frontend
+derives `/api` or `/posao/api` at runtime from the current browser URL.
+`APP_BASE_URL` must match the external frontend URL, including the subfolder if
+used.
+
+After changing frontend build variables, the frontend must be rebuilt.
 
 Step 3: start or rebuild Docker.
 
@@ -105,8 +109,8 @@ http://localhost:11001/secure-zc-panel-8f4k/login
 Subfolder deployment:
 
 ```text
-http://localhost:11001/karijera/
-http://localhost:11001/karijera/secure-zc-panel-8f4k/login
+http://localhost:11001/posao/
+http://localhost:11001/posao/secure-zc-panel-8f4k/login
 ```
 
 ## Default Local URLs
@@ -164,12 +168,12 @@ FRONTEND_PORT=11001
 ## Same-Origin API
 
 For Docker builds, leave `VITE_API_BASE_URL` empty unless you intentionally need
-a custom API endpoint. The frontend derives the API path from
-`VITE_PUBLIC_BASE_PATH`:
+a custom API endpoint. In the recommended relative asset mode, the frontend
+derives the API path at runtime:
 
 ```text
-VITE_PUBLIC_BASE_PATH=/              -> /api
-VITE_PUBLIC_BASE_PATH=/folder/       -> /folder/api
+http://localhost:11001/              -> /api
+https://promo.zepter.rs/posao/       -> /posao/api
 ```
 
 This is important because frontend JavaScript runs in the user's browser.
@@ -194,31 +198,38 @@ http://localhost:11001/uploads/applications/<filename>
 Example external URL:
 
 ```text
-https://promo.zepter.rs/karijera/
+https://promo.zepter.rs/posao/
 ```
+
+Use the trailing slash on the external subfolder URL. Relative asset paths such
+as `assets/index.js` resolve correctly from `/posao/`.
 
 Use these values in root `.env`:
 
 ```text
-VITE_PUBLIC_BASE_PATH=/karijera/
-APP_BASE_URL=https://promo.zepter.rs/karijera
+VITE_PUBLIC_BASE_PATH=
+APP_BASE_URL=https://promo.zepter.rs/posao
 VITE_API_BASE_URL=
 ```
 
-`VITE_PUBLIC_BASE_PATH` must match the external subfolder. `APP_BASE_URL`
-should include the full external URL, including the subfolder.
+Leave `VITE_PUBLIC_BASE_PATH` empty for the recommended Docker deployment. The
+generated `index.html` will use relative paths like `assets/index.js` and
+`Zepter-Careers images/ZepterJobLogo.png`, so the same image can be served from
+any external subfolder without rebuilding for that folder name.
+
+`APP_BASE_URL` should include the full external URL, including the subfolder.
 
 Recommended reverse proxy rule:
 
 ```text
-https://promo.zepter.rs/karijera/ -> http://127.0.0.1:11001/
+https://promo.zepter.rs/posao/ -> http://127.0.0.1:11001/
 ```
 
-Preferably strip `/karijera` before forwarding to Docker nginx. The
-frontend nginx also tolerates prefixed `/api`, `/uploads`, and `/assets` paths,
-but stripping the prefix at the external proxy keeps the internal setup simpler.
+The frontend nginx tolerates prefixed `/api`, `/uploads`, `/assets`, and public
+asset-folder paths. Stripping `/posao` at the external proxy is still fine, but
+the Docker build no longer depends on the concrete subfolder name.
 
-After changing `VITE_PUBLIC_BASE_PATH`, rebuild the frontend image:
+After changing Docker frontend build variables, rebuild the frontend image:
 
 ```bash
 docker compose down
@@ -343,7 +354,7 @@ FRONTEND_BIND_HOST=127.0.0.1
 FRONTEND_PORT=11001
 BACKEND_BIND_HOST=127.0.0.1
 BACKEND_PORT=11002
-VITE_PUBLIC_BASE_PATH=/
+VITE_PUBLIC_BASE_PATH=
 VITE_API_BASE_URL=
 VITE_ADMIN_LOGIN_PATH=/secure-zc-panel-8f4k/login
 APP_BASE_URL=http://localhost:11001
@@ -380,11 +391,11 @@ location / {
 This prevents nginx 404 responses when refreshing frontend routes such as:
 
 - `/secure-zc-panel-8f4k/login`
-- `/karijera/secure-zc-panel-8f4k/login`
+- `/posao/secure-zc-panel-8f4k/login`
 - `/admin/dashboard`
-- `/karijera/admin/dashboard`
+- `/posao/admin/dashboard`
 - `/jobs/...`
-- `/karijera/jobs/...`
+- `/posao/jobs/...`
 - any other client-side route
 
 ## Files

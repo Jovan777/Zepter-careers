@@ -1,3 +1,11 @@
+const configuredAdminLoginPath =
+  import.meta.env.VITE_ADMIN_LOGIN_PATH || "/admin-login";
+
+const stripTrailingSlash = (value: string) => value.replace(/\/+$/, "");
+
+const stripTrailingAndLeadingSlash = (value: string) =>
+  value.replace(/^\/+/, "").replace(/\/+$/, "");
+
 const normalizePublicBasePath = (value?: string) => {
   const rawValue = value?.trim() || "/";
 
@@ -5,16 +13,57 @@ const normalizePublicBasePath = (value?: string) => {
     return "/";
   }
 
-  const path = rawValue.replace(/^\/+/, "").replace(/\/+$/, "");
+  const path = stripTrailingAndLeadingSlash(rawValue);
 
   return path ? `/${path}/` : "/";
 };
 
-const stripTrailingSlash = (value: string) => value.replace(/\/+$/, "");
-
 const isAbsoluteUrl = (value: string) =>
   /^(?:[a-z][a-z\d+\-.]*:)?\/\//i.test(value) ||
   /^(?:data|mailto|tel):/i.test(value);
+
+const isRelativeBaseMode = (value?: string) => {
+  const rawValue = value?.trim() || "";
+  return (
+    !rawValue ||
+    rawValue === "." ||
+    rawValue === "./" ||
+    rawValue === "relative"
+  );
+};
+
+const normalizeRoutePrefix = (value: string) => {
+  const path = stripTrailingAndLeadingSlash(value);
+  return path ? `/${path}` : "/";
+};
+
+const deriveRuntimeBasePath = () => {
+  if (typeof window === "undefined") {
+    return "/";
+  }
+
+  const pathname = window.location.pathname || "/";
+  const routePrefixes = [
+    normalizeRoutePrefix(configuredAdminLoginPath),
+    "/admin",
+    "/jobs",
+    "/process",
+    "/faq",
+    "/our-team",
+    "/contact",
+  ];
+
+  for (const prefix of routePrefixes) {
+    const index = pathname.indexOf(prefix);
+    const afterPrefix = pathname[index + prefix.length];
+
+    if (index >= 0 && (!afterPrefix || afterPrefix === "/")) {
+      return normalizePublicBasePath(pathname.slice(0, index) || "/");
+    }
+  }
+
+  return normalizePublicBasePath(pathname);
+};
 
 const normalizeExplicitApiBaseUrl = (value?: string) => {
   const rawValue = value?.trim() || "";
@@ -27,7 +76,7 @@ const normalizeExplicitApiBaseUrl = (value?: string) => {
     return stripTrailingSlash(rawValue);
   }
 
-  const path = rawValue.replace(/^\/+/, "").replace(/\/+$/, "");
+  const path = stripTrailingAndLeadingSlash(rawValue);
 
   return path ? `/${path}` : "";
 };
@@ -48,7 +97,11 @@ const getApiOrigin = (apiBaseUrl: string) => {
   return "";
 };
 
-export const PUBLIC_BASE_PATH = normalizePublicBasePath(import.meta.env.BASE_URL);
+const configuredPublicBasePath = import.meta.env.VITE_PUBLIC_BASE_PATH;
+
+export const PUBLIC_BASE_PATH = isRelativeBaseMode(configuredPublicBasePath)
+  ? deriveRuntimeBasePath()
+  : normalizePublicBasePath(configuredPublicBasePath);
 export const ROUTER_BASENAME =
   PUBLIC_BASE_PATH === "/" ? undefined : stripTrailingSlash(PUBLIC_BASE_PATH);
 
