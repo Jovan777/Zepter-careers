@@ -1,4 +1,5 @@
 const { sendEmail } = require("../services/emailService");
+const ContactMessage = require("../models/ContactMessage");
 
 const CONTACT_TO_EMAIL = "karijera@zepter.rs";
 
@@ -127,6 +128,10 @@ const submitContactMessage = async (req, res) => {
     const country = normalizeString(req.body.country);
     const contactReason = normalizeString(req.body.contactReason);
     const message = normalizeString(req.body.message);
+    const sourcePage =
+      normalizeString(req.body.sourcePage) ||
+      normalizeString(req.get("referer")) ||
+      "/contact";
 
     if (!firstName) {
       return res.status(400).json({ message: "Ime je obavezno." });
@@ -156,6 +161,21 @@ const submitContactMessage = async (req, res) => {
       return res.status(400).json({ message: "Poruka je obavezna." });
     }
 
+    const contactMessage = await ContactMessage.create({
+      firstName,
+      lastName,
+      fullName: `${firstName} ${lastName}`.trim(),
+      email,
+      phone,
+      country,
+      countryLabel: COUNTRY_LABELS[country],
+      reason: contactReason,
+      reasonLabel: CONTACT_REASON_LABELS[contactReason],
+      message,
+      sourcePage,
+      status: "new",
+    });
+
     const emailPayload = buildContactEmail({
       firstName,
       lastName,
@@ -164,17 +184,26 @@ const submitContactMessage = async (req, res) => {
       countryLabel: COUNTRY_LABELS[country],
       contactReasonLabel: CONTACT_REASON_LABELS[contactReason],
       message,
-      submittedAt: new Date(),
+      submittedAt: contactMessage.createdAt || new Date(),
     });
 
-    await sendEmail({
-      to: CONTACT_TO_EMAIL,
-      replyTo: email,
-      category: "Contact Form",
-      ...emailPayload,
-    });
+    try {
+      await sendEmail({
+        to: CONTACT_TO_EMAIL,
+        replyTo: email,
+        category: "Contact Form",
+        ...emailPayload,
+      });
+    } catch (emailError) {
+      console.error("Kontakt poruka je sacuvana, ali email nije poslat:", {
+        contactMessageId: contactMessage._id,
+        message: emailError.message,
+        code: emailError.code,
+      });
+    }
 
     return res.status(200).json({
+      contactMessageId: contactMessage._id,
       message: "Vaša poruka je uspešno poslata.",
     });
   } catch (error) {

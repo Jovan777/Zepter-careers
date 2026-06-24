@@ -9,6 +9,7 @@ export type SubmitContactPayload = {
   contactReason: string;
   message: string;
   locale?: string;
+  sourcePage?: string;
   captchaId: string;
   captchaAnswer: string;
   companyWebsite?: string;
@@ -16,6 +17,7 @@ export type SubmitContactPayload = {
 
 export type SubmitContactResponse = {
   message: string;
+  contactMessageId?: string;
 };
 
 export const submitContactMessage = async (payload: SubmitContactPayload) =>

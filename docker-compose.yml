@@ -35,7 +35,7 @@ services:
       SMTP_AUTH: ${SMTP_AUTH:-true}
       SMTP_TLS_MIN_VERSION: ${SMTP_TLS_MIN_VERSION:-}
     volumes:
-      - backend_uploads:/app/uploads
+      - "${UPLOADS_HOST_PATH:-backend_uploads}:/app/uploads"
 
   frontend:
     build:

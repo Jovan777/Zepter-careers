@@ -46,6 +46,10 @@ app.use(
   "/api/admin/sales-consultant-applications",
   require("./routes/admin/adminSalesConsultantApplicationsRoutes")
 );
+app.use(
+  "/api/admin/contact-messages",
+  require("./routes/admin/adminContactMessagesRoutes")
+);
 app.use("/api/admin/candidates", require("./routes/admin/adminCandidatesRoutes"));
 app.use("/api/admin/scheduler", require("./routes/admin/adminSchedulerRoutes"));
 

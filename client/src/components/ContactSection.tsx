@@ -84,6 +84,7 @@ const ContactSection = () => {
         contactReason,
         message: message.trim(),
         locale: "sr",
+        sourcePage: window.location.pathname,
         ...humanVerification.getPayload(),
       });
 

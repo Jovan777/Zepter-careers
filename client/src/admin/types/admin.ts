@@ -283,6 +283,49 @@ export type AdminSalesConsultantDetailsResponse = {
   };
 };
 
+export type AdminContactMessage = {
+  _id: string;
+  fullName: string;
+  firstName?: string;
+  lastName?: string;
+  email: string;
+  phone?: string;
+  country?: string;
+  countryLabel?: string;
+  reason?: string;
+  reasonLabel?: string;
+  message: string;
+  messagePreview: string;
+  sourcePage?: string;
+  status: string;
+  statusLabel: string;
+  readAt?: string | null;
+  answeredAt?: string | null;
+  adminNote?: string;
+  createdAt: string;
+  updatedAt?: string;
+};
+
+export type AdminContactMessagesListResponse = {
+  statuses: string[];
+  messages: AdminContactMessage[];
+};
+
+export type AdminContactMessageDetailsResponse = {
+  statuses: string[];
+  message: AdminContactMessage;
+};
+
+export type AdminContactMessagesUnreadCountResponse = {
+  count: number;
+};
+
+export type AdminContactMessageMutationResponse = {
+  message: string;
+  contactMessage: AdminContactMessage;
+  unreadCount?: number;
+};
+
 export type AdminCandidate = {
   _id: string;
   publicId: string;

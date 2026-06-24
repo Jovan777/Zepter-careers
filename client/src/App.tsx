@@ -15,6 +15,7 @@ import AdminApplicationsPage from "./admin/pages/AdminApplicationsPage";
 import AdminApplicationDetailsPage from "./admin/pages/AdminApplicationDetailsPage";
 import AdminTalentPoolPage from "./admin/pages/AdminTalentPoolPage";
 import AdminSalesConsultantApplicationsPage from "./admin/pages/AdminSalesConsultantApplicationsPage";
+import AdminContactMessagesPage from "./admin/pages/AdminContactMessagesPage";
 import AdminCandidatesPage from "./admin/pages/AdminCandidatesPage";
 import AdminCandidateDetailsPage from "./admin/pages/AdminCandidateDetailsPage";
 import AdminCompaniesPage from "./admin/pages/AdminCompaniesPage";
@@ -64,6 +65,7 @@ function App() {
             path="sales-consultants"
             element={<AdminSalesConsultantApplicationsPage />}
           />
+          <Route path="contact-messages" element={<AdminContactMessagesPage />} />
           <Route path="candidates" element={<AdminCandidatesPage />} />
           <Route path="candidates/archived" element={<AdminArchivedCandidatesPage />} />
           <Route path="candidates/:publicId" element={<AdminCandidateDetailsPage />} />

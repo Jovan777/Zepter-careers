@@ -193,6 +193,58 @@ Uploaded CV/document URLs therefore work through the frontend host, for example:
 http://localhost:11001/uploads/applications/<filename>
 ```
 
+## Uploaded Files / Shared Folder
+
+By default, backend uploads can use the Docker named volume `backend_uploads`.
+For production, the system administrator can mount a shared host folder instead
+by setting `UPLOADS_HOST_PATH` in the root `.env` file:
+
+```text
+UPLOADS_HOST_PATH=/home/promozepter/.local/share/Zepter-Careers
+```
+
+This folder stores every file that the backend writes under `/app/uploads`,
+including:
+
+- candidate CVs
+- additional candidate documents
+- property offer images
+- property offer floor plans
+- property offer documents
+- any other uploaded files
+
+The backend application code still writes to:
+
+```text
+/app/uploads
+```
+
+Docker stores those files physically in the configured host folder. The folder
+must exist on the host and Docker must have write permission.
+
+Create the production folder on Linux:
+
+```bash
+mkdir -p /home/promozepter/.local/share/Zepter-Careers
+```
+
+After Docker starts, test backend write access:
+
+```bash
+docker-compose run --rm backend sh -lc "id && echo test > /app/uploads/.write-test && ls -la /app/uploads/.write-test"
+```
+
+If that returns `Permission denied`, the system administrator must adjust the
+ownership or permissions of the host folder for the user/group used by the
+backend container. Do not use `777` except as a temporary diagnostic test.
+
+To quickly check whether the problem is folder permissions, test with a
+temporary writable path first:
+
+```text
+UPLOADS_HOST_PATH=/tmp/zepter-careers-uploads
+```
+
 ## Deploying Under A Subfolder
 
 Example external URL:
@@ -312,8 +364,10 @@ docker compose down -v
 ```
 
 Do not use this in production unless you intentionally want to delete persistent
-data. This deletes named volumes, including MongoDB data and uploaded candidate
-files.
+data. This deletes named volumes, including MongoDB data and the fallback
+`backend_uploads` volume. If `UPLOADS_HOST_PATH` points to a host folder,
+Docker does not delete that host folder, but the command can still remove the
+database volume.
 
 ## Persistent Data
 
@@ -324,10 +378,19 @@ mongo_data
 ```
 
 Backend uploaded files, including candidate CVs and extra documents, are stored
-in:
+in the configured upload mount.
+
+If `UPLOADS_HOST_PATH` is empty, Docker uses the named volume:
 
 ```text
 backend_uploads
+```
+
+If `UPLOADS_HOST_PATH` is set, Docker stores uploads in that host folder, for
+example:
+
+```text
+/home/promozepter/.local/share/Zepter-Careers
 ```
 
 Inside the backend container the upload directory is:
@@ -354,6 +417,7 @@ FRONTEND_BIND_HOST=127.0.0.1
 FRONTEND_PORT=11001
 BACKEND_BIND_HOST=127.0.0.1
 BACKEND_PORT=11002
+UPLOADS_HOST_PATH=
 VITE_PUBLIC_BASE_PATH=
 VITE_API_BASE_URL=
 VITE_ADMIN_LOGIN_PATH=/secure-zc-panel-8f4k/login
