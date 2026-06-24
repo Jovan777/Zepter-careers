@@ -61,7 +61,7 @@ Step 2: edit the root `.env`.
 For root deployment:
 
 ```text
-VITE_PUBLIC_BASE_PATH=
+VITE_PUBLIC_BASE_PATH=/
 VITE_API_BASE_URL=
 APP_BASE_URL=http://localhost:11001
 ```
@@ -70,14 +70,20 @@ For subfolder deployment, for example
 `https://promo.zepter.rs/posao/`:
 
 ```text
-VITE_PUBLIC_BASE_PATH=
+VITE_PUBLIC_BASE_PATH=/posao/
 VITE_API_BASE_URL=
 APP_BASE_URL=https://promo.zepter.rs/posao
 ```
 
-The recommended Docker mode leaves `VITE_PUBLIC_BASE_PATH` empty. This makes
-Vite generate relative asset paths such as `assets/index.js` instead of
-root-absolute paths such as `/assets/index.js`.
+`VITE_PUBLIC_BASE_PATH` must match the public folder where the frontend is
+mounted. For the current production deployment at
+`https://promo.zepter.rs/posao/`, use `/posao/`. If the app is served from the
+domain root, use `/`.
+
+Do not leave `VITE_PUBLIC_BASE_PATH` empty for production deep-route
+deployments. Empty relative asset mode can make direct URLs such as
+`/posao/secure-zc-panel-8f4k/login` request assets from
+`/posao/secure-zc-panel-8f4k/assets/...` instead of `/posao/assets/...`.
 
 `VITE_API_BASE_URL` should normally stay empty for Docker, so the frontend
 derives `/api` or `/posao/api` at runtime from the current browser URL.
@@ -168,8 +174,8 @@ FRONTEND_PORT=11001
 ## Same-Origin API
 
 For Docker builds, leave `VITE_API_BASE_URL` empty unless you intentionally need
-a custom API endpoint. In the recommended relative asset mode, the frontend
-derives the API path at runtime:
+a custom API endpoint. The frontend derives the API path from the configured
+public base path at runtime:
 
 ```text
 http://localhost:11001/              -> /api
@@ -253,21 +259,20 @@ Example external URL:
 https://promo.zepter.rs/posao/
 ```
 
-Use the trailing slash on the external subfolder URL. Relative asset paths such
-as `assets/index.js` resolve correctly from `/posao/`.
+Use the trailing slash on the external subfolder URL.
 
 Use these values in root `.env`:
 
 ```text
-VITE_PUBLIC_BASE_PATH=
+VITE_PUBLIC_BASE_PATH=/posao/
 APP_BASE_URL=https://promo.zepter.rs/posao
 VITE_API_BASE_URL=
 ```
 
-Leave `VITE_PUBLIC_BASE_PATH` empty for the recommended Docker deployment. The
-generated `index.html` will use relative paths like `assets/index.js` and
-`Zepter-Careers images/ZepterJobLogo.png`, so the same image can be served from
-any external subfolder without rebuilding for that folder name.
+`VITE_PUBLIC_BASE_PATH` must match the external public folder. For the current
+deployment, the generated `index.html` should use paths such as
+`/posao/assets/index.js`. If the public folder changes later, update
+`VITE_PUBLIC_BASE_PATH` to match it and rebuild the frontend image.
 
 `APP_BASE_URL` should include the full external URL, including the subfolder.
 
@@ -277,9 +282,10 @@ Recommended reverse proxy rule:
 https://promo.zepter.rs/posao/ -> http://127.0.0.1:11001/
 ```
 
-The frontend nginx tolerates prefixed `/api`, `/uploads`, `/assets`, and public
-asset-folder paths. Stripping `/posao` at the external proxy is still fine, but
-the Docker build no longer depends on the concrete subfolder name.
+The frontend nginx also tolerates prefixed `/api`, `/uploads`, `/assets`, and
+public asset-folder paths, but the production build should still use the
+explicit public base path. This keeps direct deep links such as
+`/posao/secure-zc-panel-8f4k/login` asset-safe.
 
 After changing Docker frontend build variables, rebuild the frontend image:
 
@@ -408,20 +414,21 @@ The existing backend file URLs continue to use paths such as:
 nginx proxies `/uploads` to the backend, so those links work through the
 frontend host.
 
-## Important Defaults
+## Important Production Values
 
-These are the important Docker Compose defaults:
+For the current production deployment at `https://promo.zepter.rs/posao/`, the
+root `.env` should include:
 
 ```text
 FRONTEND_BIND_HOST=127.0.0.1
 FRONTEND_PORT=11001
 BACKEND_BIND_HOST=127.0.0.1
 BACKEND_PORT=11002
-UPLOADS_HOST_PATH=
-VITE_PUBLIC_BASE_PATH=
+UPLOADS_HOST_PATH=/home/promozepter/.local/share/Zepter-Careers
+VITE_PUBLIC_BASE_PATH=/posao/
 VITE_API_BASE_URL=
 VITE_ADMIN_LOGIN_PATH=/secure-zc-panel-8f4k/login
-APP_BASE_URL=http://localhost:11001
+APP_BASE_URL=https://promo.zepter.rs/posao
 MONGO_URI=mongodb://mongo:27017/zepter-careers
 ```
 
@@ -431,14 +438,14 @@ For production, set real secrets in the deployment environment or root `.env`:
 JWT_SECRET=replace-with-a-strong-secret
 CONTACT_SECURITY_SECRET=replace-with-a-strong-contact-security-secret
 MAILTRAP_API_TOKEN=
-SMTP_HOST=
-SMTP_PORT=
+SMTP_HOST=mail2.zepter.rs
+SMTP_PORT=25
 SMTP_USER=
 SMTP_PASS=
 SMTP_SECURE=false
-SMTP_IGNORE_TLS=false
+SMTP_IGNORE_TLS=true
 SMTP_REQUIRE_TLS=false
-SMTP_AUTH=true
+SMTP_AUTH=false
 SMTP_TLS_MIN_VERSION=
 ```
 
