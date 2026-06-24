@@ -1,5 +1,4 @@
-const configuredAdminLoginPath =
-  import.meta.env.VITE_ADMIN_LOGIN_PATH || "/admin-login";
+import { ADMIN_LOGIN_PATH } from "./adminRoutes";
 
 const stripTrailingSlash = (value: string) => value.replace(/\/+$/, "");
 
@@ -44,7 +43,7 @@ const deriveRuntimeBasePath = () => {
 
   const pathname = window.location.pathname || "/";
   const routePrefixes = [
-    normalizeRoutePrefix(configuredAdminLoginPath),
+    normalizeRoutePrefix(ADMIN_LOGIN_PATH),
     "/admin",
     "/jobs",
     "/process",
