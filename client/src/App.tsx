@@ -38,7 +38,7 @@ function App() {
         <Route path="/jobs" element={<JobsPage />} />
         <Route path="/process" element={<ProcessPage />} />
         <Route path="/faq" element={<FaqPage />} />
-        <Route path="/our-team" element={<OurTeamPage />} />
+        <Route path="/our-teammmmmmmmmmmmmmmm" element={<OurTeamPage />} />
         <Route path="/contact" element={<ContactPage />} />
 
         <Route path="/admin/login" element={<Navigate to="/" replace />} />

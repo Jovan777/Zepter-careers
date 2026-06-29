@@ -283,7 +283,7 @@ const SalesConsultantModal = ({ isOpen, onClose }: SalesConsultantModalProps) =>
               </div>
 
               <div className="sales-consultant-modal__field">
-                <label>Kratka poruka / Motivacija</label>
+                <label>Kratka poruka / Motivacija - (Opciono)</label>
                 <textarea
                   placeholder="Napišite zašto želite da postanete Zepter konsultant prodaje..."
                   value={message}
